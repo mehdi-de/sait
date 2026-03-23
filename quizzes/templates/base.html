@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <style>
+        
+        /* دکمه ها دقیقاً گوشه چپ بالا */
+.auth-buttons {
+    position: absolute;
+    top: 10px;
+    left: 20px; /* گوشه چپ */
+    display: flex;
+    gap: 15px;
+    z-index: 999;
+}
+
+/* استایل کلی نئونی */
+.btn-neon {
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    transition: 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.4);
+    box-shadow: 0 0 10px rgba(255,255,255,0.3);
+}
+
+/* نئونی ویژه ورود (آبی – نوری) */
+.login-neon {
+    background: linear-gradient(45deg, #0ea5e9, #38bdf8);
+    box-shadow:
+        0 0 8px #38bdf8,
+        0 0 15px #0ea5e9,
+        inset 0 0 10px rgba(255,255,255,0.3);
+}
+.login-neon:hover {
+    box-shadow:
+        0 0 12px #38bdf8,
+        0 0 22px #0ea5e9,
+        inset 0 0 14px rgba(255,255,255,0.5);
+}
+
+/* مخصوص ثبت‌نام (صورتی نئونی) */
+.register-neon {
+    background: linear-gradient(45deg, #ec4899, #f472b6);
+    box-shadow:
+        0 0 8px #f472b6,
+        0 0 15px #ec4899,
+        inset 0 0 10px rgba(255,255,255,0.3);
+}
+.register-neon:hover {
+    box-shadow:
+        0 0 12px #f472b6,
+        0 0 22px #ec4899,
+        inset 0 0 14px rgba(255,255,255,0.5);
+}
+
+/* موبایل */
+@media(max-width: 768px){
+    .auth-buttons {
+        left: 10px;
+        top: 15px;
+    }
+}
+
+</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}سایت آزمون{% endblock %}</title>
+    
+    <!-- لینک به فایل CSS ناوبار -->
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <!-- لینک به فایل CSS اصلی سایت (اگر دارید) -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% include 'includes/navbar.html' %} {# ناوبار را اینجا فراخوانی می کنیم #}
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    {% block extra_js %}{% endblock %}
+    <!-- اسکریپت ناوبار را اینجا قرار دهید -->
+<script src="{% static 'js/navbar.js' %}"></script>
+</body>
+</html>

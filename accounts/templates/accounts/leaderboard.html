@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .top-rank {
+        background-color: #4CAF50 !important;
+        color: white !important;
+    }
+</style>
+
+<div class="container" style="max-width:900px; margin:40px auto; font-family:sans-serif;">
+    <h1 style="text-align:center;">🏆 جدول رتبه‌بندی کاربران</h1>
+    
+    <table style="width:100%; border-collapse:collapse; margin-top:20px; font-size:16px;">
+        <thead>
+            <tr style="background:#2196F3; color:white;">
+                <th style="padding:10px;">رتبه</th>
+                <th style="padding:10px;">کاربر</th>
+                <th style="padding:10px;">تعداد آزمون‌ها</th>
+                <th style="padding:10px;">امتیاز کل</th>
+                <th style="padding:10px;">میانگین درصد</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in leaderboard %}
+            <tr class="{% if forloop.first %}top-rank{% endif %}" style="text-align:center;">
+                <td>{{ item.rank }}</td>
+                <td>{{ item.user.username }}</td>
+                <td>{{ item.quizzes_taken }}</td>
+                <td>{{ item.total_score }}</td>
+                <td>{{ item.average_score }}%</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="padding:10px;">هیچ داده‌ای برای نمایش وجود ندارد.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+{% endblock %}

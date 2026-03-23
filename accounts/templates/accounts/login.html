@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود به حساب کاربری</title>
+    <style>
+        /* عنوان نئونی لامپی */
+.neon-title {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    margin-top: 40px;
+    font-size: 4rem;
+    font-weight: bold;
+    color: #7f9cff;
+
+    text-shadow:
+        0 0 8px #8da2ff,
+        0 0 15px #8da2ff,
+        0 0 25px #6c7bff,
+        0 0 40px #3f48ff;
+
+    animation: neonFlicker 4s infinite;
+    font-family: 'Arial', sans-serif;
+}
+
+/* افکت های اتصالی — روشن خاموش نامنظم */
+@keyframes neonFlicker {
+
+    0%, 13%, 16%, 18%, 22%, 25%, 28%, 100% {
+        opacity: 1;
+        text-shadow:
+            0 0 8px #8da2ff,
+            0 0 15px #8da2ff,
+            0 0 25px #6c7bff,
+            0 0 40px #3f48ff,
+            0 0 70px #2f37ff;
+    }
+
+    14%, 17% {
+        opacity: 0.4;
+        text-shadow: none;
+    }
+
+    26% {
+        opacity: 0.1;
+        text-shadow: 0 0 2px #3f48ff;
+    }
+
+    27% {
+        opacity: 0.7;
+        text-shadow:
+            0 0 5px #7f9cff,
+            0 0 10px #8da2ff;
+    }
+}
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+            font-family: 'Arial', sans-serif; /* فونت خواناتر */
+        }
+
+.stars-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                        radial-gradient(circle, rgba(255, 255, 255, 0.1) 2px, transparent 2px),
+                        radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                        radial-gradient(circle, rgba(255, 255, 255, 0.1) 2px, transparent 2px);
+            background-size: 50px 50px, 100px 100px, 70px 70px, 120px 120px;
+            animation: moveStars 60s linear infinite;
+        }
+
+        .stars-background::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at top left, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                        radial-gradient(ellipse at bottom right, rgba(255, 255, 255, 0.05) 2px, transparent 2px);
+            background-size: 80px 80px, 150px 150px;
+            animation: twinkleStars 30s linear infinite;
+        }
+        @keyframes moveStars {
+            0% { background-position: 0 0; }
+            100% { background-position: 1000px 1000px; }
+        }
+
+        @keyframes twinkleStars {
+            0% { background-position: 500px 200px; }
+            100% { background-position: 0 0; }
+        }
+
+        /* استایل‌های صفحه ورود */
+        .login-container {
+            position: relative; /* برای اینکه z-index کار کند */
+            z-index: 1;
+            max-width: 400px;
+            margin: 100px auto; /* وسط صفحه */
+            padding: 30px;
+            background: rgba(10, 10, 30, 0.6); /* پس‌زمینه نیمه‌شفاف با تم فضایی */
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), /* سایه بیشتر */
+                        0 0 20px rgba(130, 130, 255, 0.4); /* افکت نوری آبی */
+            color: #fff;
+            text-align: center;
+        }
+
+        .login-container h2 {
+            margin-bottom: 20px;
+            color: #a0a0ff; /* رنگ آبی ملایم */
+            font-size: 2em;
+            text-shadow: 0 0 10px rgba(130, 130, 255, 0.7);
+        }
+
+        .messages .error {
+            color: #ff6060; /* رنگ قرمز برای خطا */
+            background-color: rgba(255, 100, 100, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #ff6060;
+        }
+
+        .login-container form p {
+            margin-bottom: 15px;
+            text-align: right; /* برای تراز کردن برچسب‌ها */
+        }
+
+        .login-container label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ccc;
+            font-weight: bold;
+        }
+
+        .login-container input[type="text"],
+        .login-container input[type="password"] {
+            width: calc(100% - 20px); /* محاسبه عرض با در نظر گرفتن padding */
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.05); /* پس‌زمینه ورودی‌ها */
+            color: #fff;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .login-container input[type="text"]:focus,
+        .login-container input[type="password"]:focus {
+            border-color: #a0a0ff;
+            box-shadow: 0 0 15px rgba(130, 130, 255, 0.5);
+            outline: none; /* حذف خط دور */
+        }
+
+        .login-container button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(to right, #4e54c8, #8f94fb); /* گرادیانت آبی */
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s, box-shadow 0.3s;
+            text-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .login-container button:hover {
+            background: linear-gradient(to right, #8f94fb, #4e54c8); /* تغییر گرادیانت در هاور */
+            box-shadow: 0 0 20px rgba(130, 130, 255, 0.7);
+        }
+
+        .register-link {
+            margin-top: 25px;
+            font-size: 0.9em;
+        }
+
+        .register-link a {
+            color: #a0a0ff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .register-link a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="logo">
+        <a href="{% url 'home' %}">
+            <h1 class="neon-title">AR TEST</h1>
+        </a>
+    </div>
+    
+
+    <!-- پس‌زمینه ستاره‌ای متحرک -->
+    <div class="stars-background"></div>
+
+    <!-- کانتینر ورود -->
+    <div class="login-container">
+        <h2>ورود به حساب کاربری</h2>
+
+        <!-- نمایش پیام خطا -->
+        <div class="messages">
+            {% if form.errors %}
+                <p class="error">نام کاربری یا رمز عبور اشتباه است.</p>
+            {% endif %}
+        </div>
+
+        <!-- فرم ورود -->
+        <form method="post">
+            {% csrf_token %}
+            <p>
+                <label for="{{ form.username.id_for_label }}">نام کاربری:</label>
+                {{ form.username }}
+            </p>
+            <p>
+                <label for="{{ form.password.id_for_label }}">رمز عبور:</label>
+                {{ form.password }}
+            </p>
+            <button type="submit">ورود</button>
+        </form>
+
+        <!-- لینک ثبت‌نام -->
+        <div class="register-link">
+            <p>کاربر جدید هستید؟ <a href="{% url 'accounts:register' %}">ثبت‌نام</a></p>
+        </div>
+    </div>
+</body>
+</html>

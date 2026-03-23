@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ورود به آزمون{% endblock %}
+
+{% block content %}
+
+<style>
+    body {
+        background: 
+            linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+            url("{% static 'image/background.jpg' %}") center / cover no-repeat fixed;
+        min-height: 100vh;
+        color: #fff;
+    }
+
+    .top-actions {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .hero-box {
+        max-width: 420px;
+        margin: 80px auto;
+        background: rgba(255,255,255,0.12);
+        backdrop-filter: blur(12px);
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        text-align: center;
+    }
+
+    .hero-box h2 {
+        margin-bottom: 20px;
+        font-size: 1.6em;
+        font-weight: bold;
+    }
+
+    .hero-box label {
+        display: block;
+        text-align: right;
+        margin-bottom: 6px;
+        font-size: 0.95em;
+    }
+
+    .hero-box input {
+        background: rgba(255,255,255,0.9);
+        border-radius: 8px;
+    }
+
+    .hero-box button {
+        width: 100%;
+        margin-top: 15px;
+        font-size: 1em;
+    }
+
+    .info-box {
+        max-width: 700px;
+        margin: 30px auto;
+        background: rgba(255,255,255,0.9);
+        color: #333;
+        border-radius: 14px;
+        padding: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+
+    .info-box a {
+        color: #3f51b5;
+        font-weight: bold;
+    }
+
+    .success-text {
+        color: #4CAF50;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .error-text {
+        color: #ff5252;
+        margin-bottom: 10px;
+    }
+    
+</style>
+
+
+
+
+<div class="top-actions">
+    <a href="{% url 'home' %}" class="button is-info is-light">🔄 بروزرسانی صفحه</a>
+    <a href="{% url 'quiz_list' %}" class="button is-success is-light">📋 لیست آزمون‌ها</a>
+    <a href="{% url 'about' %}" class="button is-info is-light"> درباره ما 📃</a>
+</div>
+
+<div class="info-box">
+    <p><strong>داوطلبان گرامی،</strong></p>
+    <p>
+        برای دریافت <strong>رمز ورود به آزمون</strong>، نام آزمون را در پیام‌رسان
+        <strong>روبیکا</strong> برای ما ارسال نمایید:
+    </p>
+    <p>
+        👉
+        <a href="https://rubika.ir/portal_online" target="_blank" rel="noopener noreferrer">
+            ارتباط با ما در روبیکا
+        </a>
+    </p>
+</div>
+
+<div class="hero-box">
+    <h2>🔐 ورود به آزمون</h2>
+
+    {% if error %}
+        <div class="error-text">{{ error }}</div>
+    {% endif %}
+
+    {% if access_granted %}
+        <div class="success-text">
+            ✅ رمز صحیح است، آماده‌ی شروع آزمون هستید
+        </div>
+        <a href="{% url 'start_quiz' pk=quiz_id %}" class="button is-success is-medium">
+            ▶️ شروع آزمون
+        </a>
+    {% else %}
+        <form method="POST">
+            {% csrf_token %}
+            <label for="password">رمز عبور آزمون</label>
+            <input type="password" name="password" id="password" class="input" required>
+            <button type="submit" class="button is-primary is-medium">
+                تأیید و ورود
+            </button>
+        </form>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+
+کد های ببس 
+
+    <!DOCTYPE html>
+    {% load static %}
+    <html lang="fa" dir="rtl">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}سایت آزمون{% endblock %}</title>
+        
+        
+       
+        <link rel="stylesheet" href="{% static 'css/bulma.css'%}" >
+        {% block extra_css %}{% endblock extra_css %}
+
+    </head>
+    <body>
+        {% include 'navbar.html' %}
+        <!-- تغییر کلاس container به container-fluid یا حذف برای کنترل بیشتر روی عرض -->
+        <div class="container mt-4"> 
+            {% block content %}
+                <!-- محتوای اصلی از قالب‌های فرزند (مثل quiz_detail.html) در اینجا قرار می‌گیرد -->
+            {% endblock %}
+        </div>
+
+        <!-- 3. اضافه کردن جاوا اسکریپت بوت‌استرپ (برای تعاملات بهتر) -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNk77Var ж" crossorigin="anonymous"></script>
+        {% block extra_js %}{% endblock extra_js %}
+
+    </body>
+    </html>

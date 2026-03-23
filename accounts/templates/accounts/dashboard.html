@@ -1,0 +1,491 @@
+{% extends 'base.html' %}
+{% block title %}داشبورد کاربر{% endblock %}
+
+{% block content %}
+<style>
+
+/* ===========================
+   🌿 MAGIC GARDEN GLOBAL AESTHETIC
+=========================== */
+body {
+    background: linear-gradient(210deg, #1a4d2e, #4a3e66, #a06b2d);
+    background-size: 400% 400%;
+    animation: magicGradient 25s ease infinite;
+    font-family: 'Vazirmatn', sans-serif; /* فونت فارسی خوانا */
+    color: #e0e0e0; /* رنگ متن روشن برای کنتراست */
+    direction: rtl;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* جلوگیری از اسکرول افقی ناخواسته */
+}
+
+@keyframes magicGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ذرات درخشان شبنم */
+.magic-particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.magic-particle {
+    position: absolute;
+    background: rgba(255, 215, 0, 0.7); /* رنگ طلایی */
+    border-radius: 50%;
+    opacity: 0;
+    animation: fall 8s infinite ease-in-out;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+@keyframes fall {
+    0% { transform: translateY(-100px) scale(0.8); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateY(100vh) scale(1.2); opacity: 0; }
+}
+
+/* ظرف کلی داشبورد */
+.dashboard-container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+    position: relative; /* برای قرارگیری ذرات روی محتوا */
+    z-index: 1;
+}
+
+/* ===========================
+   👑 ARTISTIC HEADER (MAGIC STYLE)
+=========================== */
+.dashboard-header {
+    background: rgba(40, 50, 30, 0.75); /* سبز تیره و کمی شفاف */
+    backdrop-filter: blur(18px);
+    border-radius: 28px;
+    padding: 25px 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 
+        0 8px 30px rgba(0,0,0,0.2),
+        0 0 40px rgba(150, 120, 180, 0.4); /* سایه بنفش */
+    border: 1px solid rgba(100, 80, 120, 0.5);
+    margin-bottom: 40px;
+}
+
+.dashboard-header h2 {
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: -1.5px;
+    /* گرادیانت اصلی متن */
+    background: linear-gradient(45deg, #FFD700, #E6B800, #D4AF37); 
+    /* استایل استاندارد و وب‌کیت برای کلیپ کردن گرادیانت به متن */
+    background-clip: text; /* برای مرورگرهای مدرن */
+    -webkit-background-clip: text; /* برای مرورگرهای قدیمی‌تر WebKit */
+    color: transparent; /* رنگ متن رو شفاف می‌کنیم تا گرادیانت دیده بشه */
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+}
+
+.user-box {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 12px 25px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: inset 0 0 20px rgba(255, 230, 170, 0.3); /* طلایی ملایم */
+}
+
+.user-name {
+    font-weight: bold;
+    color: #f0e68c; /* طلایی روشن */
+}
+
+.logout-btn {
+    background: linear-gradient(135deg, #8A2BE2, #9370DB); /* بنفش */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 14px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.4s;
+    text-shadow: 0 0 5px rgba(0,0,0,0.3);
+}
+
+.logout-btn:hover {
+    transform: scale(1.08);
+    background: linear-gradient(135deg, #9370DB, #8A2BE2);
+}
+
+/* ===========================
+   ✨ STAT CARDS (MAGIC GARDEN STYLE)
+=========================== */
+.stats {
+    margin-top: 35px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.stat-card {
+    background: linear-gradient(145deg, #2e5a3a, #5b4d7c); /* سبز تیره به بنفش */
+    border-radius: 30px;
+    padding: 30px;
+    text-align: center;
+    box-shadow:
+        0 15px 35px rgba(0,0,0,0.3),
+        inset 0 0 25px rgba(120, 100, 150, 0.4); /* سایه بنفش داخلی */
+    transition: 0.4s ease-out;
+    border: 1px solid rgba(40, 50, 30, 0.6);
+}
+
+.stat-card:hover {
+    transform: translateY(-10px) scale(1.03);
+    box-shadow:
+        0 25px 45px rgba(0,0,0,0.4),
+        0 0 30px rgba(255, 215, 0, 0.5); /* هایلایت طلایی */
+}
+
+.stat-card h3 {
+    color: #FFD700; /* طلایی */
+    font-size: 22px;
+    margin-bottom: 15px;
+    font-weight: bold;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
+}
+
+.stat-card p {
+    font-size: 26px;
+    font-weight: bold;
+    color: #f0e68c; /* طلایی روشن */
+    text-shadow: 0 0 6px rgba(255, 215, 0, 0.5);
+}
+
+/* ===========================
+   📚 ARTISTIC TABLE (MAGIC TOUCH)
+=========================== */
+table {
+    width: 100%;
+    margin-top: 40px;
+    border-collapse: separate;
+    border-spacing: 0 15px;
+}
+
+table th {
+    background: linear-gradient(135deg, #7b2c4d, #4a3e66); /* ترکیب زرشکی و بنفش */
+    color: white;
+    padding: 16px;
+    border-radius: 16px;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 5px rgba(0,0,0,0.3);
+}
+
+table tr {
+    background: rgba(40, 50, 30, 0.6); /* سبز تیره نیمه شفاف */
+    border-radius: 20px;
+    box-shadow:
+        0 12px 28px rgba(0,0,0,0.3),
+        inset 0 0 25px rgba(80, 60, 100, 0.5); /* سایه بنفش داخلی */
+    transition: 0.3s;
+}
+
+table tr:hover {
+    transform: scale(1.01);
+    background: rgba(50, 60, 40, 0.7);
+}
+
+table td {
+    padding: 16px;
+    font-size: 16px;
+    color: #e0e0e0; /* متن روشن */
+}
+
+/* دکمه‌های هنری جادویی */
+.start-quiz-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #FFD700, #DAA520); /* طلایی */
+    color: #333;
+    padding: 10px 20px;
+    border-radius: 16px;
+    text-decoration: none;
+    transition: 0.4s;
+    font-weight: bold;
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+}
+
+.start-quiz-btn:hover {
+    transform: translateY(-4px) scale(1.05);
+    background: linear-gradient(135deg, #DAA520, #FFD700);
+    box-shadow: 0 8px 20px rgba(255, 215, 0, 0.6);
+}
+
+.disabled-btn {
+    background: #6a5a4a; /* رنگ طلایی تیره و خسته */
+    color: #bbb;
+    cursor: not-allowed;
+}
+
+/* ===========================
+   🏆 ARTISTIC RANKING CARD (MAGIC GARDEN)
+=========================== */
+.ranking-summary-card {
+    background: linear-gradient(135deg, #6a0572, #a06b2d, #2e5a3a); /* بنفش -> طلایی/قهوه ای -> سبز */
+    padding: 35px;
+    border-radius: 35px;
+    margin-top: 50px;
+    box-shadow:
+        0 20px 40px rgba(0,0,0,0.4),
+        inset 0 0 30px rgba(100, 80, 120, 0.5);
+    color: #eee;
+    transition: 0.4s;
+    position: relative;
+    overflow: hidden; /* برای افکت برگ‌ها */
+}
+
+/* افکت برگ‌های شناور */
+.ranking-summary-card::before,
+.ranking-summary-card::after {
+    content: '';
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: rgba(255, 215, 0, 0.1); /* طلایی کمرنگ */
+    border-radius: 40%;
+    animation: swirl 15s infinite ease-in-out;
+    opacity: 0.7;
+}
+
+.ranking-summary-card::before {
+    top: -30px;
+    left: -30px;
+    transform: rotate(-30deg);
+}
+
+.ranking-summary-card::after {
+    bottom: -30px;
+    right: -30px;
+    transform: rotate(30deg);
+    background: rgba(130, 80, 150, 0.1); /* بنفش کمرنگ */
+}
+
+@keyframes swirl {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(50px, 20px) rotate(180deg); }
+    100% { transform: translate(0, 0) rotate(360deg); }
+}
+
+
+.card-header i { /* اگر آیکون دارید */
+    font-size: 40px;
+    color: #FFD700;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+    margin-bottom: 10px;
+}
+
+.card-header h3 {
+    font-size: 28px;
+    font-weight: 900;
+    background: linear-gradient(45deg, #FFD700, #f0e68c);
+    background-clip: text; /* برای مرورگرهای مدرن */
+    -webkit-background-clip: text; /* برای مرورگرهای قدیمی‌تر WebKit */
+    color: transparent; /* رنگ متن رو شفاف می‌کنیم */
+    text-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
+}
+
+.user-rank {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-weight: bold;
+    color: #f0e68c;
+    font-size: 1.1em;
+    display: inline-block; /* برای اینکه padding کار کند */
+    margin-top: 15px;
+    margin-bottom: 20px;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.4);
+}
+
+.nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #fff;
+    background: linear-gradient(135deg, #FFD700, #DAA520); /* طلایی */
+    padding: 10px 20px;
+    border-radius: 16px;
+    transition: 0.4s;
+    font-weight: bold;
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+    border: 1px solid rgba(255, 215, 0, 0.6);
+}
+
+.nav-link:hover {
+    transform: translateX(-6px) scale(1.05);
+    background: linear-gradient(135deg, #DAA520, #FFD700);
+    box-shadow: 0 8px 20px rgba(255, 215, 0, 0.6);
+}
+
+/* ===========================
+   🌟 RESPONSIVE
+=========================== */
+@media (max-width: 650px) {
+    .dashboard-header {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .dashboard-header h2 {
+        font-size: 26px;
+    }
+    .stats {
+        grid-template-columns: 1fr; /* کارت‌ها روی هم قرار بگیرند */
+    }
+    .ranking-summary-card {
+        padding: 25px;
+    }
+}
+
+</style>
+
+<div class="dashboard-container">
+
+    <div class="dashboard-header">
+        <h2>🚀 داشبورد شما</h2>
+        <div class="user-box">
+            {{ request.user.username }}
+
+            <!-- دکمه خروج -->
+            <form action="{% url 'accounts:logout' %}" method="post" style="margin:0;">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">خروج از حساب</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- کارت‌های آماری -->
+    <div class="stats">
+        <div class="stat-card">
+            <h3>وضعیت اشتراک</h3>
+            <p>{{ subscription_status }}</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>تاریخ پایان</h3>
+            <p>{% if subscription_end %}{{ subscription_end }}{% else %}-{% endif %}</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>تعداد آزمون‌ها</h3>
+            <p>{{ quiz_results|length }}</p>
+        </div>
+    </div>
+
+    <!-- جدول آزمون‌ها -->
+    <h3 style="margin-bottom:20px;">📚 آزمون‌های شما</h3>
+
+    <table>
+        <tr>
+            <th>عنوان</th>
+            <th>نوع</th>
+            <th>وضعیت</th>
+            <th>عملیات</th>
+        </tr>
+
+        {% for result in quiz_results %}
+        <tr>
+            <td>{{ result.quiz.title }}</td>
+            <td>
+                {% if result.quiz.is_premium %}
+                    🔒 پرمیوم
+                {% else %}
+                    🆓 رایگان
+                {% endif %}
+            </td>
+            <td>{{ result.status }}</td>
+            <td>
+                {% if result.quiz.is_premium and result.status != 'هنوز امتحان داده نشده' %}
+                    <span class="start-quiz-btn disabled-btn">انجام شده</span>
+                {% else %}
+                    <a href="{% url 'start_quiz' result.quiz.id %}" class="start-quiz-btn">
+                        شروع آزمون
+                    </a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+<!-- قسمت رتبه بندی  -->
+ {% if user_rank %}
+<div class="ranking-summary-card">
+
+    <!-- هدر کارت -->
+    <div class="card-header">
+        <i class="fas fa-trophy icon-gradient"></i>
+        <h3> رتبه شما در جدول 🏆 </h3>
+    </div>
+
+    <!-- بدنه کارت -->
+    <div class="card-body">
+
+        <!-- رتبه کاربر -->
+        <p>
+            رتبه شما :  
+            <span class="user-rank">{{ user_rank.rank }}</span>
+        </p>
+
+        <p>مجموع امتیازات:  
+            <strong class="user-rank">{{ user_rank.total_score }}</strong>
+        </p>
+
+        <p>میانگین نمره:  
+            <strong class="user-rank">{{ user_rank.average }}%</strong>
+        </p>
+
+        <p>تعداد آزمون‌های شرکت‌کرده:  
+            <strong class="user-rank">{{ user_rank.quizzes_taken }}</strong>
+        </p>
+
+        <!-- برترین کاربر (اختیاری) -->
+        {% if top_user %}
+        <div class="top-contributor">
+            <span class="contributor-name">{{ top_user.username }}</span>
+            <span class="contributor-score">{{ top_user.total_score }}</span>
+        </div>
+        {% endif %}
+
+        <!-- لینک -->
+        <a href="{% url 'accounts:leaderboard' %}" class="nav-link">
+            مشاهده کل جدول رتبه‌بندی
+            <i class="fas fa-arrow-left"></i>
+        </a>
+
+    </div>
+
+</div>
+{% else %}
+<div class="ranking-summary-card">
+    <div class="card-header">
+        <i class="fas fa-trophy icon-gradient"></i>
+        <h3>خلاصه رتبه‌بندی</h3>
+    </div>
+
+    <div class="card-body">
+        <p>شما هنوز در هیچ آزمون پریمیوم شرکت نکرده‌اید.</p>
+
+        <a href="{% url 'accounts:leaderboard' %}" class="nav-link">
+            مشاهده جدول رتبه‌بندی
+            <i class="fas fa-arrow-left"></i>
+        </a>
+    </div>
+</div>
+{% endif %}
+
+
+{% endblock %}

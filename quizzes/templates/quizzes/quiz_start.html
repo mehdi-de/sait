@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>شروع آزمون</h1>
+  <p>شما آزمون شماره {{ quiz.id }} را شروع کرده‌اید.</p>
+  <a href="{% url 'quiz_list' %}" class="btn btn-primary">بازگشت به صفحه اصلی </a>
+{% endblock %}

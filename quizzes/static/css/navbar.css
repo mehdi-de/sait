@@ -1,0 +1,106 @@
+
+body {
+  background: none !important; 
+}
+
+.navbar {
+    padding: 10px 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 20px rgba(172, 10, 247, 0.4); 
+    position: relative; 
+    z-index: 100; 
+  
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+    flex-wrap: wrap;
+    max-width: 1200px; 
+    margin: 0 auto; 
+    position: relative; 
+}
+
+/* --- استایل‌های جدید برای دکمه‌ها --- */
+.auth-buttons {
+    display: flex;
+    gap: 15px;
+    order: 1; 
+}
+
+/* استایل کلی نئونی */
+.btn-neon {
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease; 
+    border: 1px solid rgba(255,255,255,0.4);
+    box-shadow: 0 0 10px rgba(255,255,255,0.3);
+    cursor: pointer; 
+}
+
+/* نئونی ویژه ورود (آبی – نوری) */
+.login-neon {
+    background: linear-gradient(45deg, #0ea5e9, #38bdf8);
+    box-shadow:
+        0 0 8px #38bdf8,
+        0 0 15px #0ea5e9,
+        inset 0 0 10px rgba(255,255,255,0.3);
+}
+.login-neon:hover {
+    box-shadow:
+        0 0 12px #38bdf8,
+        0 0 22px #0ea5e9,
+        inset 0 0 14px rgba(255,255,255,0.5);
+    color: #fff; 
+}
+
+/* مخصوص ثبت‌نام (صورتی نئونی) */
+.register-neon {
+    background: linear-gradient(45deg, #ec4899, #f472b6);
+    box-shadow:
+        0 0 8px #f472b6,
+        0 0 15px #ec4899,
+        inset 0 0 10px rgba(255,255,255,0.3);
+}
+.register-neon:hover {
+    box-shadow:
+        0 0 12px #f472b6,
+        0 0 22px #ec4899,
+        inset 0 0 14px rgba(255,255,255,0.5);
+    color: #fff; 
+}
+
+/* --- مدیا کوئری‌ها --- */
+@media(max-width: 768px){
+    .auth-buttons {
+        margin-left: auto; 
+        order: 2; 
+        position: relative; 
+        top: auto;
+        left: auto;
+    }
+    .menu-toggle {
+        order: 3; 
+    }
+    .nav-links {
+        order: 4; 
+        position: absolute;
+        top: 60px; 
+        left: 0;
+        width: 100%;
+        background: linear-gradient(135deg, #82ed35, #fbe018, #e7ff5e);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        padding-top: 15px;
+    }
+    .nav-links.show {
+        display: flex !important;
+    }
+}
+
+/* استایل‌های دیگر navbar-container و logo و ... باید اینجا باشند */

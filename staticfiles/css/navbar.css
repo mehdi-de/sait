@@ -1,0 +1,90 @@
+.navbar {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    padding: 10px 20px;
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* این خط برای تراز عمودی لوگو/تصویر ضروری است */
+    flex-wrap: wrap;
+}
+
+/* --- استایل‌های جدید و اصلاح شده برای لوگو --- */
+
+/* این کلاس جایگزین استایل‌های متنی .logo می‌شود و برای مدیریت تگ <a> و <img> مناسب است */
+.logo {
+    font-weight: 700;
+    font-size: 24px; /* این مورد را برای لوگوی تصویری حذف می‌کنیم یا به عنوان fallback نگه می‌داریم */
+    color: #fff;
+    /* مطمئن می‌شویم که آیتم فلکس است تا تراز شود */
+    display: flex; 
+    align-items: center; /* تراز عمودی برای تصویر */
+}
+
+.logo a {
+    color: #fff;
+    text-decoration: none;
+    /* این خط بسیار مهم است: اطمینان از اینکه تگ a کل اندازه مورد نظر را اشغال نمی‌کند */
+    line-height: 0; 
+}
+
+.logo img.site-logo {
+    /* تنظیم ارتفاع برای لوگوی تصویری (جایگزین متن "آرت تست") */
+    height: 45px; /* **اندازه دلخواه شما** - می‌توانید این عدد را تغییر دهید */
+    width: auto; /* برای حفظ نسبت ابعاد */
+    display: block; /* حذف فضای اضافی زیر تصویر */
+}
+/* ------------------------------------------ */
+
+
+/* Toggle Button موبایل */
+.menu-toggle {
+    display: none; 
+    cursor: pointer;
+    font-size: 28px;
+    color: #fff;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links li a.nav-link {
+    color: #fff;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: block;
+}
+
+.nav-links li a.nav-link:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.3s;
+}
+
+/* موبایل */
+@media (max-width: 768px) {
+    .nav-links {
+        flex-direction: column !important;
+        width: 100% !important;
+        display: none !important; 
+    }
+    .nav-links.show {
+        display: flex !important; 
+    }
+    .menu-toggle {
+        display: block !important; 
+    }
+}
+
+/* اطمینان از اینکه در دسکتاپ دکمه منو مخفی است */
+@media (min-width: 769px) {
+    .menu-toggle {
+        display: none !important;
+    }
+}

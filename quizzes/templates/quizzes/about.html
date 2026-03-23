@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block title %}درباره ما{% endblock %}
+
+{% block content %}
+
+<style>
+
+body {
+    height: 100vh;
+    margin: 0;
+    background: linear-gradient(270deg, #18e6d8, #abc0e3, #7dffe1);
+    background-size: 600% 600%;
+    animation: gradientShift 20s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+}
+
+/* هدر صفحه مشابه هدر آزمون */
+.page-header {
+    background: linear-gradient(90deg, #0d6efd, #3f8cff);
+    color: #fff;
+    padding: 20px 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-radius: 0 0 12px 12px;
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 40px;
+}
+
+/* کانتینر اصلی */
+.about-container {
+    max-width: 900px;
+    margin: 0 auto 60px auto;
+    padding: 0 20px;
+}
+
+/* بخش معرفی */
+.about-intro {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.about-intro h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #212529;
+}
+
+.about-intro p {
+    font-size: 1.05rem;
+    color: #6c757d;
+    line-height: 1.8;
+}
+
+/* کارت ویژگی‌ها */
+.features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 50px;
+}
+
+.feature-card {
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    padding: 25px 20px;
+    flex: 1 1 250px;
+    max-width: 300px;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+}
+
+.feature-card h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #0d6efd;
+}
+
+.feature-card p {
+    font-size: 0.95rem;
+    color: #495057;
+    line-height: 1.5;
+}
+
+/* شبکه‌های اجتماعی */
+.contact {
+    text-align: center;
+}
+
+.contact a {
+    margin: 0 10px;
+    text-decoration: none;
+    font-size: 1.4rem;
+    color: #0d6efd;
+    transition: color 0.3s;
+}
+
+.contact a:hover {
+    color: #3f8cff;
+}
+
+</style>
+<div class="top-actions">
+    <a href="{% url 'home' %}" class="button is-info is-light">🔄  بازگشت به صفحه اصلی</a>
+
+</div>
+<!-- هدر صفحه -->
+<div class="page-header">
+    درباره ما
+</div>
+
+<div class="about-container">
+    <!-- معرفی کوتاه -->
+    <div class="about-intro">
+        <h2>ما چه کسی هستیم؟</h2>
+        <p>
+            تیم ما متشکل از متخصصین آموزش و توسعه نرم‌افزار است که با هدف ایجاد یک سامانه آزمون آنلاین حرفه‌ای و قابل اعتماد فعالیت می‌کنیم.  
+            ماموریت ما فراهم کردن تجربه‌ای امن، ساده و کاربرپسند برای داوطلبان است.
+        </p>
+    </div>
+
+    <!-- ویژگی‌ها -->
+    <div class="features">
+        <div class="feature-card">
+            <h3>امنیت بالا</h3>
+            <p>تمامی آزمون‌ها با استانداردهای امنیتی بالا اجرا می‌شوند و اطلاعات کاربران محافظت می‌شود.</p>
+        </div>
+        <div class="feature-card">
+            <h3>پشتیبانی سریع</h3>
+            <p>تیم ما آماده پاسخگویی به سوالات و رفع مشکلات شما در کوتاه‌ترین زمان ممکن است.</p>
+        </div>
+        <div class="feature-card">
+            <h3>رابط کاربری آسان</h3>
+            <p>سامانه به گونه‌ای طراحی شده که استفاده از آن برای همه کاربران ساده و روان باشد.</p>
+        </div>
+    </div>
+
+    <!-- شبکه‌های اجتماعی / تماس -->
+    <div class="contact">
+        <p>ما را دنبال کنید:</p>
+        <a href="https://rubika.ir/portal_online" target="_blank">📱 روبیکا</a>
+        <a href="#" target="_blank">🐦 توییتر</a>
+        <a href="#" target="_blank">📘 فیسبوک</a>
+    </div>
+</div>
+
+{% endblock %}

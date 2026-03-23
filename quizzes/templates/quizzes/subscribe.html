@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if messages %}
+<ul class="messages" style="list-style: none; padding: 0;">
+    {% for message in messages %}
+    <li{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %} style="margin-bottom: 10px;">
+        {{ message }}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<h2>خرید اشتراک</h2>
+
+{% if is_currently_active %}
+    <div class="alert alert-success">
+        شما در حال حاضر اشتراک فعال دارید.
+        <br>
+        تاریخ انقضا: {{ user_status.end_date|date:"Y/m/d H:i" }}
+        <p>
+            <a href="{% url 'manage_subscription' %}" class="btn btn-sm btn-outline-dark mt-2">
+                مدیریت اشتراک
+            </a>
+        </p>
+    </div>
+{% else %}
+    {% if user_status %}
+        <div class="alert alert-warning">
+            اشتراک شما منقضی شده است. لطفاً پلن جدیدی انتخاب کنید.
+        </div>
+    {% endif %}
+{% endif %}
+
+<h3 class="mt-4">پلن‌های موجود</h3>
+
+<p>
+    تعداد پلن‌های دریافتی برای نمایش:
+    <strong>{{ available_plans.count }}</strong>
+</p>
+
+<div class="row">
+    {% for plan in available_plans %}
+    <div class="col-md-4">
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header text-center">
+                <h4 class="my-0">{{ plan.name }}</h4>
+            </div>
+            <div class="card-body text-center">
+
+                {% if plan.price %}
+                    <h1 class="card-title">{{ plan.price }} تومان</h1>
+                {% else %}
+                    <h1 class="card-title text-danger">قیمت نامشخص</h1>
+                {% endif %}
+
+                <ul class="list-unstyled mt-3 mb-4">
+                    {% if plan.duration_days %}
+                        <li>مدت اعتبار: {{ plan.duration_days }} روز</li>
+                    {% else %}
+                        <li>مدت اعتبار: نامشخص</li>
+                    {% endif %}
+                </ul>
+
+                {% if is_currently_active %}
+                    <button type="button" class="btn btn-lg btn-block btn-secondary" disabled>
+                        شما فعال هستید
+                    </button>
+                {% else %}
+
+                    <!-- 🔥 اینجا لینک قبلی حذف شده و فرم POST جایگزین شده -->
+                    <form method="post" action="{% url 'initiate_purchase' plan.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-lg btn-block btn-primary">
+                            خرید این پلن
+                        </button>
+                    </form>
+
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+    {% empty %}
+        <div class="col-12">
+            <p class="text-center alert alert-info">
+                در حال حاضر هیچ پلن فعالی برای نمایش وجود ندارد.
+            </p>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

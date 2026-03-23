@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .result-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 30px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        text-align: center;
+        font-family: sans-serif;
+    }
+
+    .result-container h1 {
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .score-text {
+        font-size: 18px;
+        margin-bottom: 15px;
+        color: #555;
+    }
+
+    .percentage {
+        font-size: 42px;
+        font-weight: bold;
+        color: #4CAF50;
+        margin: 20px 0;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 28px;
+        background-color: #eee;
+        border-radius: 20px;
+        overflow: hidden;
+        margin: 20px 0;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #4CAF50, #81C784);
+        text-align: center;
+        line-height: 28px;
+        color: #fff;
+        font-weight: bold;
+        transition: width 0.6s ease;
+    }
+
+    .home-btn {
+        display: inline-block;
+        margin-top: 25px;
+        padding: 10px 25px;
+        background-color: #2196F3;
+        color: #fff;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+
+    .home-btn:hover {
+        background-color: #1976D2;
+    }
+</style>
+
+<div class="result-container">
+
+    <h1>🎯 نتایج آزمون شما</h1>
+
+    <p class="score-text">
+        شما از <strong>{{ total_questions }}</strong> سوال، 
+        <strong>{{ correct_answers }}</strong> سوال را درست پاسخ دادید.
+    </p>
+
+    <div class="percentage">
+        {{ percentage|floatformat:0 }}%
+    </div>
+
+
+            {{ percentage|floatformat:0 }}%
+        </div>
+    </div>
+
+    {% if user_answers %}
+        <h3>جزئیات پاسخ‌ها</h3>
+        <table class="answers-table">
+            <tr>
+                <th>سوال</th>
+                <th>پاسخ شما</th>
+                <th>پاسخ درست</th>
+                <th>وضعیت</th>
+            </tr>
+            {% for ans in user_answers %}
+            <tr>
+                <td>{{ ans.question_text }}</td>
+                <td>{{ ans.selected_choice_text }}</td>
+                <td>{{ ans.correct_choice_text }}</td>
+                <td>
+                    {% if ans.is_correct %}
+                        <span class="correct">✅ صحیح</span>
+                    {% else %}
+                        <span class="wrong">❌ غلط</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+    <a href="{% url 'accounts:dashboard' %}" class="home-btn">🏠 بازگشت به خانه</a>
+
+</div>
+{% endblock %}

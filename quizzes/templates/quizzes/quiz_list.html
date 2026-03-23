@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}لیست آزمون‌ها{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h2>لیست آزمون‌ها</h2>
+    <table>
+        <tr>
+            <th>عنوان آزمون</th>
+            <th>نوع</th>
+            <th>عملیات</th>
+        </tr>
+        {% for quiz in quizzes %}
+        <tr>
+            <td>{{ quiz.title }}</td>
+            <td>
+                {% if quiz.is_premium %}
+                    🔒 پرمیوم
+                {% else %}
+                    رایگان
+                {% endif %}
+            </td>
+            <td>
+                {% if quiz.is_premium and quiz.id in completed_quiz_ids %}
+                    <button disabled class="start-quiz-btn" title="شما قبلاً این آزمون را گذرانده‌اید">
+                        آزمون انجام شده
+                    </button>
+                {% else %}
+                    <a href="{% url 'start_quiz' quiz.id %}" class="start-quiz-btn">شرکت در آزمون</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

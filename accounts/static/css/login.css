@@ -1,0 +1,127 @@
+/* === General Styles === */
+body {
+    font-family: 'Vazirmatn', sans-serif; /* فونت وزیرمتن برای خوانایی بهتر */
+    background: linear-gradient(135deg, #f0f4f8, #d9e4f5); /* گرادیانت ملایم */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    color: #333;
+}
+
+/* === Login Container === */
+.login-container {
+    background-color: #ffffff;
+    padding: 40px 50px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+    overflow: hidden; /* برای اطمینان از اینکه محتوا بیرون نمی‌زند */
+}
+
+.login-container h2 {
+    margin-bottom: 30px;
+    font-size: 28px;
+    color: #4a4a4a;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* === Form Elements === */
+.login-container form p {
+    margin-bottom: 20px;
+    text-align: right; /* برای راست‌چین کردن لیبل‌ها */
+}
+
+.login-container label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+    font-size: 14px;
+}
+
+.login-container input[type="text"],
+.login-container input[type="password"],
+.login-container input[type="email"] {
+    width: calc(100% - 20px); /* عرض کامل با در نظر گرفتن padding */
+    padding: 12px 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    box-sizing: border-box; /* برای اینکه padding و border در عرض کلی محاسبه شوند */
+}
+
+.login-container input:focus {
+    border-color: #667eea; /* رنگ آبی هنگام فوکوس */
+    box-shadow: 0 0 8px rgba(102, 122, 238, 0.3);
+    outline: none; /* حذف اوت‌لاین پیش‌فرض */
+}
+
+/* === Login Button === */
+.login-button {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #667eea, #764ba2); /* گرادیانت دکمه */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 122, 238, 0.4);
+    margin-top: 10px; /* فاصله از فیلد قبلی */
+}
+
+.login-button:hover {
+    background: linear-gradient(135deg, #5a6abf, #6b3e93); /* رنگ تیره‌تر هنگام هاور */
+    box-shadow: 0 6px 20px rgba(102, 122, 238, 0.6);
+    transform: translateY(-2px); /* افکت کمی بالا آمدن */
+}
+
+/* === Links === */
+.login-container a {
+    color: #667eea;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s;
+}
+
+.login-container a:hover {
+    color: #4a5abf;
+    text-decoration: underline;
+}
+
+/* === Error Messages (Optional) === */
+.login-container ul.errorlist {
+    list-style: none;
+    padding: 0;
+    margin-top: 15px;
+    color: #d9534f; /* رنگ قرمز برای خطا */
+    font-size: 13px;
+    text-align: right;
+}
+
+.login-container ul.errorlist li {
+    margin-bottom: 5px;
+}
+
+/* === Responsive Adjustments === */
+@media (max-width: 480px) {
+    .login-container {
+        padding: 30px 30px;
+        margin: 20px; /* برای اینکه وقتی صفحه خیلی کوچک است، کنارها چسبیده نباشد */
+    }
+    .login-container h2 {
+        font-size: 24px;
+    }
+    .login-button {
+        font-size: 16px;
+    }
+}

@@ -1,0 +1,654 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ورود به آزمون{% endblock %}
+
+{% block content %}
+
+<style>
+
+
+
+/* معرفی ویژگی های کلیدی  */
+
+.features-section {
+    padding: 60px 20px;
+    background-color: #f8f9fa; /* رنگ پس‌زمینه روشن */
+    text-align: center;
+    font-family: 'Vazir', sans-serif; /* فرض می‌کنیم فونت وزیر را دارید */
+}
+
+.features-section h2 {
+    font-size: 2.5em;
+    margin-bottom: 40px;
+    color: #333;
+}
+
+.features-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px; /* فاصله بین کارت‌ها */
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* استایل هر کارت ویژگی */
+.feature-card {
+    background-color: #ffffff;
+    border-radius: 15px; /* گوشه‌های گرد */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* سایه ملایم */
+    padding: 30px 25px;
+    width: 100%;
+    max-width: 280px; /* حداکثر عرض هر کارت */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* انیمیشن هنگام هاور */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px); /* کمی بالا رفتن کارت هنگام هاور */
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.15); /* سایه قوی‌تر هنگام هاور */
+}
+
+.feature-card .icon-container {
+    margin-bottom: 20px;
+    width: 70px; /* اندازه ثابت برای کانتینر آیکون */
+    height: 70px; /* اندازه ثابت برای کانتینر آیکون */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #e7f3ff; /* رنگ پس‌زمینه ملایم برای آیکون */
+    border-radius: 50%; /* دایره‌ای کردن */
+    margin-bottom: 15px;
+}
+
+.feature-card .icon-container img {
+    max-width: 50%; /* اندازه آیکون نسبت به کانتینر */
+    max-height: 50%; /* اندازه آیکون نسبت به کانتینر */
+    object-fit: contain; /* حفظ نسبت تصویر آیکون */
+    filter: invert(100%) sepia(80%) saturate(100%) hue-rotate(180deg) brightness(100%) contrast(100%); /* رنگ آبی ملایم برای آیکون‌ها */
+}
+
+/* استایل عنوان هر کارت */
+.feature-card h3 {
+    font-size: 1.4em;
+    color: #2c3e50; /* رنگ تیره برای عنوان */
+    margin-bottom: 10px;
+}
+
+/* استایل متن توضیحات هر کارت */
+.feature-card p {
+    font-size: 0.95em;
+    color: #555;
+    line-height: 1.6;
+    flex-grow: 1; /* باعث می‌شود متن تا جای ممکن فضا بگیرد */
+}
+
+/* استایل‌های واکنش‌گرا (Responsive) */
+@media (max-width: 768px) {
+    .features-container {
+        flex-direction: column; /* در صفحات کوچک‌تر، کارت‌ها زیر هم قرار بگیرند */
+        align-items: center;
+    }
+    .feature-card {
+        max-width: 90%; /* کارت‌ها عرض بیشتری بگیرند */
+    }
+    .features-section h2 {
+        font-size: 2em;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .feature-card {
+        max-width: 45%; /* دو کارت در هر ردیف */
+    }
+}
+
+    /*     قسمت متنی انگیزشی */
+.hero-section {
+    position: relative; /* برای قرارگیری لایه‌ها */
+    display: flex; /* برای چیدمان محتوا و تصویر */
+    align-items: center; /* وسط چین کردن عمودی */
+    justify-content: center; /* وسط چین کردن افقی */
+    min-height: 500px; /* حداقل ارتفاع بخش */
+    background-color: #f0f0f0; /* رنگ پس‌زمینه یا می‌توانید از یک تصویر استفاده کنید */
+    color: #333; /* رنگ متن */
+    text-align: center;
+    padding: 50px 20px;
+    overflow: hidden; /* برای جلوگیری از بیرون زدن محتوا */
+    /* اگر از تصویر پس‌زمینه استفاده می‌کنید: */
+     background-image: url('/static/image/background.jpg'); 
+     background-size: cover;  
+     background-position: center; 
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2; /* اطمینان از روی تصاویر پس‌زمینه */
+    max-width: 800px; /* محدود کردن عرض محتوا */
+}
+
+.hero-headline {
+    font-size: 3.5em; /* اندازه بزرگ برای عنوان اصلی */
+    margin-bottom: 20px;
+    line-height: 1.2;
+    font-weight: bold;
+}
+
+.hero-subheadline {
+    font-size: 1.4em; /* اندازه مناسب برای زیرعنوان */
+    margin-bottom: 40px;
+    line-height: 1.5;
+    opacity: 0.9;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 15px 35px;
+    background-color: #007bff; /* رنگ اصلی دکمه */
+    color: white;
+    font-size: 1.1em;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 50px; /* لبه‌های گرد */
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.cta-button:hover {
+    background-color: #0056b3; /* رنگ تیره‌تر هنگام هاور */
+    transform: translateY(-3px); /* کمی بالا آمدن دکمه */
+}
+
+.cta-button.secondary {
+    background-color: transparent;
+    color: #007bff;
+    border: 2px solid #007bff;
+    margin-left: 15px; /* فاصله با دکمه اول */
+}
+
+.cta-button.secondary:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+/* اگر از تصویر در کنار محتوا استفاده می‌کنید: */
+
+.hero-image {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    margin-left: 40px;
+}
+.hero-image img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-headline {
+        font-size: 2.8em;
+    }
+    .hero-subheadline {
+        font-size: 1.2em;
+    }
+    .cta-button {
+        padding: 12px 25px;
+        font-size: 1em;
+    }
+    .hero-section {
+        flex-direction: column; /* چیدمان عمودی در موبایل */
+        min-height: 400px;
+    }
+    .hero-content {
+        margin-bottom: 30px; /* فاصله بین محتوا و تصویر */
+    }
+    .cta-button.secondary {
+        margin-left: 0;
+        margin-top: 15px; /* فاصله با دکمه بالایی */
+    }
+}
+
+
+/*   قسمت تصاویر اولیه  */
+.slider-container {
+    position: relative;
+    width: 100%; /* تغییر از 200% به 100% */
+    max-width: 800px; /* حداکثر عرض اسلایدر */
+    height: 200px; /* ارتفاع اسلایدر */
+    margin: 20px auto; /* برای وسط چین کردن */
+    overflow: hidden;
+    border-radius: 25px; /* لبه‌های گرد */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.slider {
+    display: flex;
+    width: 500%; /* 5 تصاویر * 100% */
+    height: 100%;
+    transition: transform 0.5s ease-in-out; /* انیمیشن انتقال */
+}
+
+.slide {
+    width: 20%; /* 100% / 5 تصاویر */
+    height: 100%; /* این مقدار height باید درست عمل کند */
+    display: none; /* مخفی کردن تصاویر به صورت پیش‌فرض */
+    opacity: 0; /* شفافیت اولیه صفر */
+    transition: opacity 1s ease-in-out; /* انیمیشن شفافیت */
+}
+
+.slide.active {
+    display: block; /* نمایش تصویر فعال */
+    opacity: 1; /* شفافیت کامل */
+}
+
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover ; /* پوشاندن کل فضا بدون تغییر نسبت تصویر */
+    display: block;
+}
+.prev-btn, .next-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 10;
+    border-radius: 50%;
+    margin: 0 10px;
+}
+
+.prev-btn {
+    left: 10px;
+}
+
+.next-btn {
+    right: 10px;
+}
+
+.prev-btn:hover, .next-btn:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+
+
+    .top-actions {
+    display: flex;
+    justify-content: center; /* وسط چین شدن */
+    align-items: center;     /* عمودی وسط */
+    flex-wrap: wrap;         /* اگر صفحه کوچک بود به خط بعد برود */
+    gap: 15px;               /* فاصله بین دکمه‌ها */
+    margin: 60px 0 40px 0;   /* فاصله از بالا و پایین */
+    padding: 10px 20px;      /* فاصله داخلی */
+    background: rgba(0,0,0,0.25); /* پس‌زمینه شفاف شیک */
+    border-radius: 15px;     /* گوشه‌های گرد */
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4); /* سایه */
+    backdrop-filter: blur(10px); /* افکت Glassmorphism */
+    animation: fadeInUp 1s ease forwards;
+}
+
+.top-actions a {
+    padding: 12px 22px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: bold;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.top-actions a:hover {
+    background: rgba(255,255,255,0.3);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+}
+
+/* ریسپانسیو موبایل */
+@media (max-width: 500px) {
+    .top-actions {
+        flex-direction: column;
+        margin: 40px 20px;
+        gap: 12px;
+    }
+    .top-actions a {
+        width: 100%;
+        text-align: center;
+    }
+}
+/* ================== فونت و بدنه ================== */
+@import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css');
+
+body {
+    font-family: 'Vazir', sans-serif;
+    background: linear-gradient(to bottom right, rgba(0,0,0,0.6), rgba(0,0,0,0.8)),
+                url("{% static 'image/background.jpg' %}") center / cover no-repeat fixed;
+    min-height: 100vh;
+    margin: 0;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* ================== انیمیشن ها ================== */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ================== دکمه‌های بالای صفحه ================== */
+.top-actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 40px;
+    animation: fadeInUp 1s ease forwards;
+}
+
+.top-actions a {
+    padding: 12px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+.top-actions a:hover {
+    background: rgba(255,255,255,0.3);
+    transform: translateY(-2px);
+}
+
+/* ================== کارت اطلاع‌رسانی ================== */
+.info-card {
+    max-width: 720px;
+    margin: 40px auto 20px auto;
+    background: rgba(255,255,255,0.95);
+    color: #333;
+    border-radius: 20px;
+    padding: 30px 35px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    text-align: right;
+    animation: fadeInUp 1s 0.2s ease forwards;
+    opacity: 0;
+}
+
+.info-card a {
+    color: #3f51b5;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.info-card a:hover {
+    text-decoration: underline;
+}
+
+/* ================== کارت فرم ورود ================== */
+.login-card {
+    max-width: 420px;
+    margin: 40px auto;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(16px);
+    border-radius: 20px;
+    padding: 40px 35px;
+    box-shadow: 0 25px 70px rgba(0,0,0,0.55);
+    text-align: center;
+    animation: fadeInUp 1s 0.4s ease forwards;
+    opacity: 0;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.login-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 35px 80px rgba(0,0,0,0.65);
+}
+
+.login-card h2 {
+    font-size: 2em;
+    margin-bottom: 25px;
+    font-weight: bold;
+}
+
+.login-card label {
+    display: block;
+    text-align: right;
+    margin-bottom: 8px;
+    font-size: 0.95em;
+}
+
+.login-card input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: none;
+    margin-bottom: 18px;
+    font-size: 0.95em;
+    background: rgba(255,255,255,0.95);
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.login-card input:focus {
+    outline: none;
+    box-shadow: 0 0 10px #3f51b5;
+}
+
+/* ================== دکمه ورود ================== */
+.login-card button {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    font-size: 1.05em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.4s ease;
+}
+
+.login-card button.is-primary {
+    background: linear-gradient(90deg, #3f51b5, #5c6bc0);
+    color: #fff;
+    box-shadow: 0 5px 20px rgba(63,81,181,0.4);
+}
+
+.login-card button.is-primary:hover {
+    background: linear-gradient(90deg, #303f9f, #3f51b5);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(63,81,181,0.6);
+}
+
+/* ================== پیام موفقیت و خطا ================== */
+.success-text, .error-text {
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 18px;
+    font-weight: bold;
+    text-align: center;
+    animation: fadeInUp 0.8s ease forwards;
+    opacity: 0;
+}
+
+.success-text {
+    background: #d4edda;
+    color: #155724;
+}
+
+.error-text {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* ================== ریسپانسیو ================== */
+@media (max-width: 500px) {
+    .info-card, .login-card {
+        margin: 20px;
+        padding: 25px;
+    }
+}
+
+
+</style>
+
+
+     <div class="hero-image">
+        <img src="/static/image/background.jpg" alt="تصویر مرتبط با هنر و کنکور">
+    </div>
+
+
+<div class="slider-container">
+    
+    <div class="slider">
+        <div class="slide active">
+            <img src="/static/image/slide1.jpg" alt="اسلاید 1">
+        </div>
+        <div class="slide">
+            <img src="/static/image/slide2.jpg" alt="اسلاید 2">
+        </div>
+        <div class="slide">
+            <img src="/static/image/slide3.jpg" alt="اسلاید 3">
+        </div>
+        <div class="slide">
+            <img src="/static/image/slide4.jpg" alt="اسلاید 4">
+        </div>
+        <div class="slide">
+            <img src="/static/image/slide5.jpg" alt="اسلاید 5">
+        </div>
+    </div>
+    <button class="prev-btn">&#10094;</button>
+    <button class="next-btn">&#10095;</button>
+</div>
+
+<!-- ================== دکمه‌های بالای صفحه ================== -->
+<div class="top-actions">
+
+    <a href="{% url 'home' %}">🔄 بروزرسانی صفحه</a>
+    <a href="{% url 'quiz_list' %}">📋 لیست آزمون‌ها</a>
+    <a href="{% url 'about' %}">📃 درباره ما</a>
+    <a href="{% url 'accounts:login' %}">👤 ورود به پنل کاربری</a> 
+</div>
+<section class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-headline">آینده هنری خود را همین امروز بسازید!</h1>
+        <p class="hero-subheadline">با شبیه‌ساز کنکور هنر، مسیر موفقیت را هموار کنید و با اطمینان قدم به دانشگاه بگذارید.</p>
+        <a href="{% url 'quiz_list' %}" class="cta-button">شروع آزمون رایگان  </a>
+        <!-- یا می‌توانید از لینک ورود/ثبت نام استفاده کنید -->
+        <!-- <a href="/login" class="cta-button secondary">ورود / ثبت نام</a> -->
+    </div>
+    <!-- می‌توانید یک تصویر یا انیمیشن مرتبط در اینجا اضافه کنید -->
+
+</section>
+
+<section class="features-section">
+    <h2>چرا شبیه‌ساز کنکور هنر ما؟</h2>
+    <div class="features-container">
+        <div class="feature-card">
+            <div class="icon-container">
+                <!-- آیکون بانک سوالات جامع -->
+                <img src="/static/image/data.jpg" alt="بانک سوالات جامع">
+            </div>
+            <h3>بانک سوالات جامع</h3>
+            <p>دسترسی به هزاران سوال استاندارد و تالیفی برای پوشش کامل تمام دروس.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="icon-container">
+                <!-- آیکون آزمون‌های شبیه‌سازی شده -->
+                <img src="/static/image/help.jpg" alt="آزمون‌های شبیه‌سازی شده">
+            </div>
+            <h3>آزمون‌های شبیه‌سازی شده</h3>
+            <p>تجربه واقعی کنکور با آزمون‌هایی که دقیقاً مشابه آزمون اصلی طراحی شده‌اند.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="icon-container">
+                <!-- آیکون تحلیل کارنامه -->
+                <img src="/static/image/rotbe.jpg" alt="تحلیل کارنامه">
+            </div>
+            <h3>تحلیل کارنامه</h3>
+            <p>گزارش‌های دقیق و تحلیلی از عملکرد شما در هر آزمون و شناسایی نقاط ضعف.</p>
+        </div>
+
+
+
+        <!-- اگر مشاوره تحصیلی ارائه می‌دهید، این کارت را هم اضافه کنید -->
+        <div class="feature-card">
+            <div class="icon-container">
+                <!-- آیکون مشاوره تحصیلی -->
+                <img src="/static/image/help.jpg" alt="مشاوره تحصیلی">
+            </div>
+            <h3>مشاوره تحصیلی</h3>
+            <p>راهنمایی و پشتیبانی تخصصی برای برنامه‌ریزی و دستیابی به موفقیت.</p>
+        </div>
+    </div>
+</section>
+
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const slides = document.querySelectorAll('.slide');
+            const nextBtn = document.querySelector('.next-btn');
+            const prevBtn = document.querySelector('.prev-btn');
+            
+            let currentSlide = 0;
+            const slideInterval = 4000; // 4 ثانیه (می‌توانید تغییر دهید)
+
+            function showSlide(index) {
+                // همه را غیرفعال کن
+                slides.forEach((slide) => {
+                    slide.classList.remove('active');
+                });
+
+                // فعال کردن اسلاید جدید
+                if (slides[index]) {
+                    slides[index].classList.add('active');
+                }
+            }
+
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % slides.length;
+                showSlide(currentSlide);
+            }
+
+            function prevSlide() {
+                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+                showSlide(currentSlide);
+            }
+
+            // رویدادهای دکمه‌ها
+            nextBtn.addEventListener('click', nextSlide);
+            prevBtn.addEventListener('click', prevSlide);
+
+            // اسلاید خودکار
+            let autoSliderInterval = setInterval(nextSlide, slideInterval);
+
+            // توقف اسلاید خودکار هنگام نگه داشتن موس
+            const sliderContainer = document.querySelector('.slider-container');
+            sliderContainer.addEventListener('mouseenter', () => {
+                clearInterval(autoSliderInterval);
+            });
+
+            // ادامه اسلاید خودکار
+            sliderContainer.addEventListener('mouseleave', () => {
+                autoSliderInterval = setInterval(nextSlide, slideInterval);
+            });
+
+            // نمایش اسلاید اولیه
+            showSlide(currentSlide);
+        });
+    </script>
+
+{% endblock %}
