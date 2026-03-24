@@ -2,376 +2,637 @@
 
 
 <style>
-    /* --- Basic Reset & Variables --- */
-    :root {
-        --primary-color: #00f0ff; /* رنگ اصلی نئون */
-        --secondary-color: #ffffff;
-        --background-color: #0a0a0a; /* پس‌زمینه تیره */
-        --nav-background: #111;
-        --text-color: #ccc;
-        --hover-text-color: #fff;
-        --border-radius: 5px;
-        --transition-speed: 0.3s;
-    }
+  body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
 
-    body {
-        background-color: var(--background-color);
-        color: var(--text-color);
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        margin: 0;
-        padding: 0;
-    }
+a {
+    text-decoration: none;
+    color: var(--secondary-color);
+    transition: color var(--transition-speed) ease;
+}
 
-    a {
-        text-decoration: none;
-        color: var(--secondary-color);
-        transition: color var(--transition-speed) ease;
-    }
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
 
-    ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
+/* --- Navbar Styling --- */
+.navbar {
+    background-color: transparent !important; 
+    padding: 1rem 0;
+    border-bottom: 1px solid #de0909;
+    position: sticky; /* برای ثابت ماندن در بالای صفحه */
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
 
-    /* --- Navbar Styling --- */
-    .navbar {
-        background-color: transparent !important; 
-        padding: 1rem 0;
-        border-bottom: 1px solid #de0909;
-        position: sticky; /* برای ثابت ماندن در بالای صفحه */
-        top: 0;
-        z-index: 1000;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
+.navbar-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between; /* توزیع عناصر */
+    align-items: center;
+    flex-wrap: wrap; /* اجازه می‌دهد عناصر در موبایل به خط بعدی بروند */
+    background-color: transparent !important;
+}
 
+/* --- Site Identity (Logo + Name) --- */
+.site-identity {
+    display: flex;
+    align-items: center;
+}
+.logo-link {
+    display: flex;
+    align-items: center;
+    font-size: 1.8rem; /* بزرگتر کردن فونت نام سایت */
+    font-weight: bold;
+    color: var(--primary-color); /* رنگ نئونی برای نام سایت */
+    text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
+    transition: text-shadow var(--transition-speed) ease;
+}
+.logo-link:hover {
+    text-shadow: 0 0 15px #fff, 0 0 25px #fff;
+}
+.site-logo { /* اگر از تصویر لوگو استفاده می‌کنید */
+    height: 40px; /* تنظیم اندازه لوگو */
+    margin-right: 10px;
+}
+
+/* --- Navigation Links --- */
+.nav-links {
+    background-color: var(--nav-background);
+    display: flex;
+    align-items: center;
+}
+
+.nav-link {
+    color: var(--text-color);
+    padding: 0.8rem 1rem;
+    margin: 0 0.5rem;
+    border-radius: var(--border-radius);
+    transition: all var(--transition-speed) ease;
+    position: relative; /* برای افکت زیرخط */
+}
+
+.nav-link:hover {
+    color: var(--hover-text-color);
+    background-color: rgba(255, 30, 30, 0.958); /* کمی پس‌زمینه روشن */
+    text-shadow: 0 0 5px var(--primary-color);
+}
+
+/* افکت فعال بودن لینک */
+.nav-link.active {
+    color: var(--primary-color);
+    font-weight: bold;
+    text-shadow: 0 0 8px var(--primary-color);
+}
+ .nav-link.active::after { /* افکت خط زیر لینک فعال */
+    content: '';
+    position: absolute;
+    bottom: 5px; /* تنظیم موقعیت خط */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%;
+    height: 2px;
+    background-color: var(--primary-color);
+    box-shadow: 0 0 5px var(--primary-color);
+}
+
+/* --- Auth Buttons & Logout --- */
+.auth-controls {
+    display: flex;
+    align-items: center;
+}
+.btn-neon {
+    padding: 0.8rem 1.5rem;
+    border: 2px solid var(--primary-color);
+    border-radius: var(--border-radius);
+    color: var(--primary-color);
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: all var(--transition-speed) ease;
+    box-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
+    margin-left: 1rem; /* فاصله بین دکمه‌ها */
+}
+.btn-neon:hover {
+    color: var(--background-color); /* رنگ متن در حالت هاور */
+    background-color: var(--primary-color);
+    box-shadow: 0 0 15px #fff, 0 0 25px #fff;
+}
+
+.logout-btn {
+     border-color: #ff4f4f; /* رنگ قرمز برای خروج */
+     color: #ff4f4f;
+     box-shadow: 0 0 10px #ff4f4f, 0 0 20px #ff4f4f;
+}
+.logout-btn:hover {
+     background-color: #ff4f4f;
+     color: var(--background-color);
+}
+
+/* --- Mobile Menu Toggle --- */
+.menu-toggle {
+    display: none; /* پنهان در دسکتاپ */
+    cursor: pointer;
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+}
+.menu-toggle .bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px auto;
+    background-color: var(--primary-color);
+    transition: all var(--transition-speed) ease-in-out;
+}
+ /* انیمیشن دکمه همبرگری */
+.menu-toggle.is-active .bar:nth-child(2) {
+    opacity: 0;
+}
+.menu-toggle.is-active .bar:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+.menu-toggle.is-active .bar:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+/* --- Mobile Layout Adjustments --- */
+@media (max-width: 768px) {
     .navbar-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 20px;
-        display: flex;
-        justify-content: space-between; /* توزیع عناصر */
-        align-items: center;
-        flex-wrap: wrap; /* اجازه می‌دهد عناصر در موبایل به خط بعدی بروند */
-        background-color: transparent !important;
+        flex-wrap: wrap;
     }
 
-    /* --- Site Identity (Logo + Name) --- */
     .site-identity {
-        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        margin-bottom: 1rem;
         align-items: center;
-    }
-    .logo-link {
-        display: flex;
-        align-items: center;
-        font-size: 1.8rem; /* بزرگتر کردن فونت نام سایت */
-        font-weight: bold;
-        color: var(--primary-color); /* رنگ نئونی برای نام سایت */
-        text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
-        transition: text-shadow var(--transition-speed) ease;
-    }
-    .logo-link:hover {
-        text-shadow: 0 0 15px #fff, 0 0 25px #fff;
-    }
-    .site-logo { /* اگر از تصویر لوگو استفاده می‌کنید */
-        height: 40px; /* تنظیم اندازه لوگو */
-        margin-right: 10px;
     }
 
-    /* --- Navigation Links --- */
+    /* دکمه منو (همبرگری) را نمایان کن */
+    .menu-toggle {
+        display: block; /* یا inline-block */
+         order: 3; /* تنظیم ترتیب نمایش */
+         margin-left: auto; /* آن را به سمت راست هل می دهد */
+    }
+
+    /* دکمه های ورود/ثبت نام/خروج را نمایان کن و در زیر منو قرار بده */
+    .auth-controls {
+        width: 100%;
+        justify-content: center;
+        margin-top: 1rem;
+        order: 2; /* بعد از هویت سایت و قبل از دکمه منو */
+        /* این خط را حذف کنید یا کامنت کنید */
+        /* display: none; */
+    }
+     /* مطمئن شو که دکمه های ورود/خروج در موبایل نمایش داده می شوند */
+     .auth-controls .btn-neon {
+         margin: 0 0.5rem;
+         padding: 0.6rem 1.2rem;
+         font-size: 0.9rem;
+     }
+
+    /* لینک های ناوبری را برای حالت موبایل تنظیم کن */
     .nav-links {
-        background-color: var(--nav-background);
-        display: flex;
-        align-items: center;
+        position: absolute; /* یا fixed */
+        top: 100%; /* از زیر نوار ناوبری شروع شود */
+        left: 0;
+        width: 100%;
+        flex-direction: column;
+        background-color: var(--nav-background); /* یا یک رنگ دیگر برای اورلی */
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height var(--transition-speed) ease-out;
+        z-index: 999; /* اطمینان از اینکه بالای محتوای دیگر قرار گیرد */
+        padding-top: 1rem; /* کمی فاصله از نوار ناوبری */
+        padding-bottom: 1rem;
+        /* این خط را حذف کنید */
+         /* order: 1; */
+    }
+
+    .nav-links.active {
+        max-height: 400px; /* ارتفاع بیشتر برای اطمینان از نمایش همه لینک‌ها */
     }
 
     .nav-link {
-        color: var(--text-color);
-        padding: 0.8rem 1rem;
-        margin: 0 0.5rem;
-        border-radius: var(--border-radius);
-        transition: all var(--transition-speed) ease;
-        position: relative; /* برای افکت زیرخط */
+        margin: 0.5rem 0;
+        padding: 0.8rem 0;
+        width: 100%;
+        text-align: center;
+    }
+    .nav-link.active::after {
+        display: none;
     }
 
-    .nav-link:hover {
-        color: var(--hover-text-color);
-        background-color: rgba(255, 30, 30, 0.958); /* کمی پس‌زمینه روشن */
-        text-shadow: 0 0 5px var(--primary-color);
-    }
+}
 
-    /* افکت فعال بودن لینک */
-    .nav-link.active {
-        color: var(--primary-color);
-        font-weight: bold;
-        text-shadow: 0 0 8px var(--primary-color);
-    }
-     .nav-link.active::after { /* افکت خط زیر لینک فعال */
-        content: '';
-        position: absolute;
-        bottom: 5px; /* تنظیم موقعیت خط */
-        left: 50%;
-        transform: translateX(-50%);
-        width: 70%;
-        height: 2px;
-        background-color: var(--primary-color);
-        box-shadow: 0 0 5px var(--primary-color);
-    }
 
-    /* --- Auth Buttons & Logout --- */
-    .auth-controls {
-        display: flex;
-        align-items: center;
-    }
-    .btn-neon {
-        padding: 0.8rem 1.5rem;
-        border: 2px solid var(--primary-color);
-        border-radius: var(--border-radius);
-        color: var(--primary-color);
-        background-color: transparent;
-        cursor: pointer;
-        font-size: 1rem;
-        font-weight: bold;
-        text-transform: uppercase;
-        transition: all var(--transition-speed) ease;
-        box-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
-        margin-left: 1rem; /* فاصله بین دکمه‌ها */
-    }
-    .btn-neon:hover {
-        color: var(--background-color); /* رنگ متن در حالت هاور */
-        background-color: var(--primary-color);
-        box-shadow: 0 0 15px #fff, 0 0 25px #fff;
-    }
-
-    .logout-btn {
-         border-color: #ff4f4f; /* رنگ قرمز برای خروج */
-         color: #ff4f4f;
-         box-shadow: 0 0 10px #ff4f4f, 0 0 20px #ff4f4f;
-    }
-    .logout-btn:hover {
-         background-color: #ff4f4f;
-         color: var(--background-color);
-    }
-
-    /* --- Mobile Menu Toggle --- */
-    .menu-toggle {
-        display: none; /* پنهان در دسکتاپ */
-        cursor: pointer;
-        padding: 0.5rem;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: var(--border-radius);
-    }
-    .menu-toggle .bar {
-        display: block;
-        width: 25px;
-        height: 3px;
-        margin: 5px auto;
-        background-color: var(--primary-color);
-        transition: all var(--transition-speed) ease-in-out;
-    }
-     /* انیمیشن دکمه همبرگری */
-    .menu-toggle.is-active .bar:nth-child(2) {
-        opacity: 0;
-    }
-    .menu-toggle.is-active .bar:nth-child(1) {
-        transform: translateY(8px) rotate(45deg);
-    }
-    .menu-toggle.is-active .bar:nth-child(3) {
-        transform: translateY(-8px) rotate(-45deg);
-    }
-
-    /* --- Mobile Layout Adjustments --- */
-    @media (max-width: 768px) {
-        .navbar-container {
-            flex-wrap: wrap;
-        }
-
-        .site-identity {
-            width: 100%;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-            align-items: center;
-        }
-
-        /* دکمه منو (همبرگری) را نمایان کن */
-        .menu-toggle {
-            display: block; /* یا inline-block */
-             order: 3; /* تنظیم ترتیب نمایش */
-             margin-left: auto; /* آن را به سمت راست هل می دهد */
-        }
-
-        /* دکمه های ورود/ثبت نام/خروج را نمایان کن و در زیر منو قرار بده */
-        .auth-controls {
-            width: 100%;
-            justify-content: center;
-            margin-top: 1rem;
-            order: 2; /* بعد از هویت سایت و قبل از دکمه منو */
-            /* این خط را حذف کنید یا کامنت کنید */
-            /* display: none; */
-        }
-         /* مطمئن شو که دکمه های ورود/خروج در موبایل نمایش داده می شوند */
-         .auth-controls .btn-neon {
-             margin: 0 0.5rem;
-             padding: 0.6rem 1.2rem;
-             font-size: 0.9rem;
-         }
-
-        /* لینک های ناوبری را برای حالت موبایل تنظیم کن */
-        .nav-links {
-            position: absolute; /* یا fixed */
-            top: 100%; /* از زیر نوار ناوبری شروع شود */
-            left: 0;
-            width: 100%;
-            flex-direction: column;
-            background-color: var(--nav-background); /* یا یک رنگ دیگر برای اورلی */
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height var(--transition-speed) ease-out;
-            z-index: 999; /* اطمینان از اینکه بالای محتوای دیگر قرار گیرد */
-            padding-top: 1rem; /* کمی فاصله از نوار ناوبری */
-            padding-bottom: 1rem;
-            /* این خط را حذف کنید */
-             /* order: 1; */
-        }
-
-        .nav-links.active {
-            max-height: 400px; /* ارتفاع بیشتر برای اطمینان از نمایش همه لینک‌ها */
-        }
-
-        .nav-link {
-            margin: 0.5rem 0;
-            padding: 0.8rem 0;
-            width: 100%;
-            text-align: center;
-        }
-        .nav-link.active::after {
-            display: none;
-        }
-
-    }
-
-    
-     @media (max-width: 768px) {
-         .navbar-container {
-             /* برای اینکه همه چیز کنار هم بماند و flex-wrap را مدیریت کند */
-             display: flex;
-             flex-wrap: wrap;
-             justify-content: space-between;
-             align-items: center;
-         }
-
-         .site-identity {
-             order: 1; /* اولویت اول */
-             width: auto;
-             margin-bottom: 0;
-         }
-
-         .nav-links {
-             order: 4; /* بعد از همه ی عناصر دیگر */
-             width: 100%; /* کل عرض را بگیرد */
-             flex-direction: column;
-             max-height: 0;
-             overflow: hidden;
-             transition: max-height 0.3s ease-out;
-             position: absolute;
-             top: 100%;
-             left: 0;
-             background-color: var(--nav-background);
-             padding-top: 1rem;
-             padding-bottom: 1rem;
-             z-index: 999;
-         }
-
-         .nav-links.active {
-             max-height: 400px;
-         }
-
-         .nav-link {
-             width: 100%;
-             text-align: center;
-             margin: 0.5rem 0;
-             padding: 0.8rem 0;
-         }
-         .nav-link.active::after {
-             display: none;
-         }
-
-         .menu-toggle {
-             order: 2; /* دکمه منو دوم */
-             display: block;
-             margin-left: auto; /* هل دادن به راست */
-         }
-
-         .auth-controls {
-             order: 3; /* دکمه های ورود/خروج سوم */
-             width: auto; /* عرض خودشان را بگیرند */
-             margin-top: 0;
-             margin-left: 1rem; /* کمی فاصله از دکمه منو */
-             display: flex; /* نمایش داده شوند */
-         }
-         .auth-controls .btn-neon {
-             margin: 0 0.5rem; /* فاصله بین دکمه های ورود/خروج */
-         }
+ @media (max-width: 768px) {
+     .navbar-container {
+         /* برای اینکه همه چیز کنار هم بماند و flex-wrap را مدیریت کند */
+         display: flex;
+         flex-wrap: wrap;
+         justify-content: space-between;
+         align-items: center;
      }
 
+     .site-identity {
+         order: 1; /* اولویت اول */
+         width: auto;
+         margin-bottom: 0;
+     }
 
-     /* اگر میخواهید دکمه خروج دقیقا کنار دکمه منو باشد */
-     /* .navbar-container:not(.menu-open) .auth-controls { display: flex; } */
+     .nav-links {
+         order: 4; /* بعد از همه ی عناصر دیگر */
+         width: 100%; /* کل عرض را بگیرد */
+         flex-direction: column;
+         max-height: 0;
+         overflow: hidden;
+         transition: max-height 0.3s ease-out;
+         position: absolute;
+         top: 100%;
+         left: 0;
+         background-color: var(--nav-background);
+         padding-top: 1rem;
+         padding-bottom: 1rem;
+         z-index: 999;
+     }
 
+     .nav-links.active {
+         max-height: 400px;
+     }
+
+     .nav-link {
+         width: 100%;
+         text-align: center;
+         margin: 0.5rem 0;
+         padding: 0.8rem 0;
+     }
+     .nav-link.active::after {
+         display: none;
+     }
+
+     .menu-toggle {
+         order: 2; /* دکمه منو دوم */
+         display: block;
+         margin-left: auto; /* هل دادن به راست */
+     }
+
+     .auth-controls {
+         order: 3; /* دکمه های ورود/خروج سوم */
+         width: auto; /* عرض خودشان را بگیرند */
+         margin-top: 0;
+         margin-left: 1rem; /* کمی فاصله از دکمه منو */
+         display: flex; /* نمایش داده شوند */
+     }
+     .auth-controls .btn-neon {
+         margin: 0 0.5rem; /* فاصله بین دکمه های ورود/خروج */
+     }
+ }
+
+
+ /* اگر میخواهید دکمه خروج دقیقا کنار دکمه منو باشد */
+ .navbar-container:not(.menu-open) .auth-controls { display: flex; } 
 </style>
 
 
 
 
-<nav class="navbar">
+{% load static %}
+
+<nav class="navbar" id="navbar">
     <div class="navbar-container">
-
-        <!-- لوگو و نام سایت در سمت چپ -->
+        <!-- 🔥 Logo -->
         <div class="site-identity">
-            <a href="{% url 'home' %}" class="logo-link">
-                <!-- اگر هنوز تصویر لوگو را می‌خواهید، این خط را نگه دارید -->
-                <!-- <img src="{% static 'image/my_logo.png' %}" class="site-logo"> -->
-                <span class="site-name">AR TEST</span>
-            </a>
+            <a href="{% url 'home' %}">🎯 AR TEST</a>
         </div>
-
-        <!-- لینک‌های منو -->
-        <ul class="nav-links">
+        <!-- 🔥 Navigation -->
+        <ul class="nav-links" id="navLinks">
+            <li><a href="{% url 'home' %}" class="nav-link{% if request.resolver_match.url_name == 'home' %} active{% endif %}">🏠 خانه</a></li>
             {% if user.is_authenticated %}
-                <li><a href="{% url 'accounts:dashboard' %}" class="nav-link{% if request.resolver_match.url_name == 'accounts:dashboard' %} active{% endif %}">داشبورد</a></li>
-                <li><a href="{% url 'subscribe' %}" class="nav-link{% if request.resolver_match.url_name == 'subscribe' %} active{% endif %}">اشتراک</a></li>
-                <li><a href="{% url 'accounts:leaderboard' %}" class="nav-link{% if request.resolver_match.url_name == 'accounts:leaderboard' %} active{% endif %}">رتبه‌بندی</a></li>
+                <li><a href="{% url 'accounts:dashboard' %}" class="nav-link{% if request.resolver_match.url_name == 'accounts:dashboard' %} active{% endif %}">📊 داشبورد</a></li>
+                <li><a href="{% url 'subscribe' %}" class="nav-link{% if request.resolver_match.url_name == 'subscribe' %} active{% endif %}">💎 اشتراک</a></li>
+                <li><a href="{% url 'accounts:leaderboard' %}" class="nav-link{% if request.resolver_match.url_name == 'accounts:leaderboard' %} active{% endif %}">🏆 رتبه‌بندی</a></li>
             {% endif %}
-            <!-- لینک صفحه اصلی همیشه قابل مشاهده -->
-            <li><a href="{% url 'home' %}" class="nav-link{% if request.resolver_match.url_name == 'home' %} active{% endif %}">صفحه اصلی</a></li>
         </ul>
-
-        <!-- دکمه‌های ورود / ثبت‌نام یا خروج سمت راست -->
+        <!-- 🔥 Auth Controls -->
         <div class="auth-controls">
             {% if not user.is_authenticated %}
-                <a href="{% url 'accounts:login' %}" class="btn-neon login-neon nav-link">ورود</a>
-                <a href="{% url 'accounts:register' %}" class="btn-neon register-neon nav-link">ثبت‌نام</a>
+                <a href="{% url 'accounts:login' %}" class="btn-neon btn-primary">🔐 ورود</a>
+                <a href="{% url 'accounts:register' %}" class="btn-neon btn-secondary">📝 ثبت‌نام</a>
             {% else %}
-                <form action="{% url 'accounts:logout' %}" method="post" style="display:inline;">
+                <form method="post" action="{% url 'accounts:logout' %}" style="display: inline-block;">
                     {% csrf_token %}
-                    <button type="submit" class="btn-neon logout-btn"> خروج از حساب کاربری
-
-                    </button>
+                    <button type="submit" class="btn-neon btn-danger">🚪 خروج</button>
                 </form>
             {% endif %}
         </div>
 
-        <!-- Toggle Button موبایل (بهبود یافته) -->
-        <div class="menu-toggle" id="mobile-menu">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
+        <!-- 🔥 Mobile Toggle -->
+        <div class="menu-toggle" id="menuToggle">
+            <span class="hamburger"></span>
+            <span class="hamburger"></span>
+            <span class="hamburger"></span>
         </div>
-
     </div>
 </nav>
+<style>
+/* 🔥 Navbar Styles */
+.navbar {
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(30px);
+    border-bottom: 2px solid transparent;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 10000;
+    padding: 1rem 0;
+    transition: all 0.4s ease;
+}
 
+.navbar.scrolled {
+    border-bottom-color: #00f0ff;
+    box-shadow: 0 10px 40px rgba(0, 240, 255, 0.3);
+}
+
+.navbar-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+}
+
+.site-identity a {
+    font-size: 2rem;
+    font-weight: 900;
+    background: linear-gradient(45deg, #00f0ff, #00d4ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.site-identity a:hover {
+    filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.8));
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 15px;
+    align-items: center;
+}
+
+.nav-link {
+    color: #e0e0e0;
+    padding: 12px 24px;
+    border-radius: 15px;
+    font-weight: 600;
+    font-size: 15px;
+    position: relative;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.nav-link::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 3px;
+    background: linear-gradient(45deg, #00f0ff, #00d4ff);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+
+.nav-link:hover::before,
+.nav-link.active::before {
+    width: 90%;
+}
+
+.nav-link:hover {
+    color: #fff;
+    background: rgba(0, 240, 255, 0.15);
+    box-shadow: 0 5px 20px rgba(0, 240, 255, 0.3);
+}
+
+.nav-link.active {
+    color: #00f0ff;
+    background: rgba(0, 240, 255, 0.2);
+}
+
+.auth-controls {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.btn-neon {
+    padding: 12px 28px;
+    border: 2px solid transparent;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(15px);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Vazir', sans-serif;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #00f0ff, #00d4ff);
+    color: #000;
+    box-shadow: 0 8px 25px rgba(0, 240, 255, 0.4);
+}
+
+.btn-primary:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 45px rgba(0, 240, 255, 0.6);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.btn-secondary {
+    background: linear-gradient(45deg, #ff0080, #ff4d94);
+    color: #000;
+    box-shadow: 0 8px 25px rgba(255, 0, 128, 0.4);
+}
+
+.btn-secondary:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 45px rgba(255, 0, 128, 0.6);
+}
+
+.btn-danger {
+    background: linear-gradient(45deg, #ff416c, #ff4b2b);
+    color: white;
+    box-shadow: 0 8px 25px rgba(255, 71, 107, 0.4);
+}
+
+.btn-danger:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 45px rgba(255, 71, 107, 0.6);
+}
+
+/* 🔥 Mobile */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 5px;
+    padding: 10px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.hamburger {
+    width: 28px;
+    height: 3px;
+    background: linear-gradient(45deg, #00f0ff, #00d4ff);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+    transform-origin: center;
+}
+
+.menu-toggle.active .hamburger:nth-child(1) {
+    transform: rotate(45deg) translate(7px, 7px);
+}
+
+.menu-toggle.active .hamburger:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-toggle.active .hamburger:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -7px);
+}
+
+@media (max-width: 1024px) {
+    .nav-links {
+        position: fixed;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: rgba(10, 10, 10, 0.98);
+        flex-direction: column;
+        padding: 30px 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease;
+        backdrop-filter: blur(30px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .nav-links.active {
+        max-height: 600px;
+    }
+
+    .nav-link {
+        padding: 25px 50px;
+        width: 100%;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 0;
+    }
+
+    .menu-toggle {
+        display: flex;
+    }
+
+    .auth-controls {
+        margin-left: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar-container {
+        padding: 0 20px;
+    }
+    
+    .site-identity a {
+        font-size: 1.7rem;
+    }
+    
+    .btn-neon {
+        padding: 12px 22px;
+        font-size: 13px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+    const navbar = document.getElementById('navbar');
+
+    // 🔥 Mobile Menu Toggle
+    menuToggle.addEventListener('click', () => {
+        menuToggle.classList.toggle('active');
+        navLinks.classList.toggle('active');
+    });
+
+    // 🔥 Navbar Scroll Effect
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 100) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+
+    // 🔥 Close menu on outside click
+    document.addEventListener('click', (e) => {
+        if (!navbar.contains(e.target)) {
+            menuToggle.classList.remove('active');
+            navLinks.classList.remove('active');
+        }
+    });
+
+    // 🔥 Close menu on link click
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+            menuToggle.classList.remove('active');
+            navLinks.classList.remove('active');
+        });
+    });
+
+    // 🔥 Active link highlighting
+    const currentPath = window.location.pathname;
+    document.querySelectorAll('.nav-link').forEach(link => {
+        if (link.getAttribute('href') === currentPath) {
+            link.classList.add('active');
+        }
+    });
+});
+</script>
 <!-- بخش جاوا اسکریپت برای منوی موبایل (اگر نیاز دارید) -->
+
 <script>
     const mobileMenu = document.getElementById('mobile-menu');
     const navLinks = document.querySelector('.nav-links');

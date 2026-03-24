@@ -3,35 +3,334 @@
 {% block title %}لیست آزمون‌ها{% endblock %}
 
 {% block content %}
+<style>
+/* ========== استایل‌های فوق حرفه‌ای لیست آزمون‌ها ========== */
+.dashboard-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 40px;
+    background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(248,250,252,0.98));
+    border-radius: 25px;
+    box-shadow: 
+        0 20px 60px rgba(0,0,0,0.1),
+        0 0 0 1px rgba(255,255,255,0.5);
+    backdrop-filter: blur(20px);
+    font-family: 'Vazir', 'Segoe UI', Tahoma, sans-serif;
+    direction: rtl;
+}
+
+.dashboard-container h2 {
+    text-align: center;
+    color: #2d3748;
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+}
+
+.dashboard-container h2::after {
+    content: '📚✨';
+    display: block;
+    font-size: 1.2rem;
+    margin-top: 10px;
+    opacity: 0.7;
+}
+
+/* جدول اصلی */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 
+        0 25px 50px rgba(0,0,0,0.15),
+        0 0 0 1px rgba(255,255,255,0.8);
+    min-height: 500px;
+}
+
+/* هدر جدول */
+table thead {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
+}
+
+table thead tr th {
+    padding: 20px 25px;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+}
+
+table thead tr th::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 3px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 2px;
+}
+
+/* ردیف‌های جدول */
+table tbody tr {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+table tbody tr::before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 5px;
+    background: linear-gradient(180deg, #10b981, #059669);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+table tbody tr:hover {
+    transform: translateY(-8px);
+    box-shadow: 
+        0 25px 50px rgba(0,0,0,0.15),
+        0 10px 30px rgba(79,70,229,0.2);
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+}
+
+table tbody tr:hover::before {
+    opacity: 1;
+}
+
+table tbody td {
+    padding: 22px 25px;
+    text-align: center;
+    font-size: 1rem;
+    color: #475569;
+    position: relative;
+}
+
+/* نوع آزمون */
+.premium-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.premium-badge.free {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    box-shadow: 0 4px 15px rgba(16,185,129,0.3);
+    animation: pulse-green 2s infinite;
+}
+
+.premium-badge.premium {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    box-shadow: 0 4px 15px rgba(245,158,11,0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.premium-badge.premium::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+}
+
+.premium-badge.premium:hover::before {
+    left: 100%;
+}
+
+/* دکمه‌ها */
+.start-quiz-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.start-quiz-btn {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    box-shadow: 0 8px 25px rgba(79,70,229,0.4);
+}
+
+.start-quiz-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(79,70,229,0.5);
+    background: linear-gradient(135deg, #3730a3, #5b21b6);
+}
+
+.start-quiz-btn:active {
+    transform: translateY(-1px);
+}
+
+.start-quiz-btn:disabled {
+    background: linear-gradient(135deg, #6b7280, #4b5563);
+    color: #d1d5db;
+    cursor: not-allowed;
+    box-shadow: 0 4px 15px rgba(107,114,128,0.3);
+    transform: none;
+}
+
+.start-quiz-btn:disabled:hover {
+    transform: none;
+    box-shadow: 0 4px 15px rgba(107,114,128,0.3);
+}
+
+/* انیمیشن‌ها */
+@keyframes pulse-green {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes shine {
+    0% { box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+    50% { box-shadow: 0 0 20px rgba(255,255,255,0.8); }
+    100% { box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+}
+
+/* ریسپانسیو */
+@media (max-width: 768px) {
+    .dashboard-container {
+        margin: 20px;
+        padding: 25px;
+    }
+    
+    .dashboard-container h2 {
+        font-size: 2rem;
+    }
+    
+    table {
+        font-size: 0.9rem;
+    }
+    
+    table thead {
+        display: none;
+    }
+    
+    table tbody tr {
+        display: block;
+        margin-bottom: 20px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        padding: 20px;
+    }
+    
+    table tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        text-align: right;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    
+    table tbody td:last-child {
+        border-bottom: none;
+        justify-content: center;
+    }
+    
+    table tbody td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: #4f46e5;
+        min-width: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .start-quiz-btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+    
+    .premium-badge {
+        padding: 6px 16px;
+        font-size: 0.8rem;
+    }
+}
+</style>
+
 <div class="dashboard-container">
-    <h2>لیست آزمون‌ها</h2>
+    <h2>📚 لیست آزمون‌ها ✨</h2>
+    
+    {% if quizzes %}
     <table>
-        <tr>
-            <th>عنوان آزمون</th>
-            <th>نوع</th>
-            <th>عملیات</th>
-        </tr>
-        {% for quiz in quizzes %}
-        <tr>
-            <td>{{ quiz.title }}</td>
-            <td>
-                {% if quiz.is_premium %}
-                    🔒 پرمیوم
-                {% else %}
-                    رایگان
-                {% endif %}
-            </td>
-            <td>
-                {% if quiz.is_premium and quiz.id in completed_quiz_ids %}
-                    <button disabled class="start-quiz-btn" title="شما قبلاً این آزمون را گذرانده‌اید">
-                        آزمون انجام شده
-                    </button>
-                {% else %}
-                    <a href="{% url 'start_quiz' quiz.id %}" class="start-quiz-btn">شرکت در آزمون</a>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
+        <thead>
+            <tr>
+                <th>عنوان آزمون</th>
+                <th>نوع</th>
+                <th>عملیات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for quiz in quizzes %}
+            <tr>
+                <td data-label="عنوان آزمون">{{ quiz.title }}</td>
+                <td data-label="نوع">
+                    {% if quiz.is_premium %}
+                        <span class="premium-badge premium">🔒 پرمیوم</span>
+                    {% else %}
+                        <span class="premium-badge free">✅ رایگان</span>
+                    {% endif %}
+                </td>
+                <td data-label="عملیات">
+                    {% if quiz.is_premium and quiz.id in completed_quiz_ids %}
+                        <button disabled class="start-quiz-btn" title="شما قبلاً این آزمون را گذرانده‌اید">
+                            ✅ آزمون انجام شده
+                        </button>
+                    {% else %}
+                        <a href="{% url 'start_quiz' quiz.id %}" class="start-quiz-btn">
+                            🚀 شرکت در آزمون
+                        </a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
+    {% else %}
+    <div style="text-align: center; padding: 60px; color: #6b7280;">
+        <div style="font-size: 4rem; margin-bottom: 20px;">📭</div>
+        <h3 style="color: #4f46e5; margin-bottom: 10px;">هیچ آزمونی یافت نشد!</h3>
+        <p>به زودی آزمون‌های جدید اضافه خواهد شد...</p>
+    </div>
+    {% endif %}
 </div>
+
 {% endblock %}

@@ -2,84 +2,184 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <style>
-        
-        /* دکمه ها دقیقاً گوشه چپ بالا */
-.auth-buttons {
-    position: absolute;
-    top: 10px;
-    left: 20px; /* گوشه چپ */
-    display: flex;
-    gap: 15px;
-    z-index: 999;
-}
-
-/* استایل کلی نئونی */
-.btn-neon {
-    padding: 8px 20px;
-    border-radius: 30px;
-    font-size: 14px;
-    font-weight: bold;
-    text-decoration: none;
-    color: white;
-    position: relative;
-    overflow: hidden;
-    transition: 0.3s ease;
-    border: 1px solid rgba(255,255,255,0.4);
-    box-shadow: 0 0 10px rgba(255,255,255,0.3);
-}
-
-/* نئونی ویژه ورود (آبی – نوری) */
-.login-neon {
-    background: linear-gradient(45deg, #0ea5e9, #38bdf8);
-    box-shadow:
-        0 0 8px #38bdf8,
-        0 0 15px #0ea5e9,
-        inset 0 0 10px rgba(255,255,255,0.3);
-}
-.login-neon:hover {
-    box-shadow:
-        0 0 12px #38bdf8,
-        0 0 22px #0ea5e9,
-        inset 0 0 14px rgba(255,255,255,0.5);
-}
-
-/* مخصوص ثبت‌نام (صورتی نئونی) */
-.register-neon {
-    background: linear-gradient(45deg, #ec4899, #f472b6);
-    box-shadow:
-        0 0 8px #f472b6,
-        0 0 15px #ec4899,
-        inset 0 0 10px rgba(255,255,255,0.3);
-}
-.register-neon:hover {
-    box-shadow:
-        0 0 12px #f472b6,
-        0 0 22px #ec4899,
-        inset 0 0 14px rgba(255,255,255,0.5);
-}
-
-/* موبایل */
-@media(max-width: 768px){
-    .auth-buttons {
-        left: 10px;
-        top: 15px;
-    }
-}
-
-</style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}سایت آزمون{% endblock %}</title>
     
-    <!-- لینک به فایل CSS ناوبار -->
-    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
-    <!-- لینک به فایل CSS اصلی سایت (اگر دارید) -->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+   
+
     {% block extra_css %}{% endblock %}
+    
+    <style>
+        /* 🔥 استایل کاملاً جدید و حرفه‌ای 🔥 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Vazir', 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-attachment: fixed;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* دکمه‌های نئون گوشه چپ بالا */
+        .auth-buttons {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .btn-neon {
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid rgba(255,255,255,0.3);
+            backdrop-filter: blur(10px);
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .login-neon {
+            background: linear-gradient(45deg, rgba(14,165,233,0.9), rgba(56,189,248,0.9));
+            box-shadow: 
+                0 0 20px rgba(56,189,248,0.5),
+                0 0 40px rgba(14,165,233,0.3),
+                inset 0 0 20px rgba(255,255,255,0.2);
+        }
+
+        .login-neon:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 
+                0 0 30px rgba(56,189,248,0.8),
+                0 0 60px rgba(14,165,233,0.5),
+                inset 0 0 30px rgba(255,255,255,0.4);
+        }
+
+        .register-neon {
+            background: linear-gradient(45deg, rgba(236,72,153,0.9), rgba(244,114,182,0.9));
+            box-shadow: 
+                0 0 20px rgba(244,114,182,0.5),
+                0 0 40px rgba(236,72,153,0.3),
+                inset 0 0 20px rgba(255,255,255,0.2);
+        }
+
+        .register-neon:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 
+                0 0 30px rgba(244,114,182,0.8),
+                0 0 60px rgba(236,72,153,0.5),
+                inset 0 0 30px rgba(255,255,255,0.4);
+        }
+
+        /* Main Content */
+        main {
+            min-height: 100vh;
+            padding: 100px 20px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* کانتینرهای محتوا */
+        .container {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 50px;
+            box-shadow: 
+                0 30px 80px rgba(0,0,0,0.2),
+                0 0 0 1px rgba(255,255,255,0.5);
+            border: 1px solid rgba(255,255,255,0.3);
+            margin-bottom: 40px;
+        }
+
+        /* عناوین */
+        h1, h2, h3 {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 25px;
+            font-weight: 800;
+        }
+
+        /* پیام‌ها */
+        .messages .alert {
+            border-radius: 20px;
+            border: none;
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        /* جداول */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        }
+
+        /* ریسپانسیو */
+        @media (max-width: 768px) {
+            .auth-buttons {
+                top: 15px;
+                left: 15px;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            main {
+                padding: 80px 15px 20px;
+            }
+            
+            .container {
+                padding: 30px 20px;
+                margin: 0 10px 30px;
+            }
+            
+            .btn-neon {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 2rem !important; }
+            h2 { font-size: 1.7rem !important; }
+            .container { padding: 25px 15px; }
+        }
+    </style>
 </head>
+
 <body>
-    {% include 'includes/navbar.html' %} {# ناوبار را اینجا فراخوانی می کنیم #}
+    <!-- دکمه‌های ورود/ثبت‌نام -->
+
+
+    {% include 'includes/navbar.html' %}
 
     <main>
         {% block content %}
@@ -87,7 +187,6 @@
     </main>
 
     {% block extra_js %}{% endblock %}
-    <!-- اسکریپت ناوبار را اینجا قرار دهید -->
-<script src="{% static 'js/navbar.js' %}"></script>
+
 </body>
 </html>
