@@ -5,127 +5,303 @@
 {% block content %}
 
 <style>
+    /* ✨ استایل خاص صفحه درباره ما */
+    body {
+        background: 
+            radial-gradient(circle at 20% 80%, rgba(120,119,198,0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(255,119,198,0.3) 0%, transparent 50%),
+            radial-gradient(circle at 40% 40%, rgba(120,219,255,0.3) 0%, transparent 50%),
+            linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+        background-size: 800% 800%, 400% 400%, 600% 600%, 600% 600%;
+        animation: gradientFlow 18s ease infinite;
+        min-height: 100vh;
+        font-family: 'Vazir', -apple-system, BlinkMacSystemFont, sans-serif;
+        overflow-x: hidden;
+    }
 
-body {
-    height: 100vh;
-    margin: 0;
-    background: linear-gradient(270deg, #18e6d8, #abc0e3, #7dffe1);
-    background-size: 600% 600%;
-    animation: gradientShift 20s ease infinite;
-}
+    @keyframes gradientFlow {
+        0%, 100% { background-position: 0% 50%, 0% 50%, 0% 50%, 0% 50%; }
+        33% { background-position: 100% 50%, 0% 0%, 100% 30%, 100% 50%; }
+        66% { background-position: 0% 100%, 100% 50%, 30% 100%, 0% 100%; }
+    }
 
-@keyframes gradientShift {
-    0% {background-position: 0% 50%;}
-    50% {background-position: 100% 50%;}
-    100% {background-position: 0% 50%;}
-}
+    /* ستاره‌های شناور */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: 
+            radial-gradient(1.5px 1.5px at 30px 40px, #fff, transparent),
+            radial-gradient(1px 1px at 80px 70px, rgba(255,255,255,0.8), transparent),
+            radial-gradient(0.8px 0.8px at 120px 30px, #fff, transparent);
+        background-repeat: repeat;
+        background-size: 250px 250px;
+        animation: starsDrift 25s linear infinite;
+        pointer-events: none;
+        z-index: -1;
+        opacity: 0.4;
+    }
 
-/* هدر صفحه مشابه هدر آزمون */
-.page-header {
-    background: linear-gradient(90deg, #0d6efd, #3f8cff);
-    color: #fff;
-    padding: 20px 30px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    border-radius: 0 0 12px 12px;
-    text-align: center;
-    font-size: 1.3rem;
-    font-weight: 700;
-    margin-bottom: 40px;
-}
+    @keyframes starsDrift {
+        0% { transform: translate(0, 0); }
+        100% { transform: translate(60px, 60px); }
+    }
 
-/* کانتینر اصلی */
-.about-container {
-    max-width: 900px;
-    margin: 0 auto 60px auto;
-    padding: 0 20px;
-}
+    .top-actions {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(25px);
+        padding: 15px 30px;
+        text-align: center;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+        border-radius: 0 0 20px 20px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        margin-bottom: 20px;
+    }
 
-/* بخش معرفی */
-.about-intro {
-    text-align: center;
-    margin-bottom: 50px;
-}
+    .top-actions .button {
+        background: linear-gradient(45deg, #667eea, #764ba2) !important;
+        border: none !important;
+        color: white !important;
+        padding: 12px 30px !important;
+        border-radius: 25px !important;
+        font-weight: 600 !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 8px 25px rgba(102,126,234,0.3) !important;
+    }
 
-.about-intro h2 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 15px;
-    color: #212529;
-}
+    .top-actions .button:hover {
+        transform: translateY(-3px) !important;
+        box-shadow: 0 15px 35px rgba(102,126,234,0.5) !important;
+    }
 
-.about-intro p {
-    font-size: 1.05rem;
-    color: #6c757d;
-    line-height: 1.8;
-}
+    /* هدر */
+    .page-header {
+        background: rgba(255,255,255,0.2);
+        backdrop-filter: blur(30px);
+        color: white;
+        padding: 30px 40px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        border-radius: 25px;
+        text-align: center;
+        font-size: clamp(1.5rem, 4vw, 2.2rem);
+        font-weight: 800;
+        margin: 0 auto 60px;
+        max-width: 900px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.3);
+    }
 
-/* کارت ویژگی‌ها */
-.features {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    margin-bottom: 50px;
-}
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        animation: shimmer 3s infinite;
+    }
 
-.feature-card {
-    background-color: #f8f9fa;
-    border-radius: 12px;
-    padding: 25px 20px;
-    flex: 1 1 250px;
-    max-width: 300px;
-    text-align: center;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.05);
-    transition: transform 0.3s, box-shadow 0.3s;
-}
+    @keyframes shimmer {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
 
-.feature-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 30px rgba(0,0,0,0.1);
-}
+    /* کانتینر اصلی */
+    .about-container {
+        max-width: 1000px;
+        margin: 0 auto 80px;
+        padding: 0 20px;
+    }
 
-.feature-card h3 {
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-    color: #0d6efd;
-}
+    /* معرفی */
+    .about-intro {
+        text-align: center;
+        margin-bottom: 70px;
+        background: rgba(255,255,255,0.12);
+        backdrop-filter: blur(20px);
+        border-radius: 25px;
+        padding: 50px 40px;
+        border: 1px solid rgba(255,255,255,0.2);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        animation: floatIn 1.5s ease-out;
+    }
 
-.feature-card p {
-    font-size: 0.95rem;
-    color: #495057;
-    line-height: 1.5;
-}
+    @keyframes floatIn {
+        0% {
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
 
-/* شبکه‌های اجتماعی */
-.contact {
-    text-align: center;
-}
+    .about-intro h2 {
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 900;
+        background: linear-gradient(135deg, #fff 0%, #f8f9ff 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 25px;
+        text-shadow: 0 5px 20px rgba(255,255,255,0.5);
+    }
 
-.contact a {
-    margin: 0 10px;
-    text-decoration: none;
-    font-size: 1.4rem;
-    color: #0d6efd;
-    transition: color 0.3s;
-}
+    .about-intro p {
+        font-size: 1.2rem;
+        color: rgba(255,255,255,0.95);
+        line-height: 1.9;
+        max-width: 700px;
+        margin: 0 auto;
+        font-weight: 300;
+    }
 
-.contact a:hover {
-    color: #3f8cff;
-}
+    /* کارت‌های ویژگی */
+    .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 35px;
+        margin-bottom: 70px;
+    }
 
+    .feature-card {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(25px);
+        border-radius: 22px;
+        padding: 40px 30px;
+        text-align: center;
+        border: 1px solid rgba(255,255,255,0.25);
+        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        position: relative;
+        overflow: hidden;
+        animation: cardSlideIn 0.8s ease-out forwards;
+        opacity: 0;
+        transform: translateY(50px);
+    }
+
+    .feature-card:nth-child(1) { animation-delay: 0.1s; }
+    .feature-card:nth-child(2) { animation-delay: 0.2s; }
+    .feature-card:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes cardSlideIn {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #667eea, #f5576c, #4facfe);
+        border-radius: 22px 22px 0 0;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-12px) scale(1.02);
+        background: rgba(255,255,255,0.25);
+        box-shadow: 0 30px 60px rgba(0,0,0,0.25);
+    }
+
+    .feature-card h3 {
+        font-size: 1.4rem;
+        font-weight: 800;
+        margin-bottom: 18px;
+        color: white;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .feature-card p {
+        color: rgba(255,255,255,0.95);
+        font-size: 1.05rem;
+        line-height: 1.8;
+        font-weight: 300;
+    }
+
+    /* تماس */
+    .contact {
+        text-align: center;
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 40px 30px;
+        border: 1px solid rgba(255,255,255,0.2);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+    }
+
+    .contact p {
+        color: rgba(255,255,255,0.9);
+        font-size: 1.2rem;
+        margin-bottom: 25px;
+        font-weight: 500;
+    }
+
+    .contact a {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0 15px;
+        padding: 15px 25px;
+        background: linear-gradient(45deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
+        color: white;
+        text-decoration: none;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255,255,255,0.3);
+        backdrop-filter: blur(15px);
+    }
+
+    .contact a:hover {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(102,126,234,0.4);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .about-container {
+            padding: 0 15px;
+        }
+        
+        .about-intro {
+            padding: 30px 20px;
+            margin-bottom: 40px;
+        }
+        
+        .features {
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+        
+        .page-header {
+            margin: 0 auto 40px;
+            padding: 25px 20px;
+        }
+    }
 </style>
-<div class="top-actions">
-    <a href="{% url 'home' %}" class="button is-info is-light">🔄  بازگشت به صفحه اصلی</a>
 
+<!-- HTML بدون تغییر -->
+<div class="top-actions">
+    <a href="{% url 'home' %}" class="button is-info is-light">🔄 بازگشت به صفحه اصلی</a>
 </div>
-<!-- هدر صفحه -->
-<div class="page-header">
-    درباره ما
-</div>
+
+<div class="page-header">درباره ما</div>
 
 <div class="about-container">
-    <!-- معرفی کوتاه -->
     <div class="about-intro">
         <h2>ما چه کسی هستیم؟</h2>
         <p>
@@ -134,23 +310,21 @@ body {
         </p>
     </div>
 
-    <!-- ویژگی‌ها -->
     <div class="features">
         <div class="feature-card">
-            <h3>امنیت بالا</h3>
+            <h3>🔒 امنیت بالا</h3>
             <p>تمامی آزمون‌ها با استانداردهای امنیتی بالا اجرا می‌شوند و اطلاعات کاربران محافظت می‌شود.</p>
         </div>
         <div class="feature-card">
-            <h3>پشتیبانی سریع</h3>
+            <h3>⚡ پشتیبانی سریع</h3>
             <p>تیم ما آماده پاسخگویی به سوالات و رفع مشکلات شما در کوتاه‌ترین زمان ممکن است.</p>
         </div>
         <div class="feature-card">
-            <h3>رابط کاربری آسان</h3>
+            <h3>🎨 رابط کاربری آسان</h3>
             <p>سامانه به گونه‌ای طراحی شده که استفاده از آن برای همه کاربران ساده و روان باشد.</p>
         </div>
     </div>
 
-    <!-- شبکه‌های اجتماعی / تماس -->
     <div class="contact">
         <p>ما را دنبال کنید:</p>
         <a href="https://rubika.ir/portal_online" target="_blank">📱 روبیکا</a>

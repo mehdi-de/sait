@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 from .views import start_quiz_view
+from django.conf.urls.i18n import i18n_patterns
+from django.contrib import admin
 
 urlpatterns = [
 
@@ -27,5 +29,5 @@ urlpatterns = [
 
     path('purchase/<int:plan_id>/', views.initiate_purchase_view, name='initiate_purchase'),
 
-    
+    path('admin/', admin.site.urls),
 ]

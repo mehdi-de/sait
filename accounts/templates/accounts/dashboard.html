@@ -399,27 +399,28 @@ table td {
         </tr>
 
         {% for result in quiz_results %}
-        <tr>
-            <td>{{ result.quiz.title }}</td>
-            <td>
-                {% if result.quiz.is_premium %}
-                    🔒 پرمیوم
-                {% else %}
-                    🆓 رایگان
-                {% endif %}
-            </td>
-            <td>{{ result.status }}</td>
-            <td>
-                {% if result.quiz.is_premium and result.status != 'هنوز امتحان داده نشده' %}
-                    <span class="start-quiz-btn disabled-btn">انجام شده</span>
-                {% else %}
-                    <a href="{% url 'start_quiz' result.quiz.id %}" class="start-quiz-btn">
-                        شروع آزمون
-                    </a>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
+<tr>
+    <td>{{ result.quiz.title }}</td>
+    <td>
+        {% if result.quiz.is_premium %}
+            🔒 پرمیوم
+        {% else %}
+            🆓 رایگان
+        {% endif %}
+    </td>
+    <td>{{ result.status }}</td>
+    <td>
+        {# ✅ اینجا از result.attempted استفاده می‌کنیم #}
+        {% if result.quiz.is_premium and result.attempted %}
+            <span class="start-quiz-btn disabled-btn">انجام شده</span>
+        {% else %}
+            <a href="{% url 'quiz_list' %}" class="start-quiz-btn">
+                شروع آزمون
+            </a>
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}
     </table>
 <!-- قسمت رتبه بندی  -->
  {% if user_rank %}
@@ -461,7 +462,7 @@ table td {
         {% endif %}
 
         <!-- لینک -->
-        <a href="{% url 'accounts:leaderboard' %}" class="nav-link">
+        <a href="{% url 'accounts:leaderboard' %}" class="user-rank">
             مشاهده کل جدول رتبه‌بندی
             <i class="fas fa-arrow-left"></i>
         </a>
@@ -479,7 +480,7 @@ table td {
     <div class="card-body">
         <p>شما هنوز در هیچ آزمون پریمیوم شرکت نکرده‌اید.</p>
 
-        <a href="{% url 'accounts:leaderboard' %}" class="nav-link">
+        <a href="{% url 'accounts:leaderboard' %}" class="user-rank">
             مشاهده جدول رتبه‌بندی
             <i class="fas fa-arrow-left"></i>
         </a>

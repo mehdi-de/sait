@@ -1,354 +1,7 @@
 {% load static %}
 
-
 <style>
-  body {
-    background-color: var(--background-color);
-    color: var(--text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-}
-
-a {
-    text-decoration: none;
-    color: var(--secondary-color);
-    transition: color var(--transition-speed) ease;
-}
-
-ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-/* --- Navbar Styling --- */
-.navbar {
-    background-color: transparent !important; 
-    padding: 1rem 0;
-    border-bottom: 1px solid #de0909;
-    position: sticky; /* برای ثابت ماندن در بالای صفحه */
-    top: 0;
-    z-index: 1000;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-.navbar-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-    display: flex;
-    justify-content: space-between; /* توزیع عناصر */
-    align-items: center;
-    flex-wrap: wrap; /* اجازه می‌دهد عناصر در موبایل به خط بعدی بروند */
-    background-color: transparent !important;
-}
-
-/* --- Site Identity (Logo + Name) --- */
-.site-identity {
-    display: flex;
-    align-items: center;
-}
-.logo-link {
-    display: flex;
-    align-items: center;
-    font-size: 1.8rem; /* بزرگتر کردن فونت نام سایت */
-    font-weight: bold;
-    color: var(--primary-color); /* رنگ نئونی برای نام سایت */
-    text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
-    transition: text-shadow var(--transition-speed) ease;
-}
-.logo-link:hover {
-    text-shadow: 0 0 15px #fff, 0 0 25px #fff;
-}
-.site-logo { /* اگر از تصویر لوگو استفاده می‌کنید */
-    height: 40px; /* تنظیم اندازه لوگو */
-    margin-right: 10px;
-}
-
-/* --- Navigation Links --- */
-.nav-links {
-    background-color: var(--nav-background);
-    display: flex;
-    align-items: center;
-}
-
-.nav-link {
-    color: var(--text-color);
-    padding: 0.8rem 1rem;
-    margin: 0 0.5rem;
-    border-radius: var(--border-radius);
-    transition: all var(--transition-speed) ease;
-    position: relative; /* برای افکت زیرخط */
-}
-
-.nav-link:hover {
-    color: var(--hover-text-color);
-    background-color: rgba(255, 30, 30, 0.958); /* کمی پس‌زمینه روشن */
-    text-shadow: 0 0 5px var(--primary-color);
-}
-
-/* افکت فعال بودن لینک */
-.nav-link.active {
-    color: var(--primary-color);
-    font-weight: bold;
-    text-shadow: 0 0 8px var(--primary-color);
-}
- .nav-link.active::after { /* افکت خط زیر لینک فعال */
-    content: '';
-    position: absolute;
-    bottom: 5px; /* تنظیم موقعیت خط */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 70%;
-    height: 2px;
-    background-color: var(--primary-color);
-    box-shadow: 0 0 5px var(--primary-color);
-}
-
-/* --- Auth Buttons & Logout --- */
-.auth-controls {
-    display: flex;
-    align-items: center;
-}
-.btn-neon {
-    padding: 0.8rem 1.5rem;
-    border: 2px solid var(--primary-color);
-    border-radius: var(--border-radius);
-    color: var(--primary-color);
-    background-color: transparent;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    transition: all var(--transition-speed) ease;
-    box-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
-    margin-left: 1rem; /* فاصله بین دکمه‌ها */
-}
-.btn-neon:hover {
-    color: var(--background-color); /* رنگ متن در حالت هاور */
-    background-color: var(--primary-color);
-    box-shadow: 0 0 15px #fff, 0 0 25px #fff;
-}
-
-.logout-btn {
-     border-color: #ff4f4f; /* رنگ قرمز برای خروج */
-     color: #ff4f4f;
-     box-shadow: 0 0 10px #ff4f4f, 0 0 20px #ff4f4f;
-}
-.logout-btn:hover {
-     background-color: #ff4f4f;
-     color: var(--background-color);
-}
-
-/* --- Mobile Menu Toggle --- */
-.menu-toggle {
-    display: none; /* پنهان در دسکتاپ */
-    cursor: pointer;
-    padding: 0.5rem;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: var(--border-radius);
-}
-.menu-toggle .bar {
-    display: block;
-    width: 25px;
-    height: 3px;
-    margin: 5px auto;
-    background-color: var(--primary-color);
-    transition: all var(--transition-speed) ease-in-out;
-}
- /* انیمیشن دکمه همبرگری */
-.menu-toggle.is-active .bar:nth-child(2) {
-    opacity: 0;
-}
-.menu-toggle.is-active .bar:nth-child(1) {
-    transform: translateY(8px) rotate(45deg);
-}
-.menu-toggle.is-active .bar:nth-child(3) {
-    transform: translateY(-8px) rotate(-45deg);
-}
-
-/* --- Mobile Layout Adjustments --- */
-@media (max-width: 768px) {
-    .navbar-container {
-        flex-wrap: wrap;
-    }
-
-    .site-identity {
-        width: 100%;
-        justify-content: space-between;
-        margin-bottom: 1rem;
-        align-items: center;
-    }
-
-    /* دکمه منو (همبرگری) را نمایان کن */
-    .menu-toggle {
-        display: block; /* یا inline-block */
-         order: 3; /* تنظیم ترتیب نمایش */
-         margin-left: auto; /* آن را به سمت راست هل می دهد */
-    }
-
-    /* دکمه های ورود/ثبت نام/خروج را نمایان کن و در زیر منو قرار بده */
-    .auth-controls {
-        width: 100%;
-        justify-content: center;
-        margin-top: 1rem;
-        order: 2; /* بعد از هویت سایت و قبل از دکمه منو */
-        /* این خط را حذف کنید یا کامنت کنید */
-        /* display: none; */
-    }
-     /* مطمئن شو که دکمه های ورود/خروج در موبایل نمایش داده می شوند */
-     .auth-controls .btn-neon {
-         margin: 0 0.5rem;
-         padding: 0.6rem 1.2rem;
-         font-size: 0.9rem;
-     }
-
-    /* لینک های ناوبری را برای حالت موبایل تنظیم کن */
-    .nav-links {
-        position: absolute; /* یا fixed */
-        top: 100%; /* از زیر نوار ناوبری شروع شود */
-        left: 0;
-        width: 100%;
-        flex-direction: column;
-        background-color: var(--nav-background); /* یا یک رنگ دیگر برای اورلی */
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height var(--transition-speed) ease-out;
-        z-index: 999; /* اطمینان از اینکه بالای محتوای دیگر قرار گیرد */
-        padding-top: 1rem; /* کمی فاصله از نوار ناوبری */
-        padding-bottom: 1rem;
-        /* این خط را حذف کنید */
-         /* order: 1; */
-    }
-
-    .nav-links.active {
-        max-height: 400px; /* ارتفاع بیشتر برای اطمینان از نمایش همه لینک‌ها */
-    }
-
-    .nav-link {
-        margin: 0.5rem 0;
-        padding: 0.8rem 0;
-        width: 100%;
-        text-align: center;
-    }
-    .nav-link.active::after {
-        display: none;
-    }
-
-}
-
-
- @media (max-width: 768px) {
-     .navbar-container {
-         /* برای اینکه همه چیز کنار هم بماند و flex-wrap را مدیریت کند */
-         display: flex;
-         flex-wrap: wrap;
-         justify-content: space-between;
-         align-items: center;
-     }
-
-     .site-identity {
-         order: 1; /* اولویت اول */
-         width: auto;
-         margin-bottom: 0;
-     }
-
-     .nav-links {
-         order: 4; /* بعد از همه ی عناصر دیگر */
-         width: 100%; /* کل عرض را بگیرد */
-         flex-direction: column;
-         max-height: 0;
-         overflow: hidden;
-         transition: max-height 0.3s ease-out;
-         position: absolute;
-         top: 100%;
-         left: 0;
-         background-color: var(--nav-background);
-         padding-top: 1rem;
-         padding-bottom: 1rem;
-         z-index: 999;
-     }
-
-     .nav-links.active {
-         max-height: 400px;
-     }
-
-     .nav-link {
-         width: 100%;
-         text-align: center;
-         margin: 0.5rem 0;
-         padding: 0.8rem 0;
-     }
-     .nav-link.active::after {
-         display: none;
-     }
-
-     .menu-toggle {
-         order: 2; /* دکمه منو دوم */
-         display: block;
-         margin-left: auto; /* هل دادن به راست */
-     }
-
-     .auth-controls {
-         order: 3; /* دکمه های ورود/خروج سوم */
-         width: auto; /* عرض خودشان را بگیرند */
-         margin-top: 0;
-         margin-left: 1rem; /* کمی فاصله از دکمه منو */
-         display: flex; /* نمایش داده شوند */
-     }
-     .auth-controls .btn-neon {
-         margin: 0 0.5rem; /* فاصله بین دکمه های ورود/خروج */
-     }
- }
-
-
- /* اگر میخواهید دکمه خروج دقیقا کنار دکمه منو باشد */
- .navbar-container:not(.menu-open) .auth-controls { display: flex; } 
-</style>
-
-
-
-
-{% load static %}
-
-<nav class="navbar" id="navbar">
-    <div class="navbar-container">
-        <!-- 🔥 Logo -->
-        <div class="site-identity">
-            <a href="{% url 'home' %}">🎯 AR TEST</a>
-        </div>
-        <!-- 🔥 Navigation -->
-        <ul class="nav-links" id="navLinks">
-            <li><a href="{% url 'home' %}" class="nav-link{% if request.resolver_match.url_name == 'home' %} active{% endif %}">🏠 خانه</a></li>
-            {% if user.is_authenticated %}
-                <li><a href="{% url 'accounts:dashboard' %}" class="nav-link{% if request.resolver_match.url_name == 'accounts:dashboard' %} active{% endif %}">📊 داشبورد</a></li>
-                <li><a href="{% url 'subscribe' %}" class="nav-link{% if request.resolver_match.url_name == 'subscribe' %} active{% endif %}">💎 اشتراک</a></li>
-                <li><a href="{% url 'accounts:leaderboard' %}" class="nav-link{% if request.resolver_match.url_name == 'accounts:leaderboard' %} active{% endif %}">🏆 رتبه‌بندی</a></li>
-            {% endif %}
-        </ul>
-        <!-- 🔥 Auth Controls -->
-        <div class="auth-controls">
-            {% if not user.is_authenticated %}
-                <a href="{% url 'accounts:login' %}" class="btn-neon btn-primary">🔐 ورود</a>
-                <a href="{% url 'accounts:register' %}" class="btn-neon btn-secondary">📝 ثبت‌نام</a>
-            {% else %}
-                <form method="post" action="{% url 'accounts:logout' %}" style="display: inline-block;">
-                    {% csrf_token %}
-                    <button type="submit" class="btn-neon btn-danger">🚪 خروج</button>
-                </form>
-            {% endif %}
-        </div>
-
-        <!-- 🔥 Mobile Toggle -->
-        <div class="menu-toggle" id="menuToggle">
-            <span class="hamburger"></span>
-            <span class="hamburger"></span>
-            <span class="hamburger"></span>
-        </div>
-    </div>
-</nav>
-<style>
+    
 /* 🔥 Navbar Styles */
 .navbar {
     background: rgba(10, 10, 10, 0.95);
@@ -583,64 +236,139 @@ ul {
         font-size: 13px;
     }
 }
+.menu-toggle {
+    display: none; /* موبایل نشون میده */
+    flex-direction: column;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.hamburger {
+    width: 25px;
+    height: 3px;
+    background: #fff;
+    margin: 3px 0;
+    transition: 0.3s;
+    border-radius: 3px;
+}
+
+/* موبایل */
+@media (max-width: 768px) {
+    .menu-toggle { display: flex; }
+    
+    .nav-links {
+        position: fixed;
+        top: 70px; right: -100%;
+        width: 80%;
+        height: calc(100vh - 70px);
+        background: linear-gradient(135deg, #9dea66 30%, #ff0de7 100%);
+        backdrop-filter: blur(10px);
+        flex-direction: column;
+        padding: 2rem 0;
+        transition: 0.4s ease-in-out;
+        box-shadow: -10px 0 30px rgba(0,0,0,0.3);
+        z-index: 1000;
+    }
+    
+    .nav-links.active {
+        right: 0; /* باز میشه */
+    }
+    
+    .nav-link {
+        font-size: 1.3rem;
+        padding: 1rem 2rem;
+        color: white;
+        text-align: center;
+        border-bottom: 1px solid rgba(235, 8, 8, 0.1);
+        opacity: 0;
+        transform: translateX(30px);
+        transition: 0.3s ease;
+    }
+    
+    .nav-links.active .nav-link {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    
+    /* انیمیشن همبرگر */
+    .menu-toggle.active .hamburger:nth-child(1) {
+        transform: rotate(-45deg) translate(-5px, 6px);
+    }
+    .menu-toggle.active .hamburger:nth-child(2) {
+        opacity: 0;
+    }
+    .menu-toggle.active .hamburger:nth-child(3) {
+        transform: rotate(45deg) translate(-5px, -6px);
+    }
+}
 </style>
+
+<nav class="navbar" id="navbar">
+    <div class="navbar-container">
+        <!-- 🔥 Logo -->
+        <div class="site-identity">
+            <a href="{% url 'home' %}">🎯 AR TEST</a>
+        </div>
+        <!-- 🔥 Navigation -->
+        <ul class="nav-links" id="navLinks">
+            <li><a href="{% url 'home' %}" class="nav-link{% if request.resolver_match.url_name == 'home' %} active{% endif %}">🏠 خانه</a></li>
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'accounts:dashboard' %}" class="nav-link{% if request.resolver_match.url_name == 'accounts:dashboard' %} active{% endif %}">📊 داشبورد</a></li>
+                <li><a href="{% url 'subscribe' %}" class="nav-link{% if request.resolver_match.url_name == 'subscribe' %} active{% endif %}">💎 اشتراک</a></li>
+                <li><a href="{% url 'accounts:leaderboard' %}" class="nav-link{% if request.resolver_match.url_name == 'accounts:leaderboard' %} active{% endif %}">🏆 رتبه‌بندی</a></li>
+                <li><a href="{% url 'about' %}" class="nav-link{% if request.resolver_match.url_name == 'about' %} active{% endif %}">📃 درباره ما</a></li>
+            {% endif %}
+        </ul>
+        <!-- 🔥 Auth Controls -->
+        <div class="auth-controls">
+            {% if not user.is_authenticated %}
+                <a href="{% url 'accounts:login' %}" class="btn-neon btn-primary">🔐 ورود</a>
+                <a href="{% url 'accounts:register' %}" class="btn-neon btn-secondary">📝 ثبت‌نام</a>
+            {% else %}
+                <form method="post" action="{% url 'accounts:logout' %}" style="display: inline-block;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-neon btn-danger">🚪 خروج</button>
+                </form>
+            {% endif %}
+        </div>
+
+        <!-- 🔥 Mobile Toggle -->
+        <div class="menu-toggle" id="menuToggle">
+            <span class="hamburger"></span>
+            <span class="hamburger"></span>
+            <span class="hamburger"></span>
+        </div>
+    </div>
+</nav>
+
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const menuToggle = document.getElementById('menuToggle');
     const navLinks = document.getElementById('navLinks');
-    const navbar = document.getElementById('navbar');
-
-    // 🔥 Mobile Menu Toggle
-    menuToggle.addEventListener('click', () => {
+    
+    // باز/بست منو
+    menuToggle.addEventListener('click', function() {
         menuToggle.classList.toggle('active');
         navLinks.classList.toggle('active');
     });
-
-    // 🔥 Navbar Scroll Effect
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 100) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
-    });
-
-    // 🔥 Close menu on outside click
-    document.addEventListener('click', (e) => {
-        if (!navbar.contains(e.target)) {
-            menuToggle.classList.remove('active');
-            navLinks.classList.remove('active');
-        }
-    });
-
-    // 🔥 Close menu on link click
+    
+    // بستن با کلیک روی لینک
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', () => {
             menuToggle.classList.remove('active');
             navLinks.classList.remove('active');
         });
     });
-
-    // 🔥 Active link highlighting
-    const currentPath = window.location.pathname;
-    document.querySelectorAll('.nav-link').forEach(link => {
-        if (link.getAttribute('href') === currentPath) {
-            link.classList.add('active');
+    
+    // بستن با کلیک بیرون منو
+    document.addEventListener('click', function(e) {
+        if (!navLinks.contains(e.target) && !menuToggle.contains(e.target)) {
+            menuToggle.classList.remove('active');
+            navLinks.classList.remove('active');
         }
     });
 });
-</script>
-<!-- بخش جاوا اسکریپت برای منوی موبایل (اگر نیاز دارید) -->
-
-<script>
-    const mobileMenu = document.getElementById('mobile-menu');
-    const navLinks = document.querySelector('.nav-links');
-
-    mobileMenu.addEventListener('click', () => {
-        navLinks.classList.toggle('active');
-        mobileMenu.classList.toggle('is-active'); // برای تغییر ظاهر دکمه همبرگری
-    });
 </script>
 
 

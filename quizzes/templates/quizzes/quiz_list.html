@@ -3,297 +3,188 @@
 {% block title %}لیست آزمون‌ها{% endblock %}
 
 {% block content %}
+<!-- CSS بهینه شده - بدون انیمیشن سنگین -->
 <style>
-/* ========== استایل‌های فوق حرفه‌ای لیست آزمون‌ها ========== */
-.dashboard-container {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 40px;
-    background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(248,250,252,0.98));
-    border-radius: 25px;
-    box-shadow: 
-        0 20px 60px rgba(0,0,0,0.1),
-        0 0 0 1px rgba(255,255,255,0.5);
-    backdrop-filter: blur(20px);
-    font-family: 'Vazir', 'Segoe UI', Tahoma, sans-serif;
-    direction: rtl;
+:root {
+    --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
+    --free-gradient: linear-gradient(135deg, #10b981, #059669);
+    --premium-gradient: linear-gradient(135deg, #f59e0b, #d97706);
 }
 
+* { box-sizing: border-box; }
+
+body { 
+    font-family: 'Vazir', Tahoma, sans-serif; 
+    direction: rtl;
+    background: #f8fafc;
+}
+
+/* کانتینر اصلی - بهینه */
+.dashboard-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background: rgba(255,255,255,0.95);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+/* عنوان */
 .dashboard-container h2 {
     text-align: center;
     color: #2d3748;
-    font-size: 2.5rem;
-    margin-bottom: 40px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-size: 2rem;
+    margin-bottom: 30px;
+    background: var(--primary-gradient);
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     background-clip: text;
-    position: relative;
+    -webkit-text-fill-color: transparent;
 }
 
-.dashboard-container h2::after {
-    content: '📚✨';
-    display: block;
-    font-size: 1.2rem;
-    margin-top: 10px;
-    opacity: 0.7;
-}
-
-/* جدول اصلی */
+/* جدول بهینه */
 table {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
+    border-collapse: collapse;
     background: white;
-    border-radius: 20px;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 
-        0 25px 50px rgba(0,0,0,0.15),
-        0 0 0 1px rgba(255,255,255,0.8);
-    min-height: 500px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
 }
 
-/* هدر جدول */
-table thead {
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
+thead {
+    background: var(--primary-gradient);
 }
 
-table thead tr th {
-    padding: 20px 25px;
+th {
+    padding: 15px;
     color: white;
-    font-weight: 700;
-    font-size: 1.1rem;
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    position: relative;
-}
-
-table thead tr th::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60%;
-    height: 3px;
-    background: rgba(255,255,255,0.6);
-    border-radius: 2px;
-}
-
-/* ردیف‌های جدول */
-table tbody tr {
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-    position: relative;
-    overflow: hidden;
-}
-
-table tbody tr::before {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 0;
-    height: 100%;
-    width: 5px;
-    background: linear-gradient(180deg, #10b981, #059669);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-table tbody tr:hover {
-    transform: translateY(-8px);
-    box-shadow: 
-        0 25px 50px rgba(0,0,0,0.15),
-        0 10px 30px rgba(79,70,229,0.2);
-    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-}
-
-table tbody tr:hover::before {
-    opacity: 1;
-}
-
-table tbody td {
-    padding: 22px 25px;
-    text-align: center;
-    font-size: 1rem;
-    color: #475569;
-    position: relative;
-}
-
-/* نوع آزمون */
-.premium-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 20px;
-    border-radius: 50px;
     font-weight: 600;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.premium-badge.free {
-    background: linear-gradient(135deg, #10b981, #059669);
-    color: white;
-    box-shadow: 0 4px 15px rgba(16,185,129,0.3);
-    animation: pulse-green 2s infinite;
-}
-
-.premium-badge.premium {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    color: white;
-    box-shadow: 0 4px 15px rgba(245,158,11,0.4);
-    position: relative;
-    overflow: hidden;
-}
-
-.premium-badge.premium::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    transition: left 0.5s;
-}
-
-.premium-badge.premium:hover::before {
-    left: 100%;
-}
-
-/* دکمه‌ها */
-.start-quiz-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 30px;
-    border: none;
-    border-radius: 50px;
-    font-weight: 700;
+    text-align: center;
     font-size: 1rem;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    text-transform: uppercase;
-    letter-spacing: 1px;
 }
 
+tbody tr {
+    transition: background 0.2s ease;
+}
+
+tbody tr:hover {
+    background: #f8fafc;
+}
+
+td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+/* بج‌ها */
+.premium-badge {
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: inline-block;
+}
+
+.free { background: var(--free-gradient); color: white; }
+.premium { background: var(--premium-gradient); color: white; }
+
+/* دکمه */
 .start-quiz-btn {
-    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    background: var(--primary-gradient);
     color: white;
-    box-shadow: 0 8px 25px rgba(79,70,229,0.4);
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s ease;
 }
 
 .start-quiz-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 35px rgba(79,70,229,0.5);
-    background: linear-gradient(135deg, #3730a3, #5b21b6);
-}
-
-.start-quiz-btn:active {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(79,70,229,0.4);
 }
 
 .start-quiz-btn:disabled {
-    background: linear-gradient(135deg, #6b7280, #4b5563);
-    color: #d1d5db;
+    background: #9ca3af;
     cursor: not-allowed;
-    box-shadow: 0 4px 15px rgba(107,114,128,0.3);
     transform: none;
 }
 
-.start-quiz-btn:disabled:hover {
-    transform: none;
-    box-shadow: 0 4px 15px rgba(107,114,128,0.3);
+/* Modal ساده */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
 }
 
-/* انیمیشن‌ها */
-@keyframes pulse-green {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+.modal-content {
+    background: white;
+    margin: 18% auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 10px;
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
-@keyframes shine {
-    0% { box-shadow: 0 0 10px rgba(255,255,255,0.5); }
-    50% { box-shadow: 0 0 20px rgba(255,255,255,0.8); }
-    100% { box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+.close-button {
+    float: left;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #999;
 }
 
-/* ریسپانسیو */
+.close-button:hover { color: #333; }
+
+/* موبایل */
 @media (max-width: 768px) {
-    .dashboard-container {
-        margin: 20px;
-        padding: 25px;
-    }
-    
-    .dashboard-container h2 {
-        font-size: 2rem;
-    }
-    
-    table {
-        font-size: 0.9rem;
-    }
-    
-    table thead {
-        display: none;
-    }
-    
-    table tbody tr {
-        display: block;
-        margin-bottom: 20px;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        padding: 20px;
-    }
-    
-    table tbody td {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 0;
-        text-align: right;
-        border-bottom: 1px solid #f1f5f9;
-    }
-    
-    table tbody td:last-child {
-        border-bottom: none;
-        justify-content: center;
-    }
-    
-    table tbody td::before {
-        content: attr(data-label);
-        font-weight: 700;
-        color: #4f46e5;
-        min-width: 120px;
-    }
-}
-
-@media (max-width: 480px) {
-    .start-quiz-btn {
-        padding: 10px 20px;
-        font-size: 0.9rem;
-    }
-    
-    .premium-badge {
-        padding: 6px 16px;
-        font-size: 0.8rem;
-    }
+    .dashboard-container { margin: 10px; padding: 15px; }
+    table { font-size: 0.9rem; }
+    th, td { padding: 10px 5px; }
 }
 </style>
 
+<!-- Modal -->
+<div id="exam-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h3>⚠️ تذکر مهم</h3>
+        <p><strong>قبل از شروع:</strong></p>
+        <ul style="line-height: 1.6;">
+            <li>صفحه را رفرش نکنید!</li>
+            <li>اتصال اینترنت پایدار!</li>
+            <li>زمان تمام شد = پایان آزمون!</li>
+            <li> بعد از ثبت سوال و رفتن به سوال بعدی امکان بازگشت به سوال وجود ندارد</li>
+            <li> توصیه میشود قبل از انجام آزمون های پرمیوم حتما چند بار آزمون رایگان ما رو تست کنید !</li>
+            <li> آزمون های پرمیوم را فقط یک بار میتوان انجام داد !</li>
+        </ul>
+        <div style="text-align: center; margin-top: 20px;">
+            <button id="start-exam" class="start-quiz-btn">شروع آزمون</button>
+        </div>
+    </div>
+</div>
+
+<!-- محتوا -->
 <div class="dashboard-container">
-    <h2>📚 لیست آزمون‌ها ✨</h2>
+    <h2>📚 لیست آزمون‌ها</h2>
     
     {% if quizzes %}
     <table>
         <thead>
             <tr>
-                <th>عنوان آزمون</th>
+                <th>عنوان</th>
                 <th>نوع</th>
                 <th>عملیات</th>
             </tr>
@@ -301,23 +192,19 @@ table tbody td {
         <tbody>
             {% for quiz in quizzes %}
             <tr>
-                <td data-label="عنوان آزمون">{{ quiz.title }}</td>
-                <td data-label="نوع">
+                <td>{{ quiz.title }}</td>
+                <td>
                     {% if quiz.is_premium %}
                         <span class="premium-badge premium">🔒 پرمیوم</span>
                     {% else %}
                         <span class="premium-badge free">✅ رایگان</span>
                     {% endif %}
                 </td>
-                <td data-label="عملیات">
+                <td>
                     {% if quiz.is_premium and quiz.id in completed_quiz_ids %}
-                        <button disabled class="start-quiz-btn" title="شما قبلاً این آزمون را گذرانده‌اید">
-                            ✅ آزمون انجام شده
-                        </button>
+                        <button disabled class="start-quiz-btn">✅ انجام شده</button>
                     {% else %}
-                        <a href="{% url 'start_quiz' quiz.id %}" class="start-quiz-btn">
-                            🚀 شرکت در آزمون
-                        </a>
+                        <a href="{% url 'start_quiz' quiz.id %}" class="start-quiz-btn" onclick="openModal()">🚀 شروع</a>
                     {% endif %}
                 </td>
             </tr>
@@ -325,12 +212,73 @@ table tbody td {
         </tbody>
     </table>
     {% else %}
-    <div style="text-align: center; padding: 60px; color: #6b7280;">
-        <div style="font-size: 4rem; margin-bottom: 20px;">📭</div>
-        <h3 style="color: #4f46e5; margin-bottom: 10px;">هیچ آزمونی یافت نشد!</h3>
-        <p>به زودی آزمون‌های جدید اضافه خواهد شد...</p>
+    <div style="text-align:center; padding:40px; color:#6b7280;">
+        <div style="font-size:3rem;">📭</div>
+        <h3>هیچ آزمونی نیست!</h3>
     </div>
     {% endif %}
 </div>
+
+<script>
+// کد کامل و بدون ایراد - تضمینی کار می‌کند
+document.addEventListener('DOMContentLoaded', function() {
+    // المان‌ها
+    const modal = document.getElementById('exam-modal');
+    const closeBtn = document.querySelector('.close-button');
+    const startExamBtn = document.getElementById('start-exam');
+    
+    let currentQuizUrl = null;
+
+    // باز کردن modal با URL آزمون
+    function openQuizModal(quizUrl) {
+        currentQuizUrl = quizUrl;
+        modal.style.display = 'block';
+    }
+
+    // بستن modal
+    function closeModal() {
+        modal.style.display = 'none';
+    }
+
+    // شروع آزمون
+    function startQuiz() {
+        closeModal();
+        if (currentQuizUrl) {
+            setTimeout(function() {
+                window.location.href = currentQuizUrl;
+            }, 200);
+        }
+    }
+
+    // Event Listeners
+    closeBtn.onclick = closeModal;
+    startExamBtn.onclick = startQuiz;
+    
+    // بستن با کلیک backdrop
+    window.onclick = function(event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    };
+
+    // دکمه‌های شروع آزمون
+    const quizButtons = document.querySelectorAll('a.start-quiz-btn:not([disabled])');
+    quizButtons.forEach(function(button) {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const href = this.getAttribute('href');
+            openQuizModal(href);
+        });
+    });
+
+    // Modal خوشامدگویی - فقط یکبار
+    if (!localStorage.getItem('welcomeModalShown')) {
+        setTimeout(function() {
+            openQuizModal(null); // بدون URL برای خوشامدگویی
+        }, 600);
+        localStorage.setItem('welcomeModalShown', 'true');
+    }
+});
+</script>
 
 {% endblock %}

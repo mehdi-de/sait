@@ -6,501 +6,388 @@
 {% block content %}
 
 <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-/* معرفی ویژگی های کلیدی  */
+        body {
+            font-family: 'Vazir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
 
-.features-section {
-    padding: 60px 20px;
-    background-color: #f8f9fa; /* رنگ پس‌زمینه روشن */
-    text-align: center;
-    font-family: 'Vazir', sans-serif; /* فرض می‌کنیم فونت وزیر را دارید */
-}
+        /* ✨ پس‌زمینه گرادیان متحرک */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(-45deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: -2;
+        }
 
-.features-section h2 {
-    font-size: 2.5em;
-    margin-bottom: 40px;
-    color: #333;
-}
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-.features-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 30px; /* فاصله بین کارت‌ها */
-    max-width: 1200px;
-    margin: 0 auto;
-}
+        /* ⭐ ستاره‌های پس‌زمینه */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #fff, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            animation: starsFloat 20s linear infinite;
+            z-index: -1;
+            opacity: 0.3;
+        }
 
-/* استایل هر کارت ویژگی */
-.feature-card {
-    background-color: #ffffff;
-    border-radius: 15px; /* گوشه‌های گرد */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* سایه ملایم */
-    padding: 30px 25px;
-    width: 100%;
-    max-width: 280px; /* حداکثر عرض هر کارت */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* انیمیشن هنگام هاور */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-}
+        @keyframes starsFloat {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
 
-.feature-card:hover {
-    transform: translateY(-10px); /* کمی بالا رفتن کارت هنگام هاور */
-    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.15); /* سایه قوی‌تر هنگام هاور */
-}
+        /* Top Actions */
+        .top-actions {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 15px 30px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-.feature-card .icon-container {
-    margin-bottom: 20px;
-    width: 70px; /* اندازه ثابت برای کانتینر آیکون */
-    height: 70px; /* اندازه ثابت برای کانتینر آیکون */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #e7f3ff; /* رنگ پس‌زمینه ملایم برای آیکون */
-    border-radius: 50%; /* دایره‌ای کردن */
-    margin-bottom: 15px;
-}
+        .top-actions h5 {
+            color: #667eea;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
 
-.feature-card .icon-container img {
-    max-width: 50%; /* اندازه آیکون نسبت به کانتینر */
-    max-height: 50%; /* اندازه آیکون نسبت به کانتینر */
-    object-fit: contain; /* حفظ نسبت تصویر آیکون */
-    filter: invert(100%) sepia(80%) saturate(100%) hue-rotate(180deg) brightness(100%) contrast(100%); /* رنگ آبی ملایم برای آیکون‌ها */
-}
+        .top-actions a {
+            color: #764ba2;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
 
-/* استایل عنوان هر کارت */
-.feature-card h3 {
-    font-size: 1.4em;
-    color: #2c3e50; /* رنگ تیره برای عنوان */
-    margin-bottom: 10px;
-}
+        .top-actions a:hover {
+            color: #f5576c;
+            transform: translateY(-2px);
+            text-shadow: 0 2px 10px rgba(245,87,108,0.3);
+        }
 
-/* استایل متن توضیحات هر کارت */
-.feature-card p {
-    font-size: 0.95em;
-    color: #555;
-    line-height: 1.6;
-    flex-grow: 1; /* باعث می‌شود متن تا جای ممکن فضا بگیرد */
-}
+        /* Slider */
+        .slider-container {
+            position: relative;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            border-radius: 25px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        }
 
-/* استایل‌های واکنش‌گرا (Responsive) */
-@media (max-width: 768px) {
-    .features-container {
-        flex-direction: column; /* در صفحات کوچک‌تر، کارت‌ها زیر هم قرار بگیرند */
-        align-items: center;
+        .slider {
+            flex: 1;
+            height: 100%;
+            position: relative;
+            border-radius: 25px;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transform: scale(0.9) translateX(50px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: scale(1) translateX(0);
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .prev-btn, .next-btn {
+            background: rgba(255,255,255,0.9);
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .prev-btn:hover, .next-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(102,126,234,0.4);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            max-width: 1200px;
+            margin: 80px auto;
+            padding: 0 20px;
+            text-align: center;
+            animation: fadeInUp 1.2s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-headline {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff 0%, #f0f0ff 50%, #fff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            text-shadow: 0 10px 30px rgba(255,255,255,0.3);
+        }
+
+        .hero-subheadline {
+            font-size: 1.4rem;
+            color: rgba(255,255,255,0.95);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            font-weight: 300;
+            line-height: 1.7;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px 50px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.4s ease;
+            box-shadow: 0 20px 40px rgba(102,126,234,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px rgba(102,126,234,0.6);
+            background: linear-gradient(45deg, #764ba2, #667eea);
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        /* Features */
+        .features-section {
+            max-width: 1200px;
+            margin: 120px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        .features-section h2 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #f0f0ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 80px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.3s forwards;
+        }
+
+        .features-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 40px 30px;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #f5576c);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            background: rgba(255,255,255,0.2);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+        }
+
+        .icon-container {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 25px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .icon-container {
+            transform: scale(1.1) rotate(5deg);
+            background: linear-gradient(135deg, rgba(102,126,234,0.3), rgba(245,87,108,0.3));
+        }
+
+        .icon-container img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .feature-card p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        /* Responsive */
+       @media (max-width: 768px) {
+    .slider-container {
+        height: 280px !important; /* ارتفاع ثابت */
+        flex-direction: row !important; /* افقی نگه دار */
+        gap: 15px;
+        padding: 20px;
+        margin: 20px auto;
     }
-    .feature-card {
-        max-width: 90%; /* کارت‌ها عرض بیشتری بگیرند */
+    
+    .slider {
+        flex: 1;
+        min-width: 280px; /* عرض ثابت */
+        max-width: 320px;
     }
-    .features-section h2 {
-        font-size: 2em;
+    
+    .slide img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        border-radius: 20px !important;
     }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
-    .feature-card {
-        max-width: 45%; /* دو کارت در هر ردیف */
+    
+    .prev-btn, .next-btn {
+        width: 50px !important;
+        height: 50px !important;
+        font-size: 20px !important;
+        flex-shrink: 0;
+        margin: 0 5px;
     }
-}
-
-    /*     قسمت متنی انگیزشی */
-.hero-section {
-    position: relative; /* برای قرارگیری لایه‌ها */
-    display: flex; /* برای چیدمان محتوا و تصویر */
-    align-items: center; /* وسط چین کردن عمودی */
-    justify-content: center; /* وسط چین کردن افقی */
-    min-height: 500px; /* حداقل ارتفاع بخش */
-    background-color: #f0f0f0; /* رنگ پس‌زمینه یا می‌توانید از یک تصویر استفاده کنید */
-    color: #333; /* رنگ متن */
-    text-align: center;
-    padding: 50px 20px;
-    overflow: hidden; /* برای جلوگیری از بیرون زدن محتوا */
-    /* اگر از تصویر پس‌زمینه استفاده می‌کنید: */
-     background-image: url('/static/image/background.jpg'); 
-     background-size: cover;  
-     background-position: center; 
-}
-
-.hero-content {
-    position: relative;
-    z-index: 2; /* اطمینان از روی تصاویر پس‌زمینه */
-    max-width: 800px; /* محدود کردن عرض محتوا */
-}
-
-.hero-headline {
-    font-size: 3.5em; /* اندازه بزرگ برای عنوان اصلی */
-    margin-bottom: 20px;
-    line-height: 1.2;
-    font-weight: bold;
-}
-
-.hero-subheadline {
-    font-size: 1.4em; /* اندازه مناسب برای زیرعنوان */
-    margin-bottom: 40px;
-    line-height: 1.5;
-    opacity: 0.9;
-}
-
-.cta-button {
-    display: inline-block;
-    padding: 15px 35px;
-    background-color: #007bff; /* رنگ اصلی دکمه */
-    color: white;
-    font-size: 1.1em;
-    font-weight: bold;
-    text-decoration: none;
-    border-radius: 50px; /* لبه‌های گرد */
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.cta-button:hover {
-    background-color: #0056b3; /* رنگ تیره‌تر هنگام هاور */
-    transform: translateY(-3px); /* کمی بالا آمدن دکمه */
-}
-
-.cta-button.secondary {
-    background-color: transparent;
-    color: #007bff;
-    border: 2px solid #007bff;
-    margin-left: 15px; /* فاصله با دکمه اول */
-}
-
-.cta-button.secondary:hover {
-    background-color: #007bff;
-    color: white;
-}
-
-/* اگر از تصویر در کنار محتوا استفاده می‌کنید: */
-
-.hero-image {
-    position: relative;
-    z-index: 1;
-    flex: 1;
-    margin-left: 40px;
-}
-.hero-image img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-}
-
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .hero-headline {
-        font-size: 2.8em;
+    
+    /* دکمه‌ها رو کوچیک‌تر کن */
+    .prev-btn {
+        order: 1;
     }
-    .hero-subheadline {
-        font-size: 1.2em;
+    
+    .next-btn {
+        order: 2;
     }
-    .cta-button {
-        padding: 12px 25px;
-        font-size: 1em;
-    }
-    .hero-section {
-        flex-direction: column; /* چیدمان عمودی در موبایل */
-        min-height: 400px;
-    }
-    .hero-content {
-        margin-bottom: 30px; /* فاصله بین محتوا و تصویر */
-    }
-    .cta-button.secondary {
-        margin-left: 0;
-        margin-top: 15px; /* فاصله با دکمه بالایی */
-    }
-}
-
-
-/*   قسمت تصاویر اولیه  */
-.slider-container {
-    position: relative;
-    width: 100%; /* تغییر از 200% به 100% */
-    max-width: 800px; /* حداکثر عرض اسلایدر */
-    height: 200px; /* ارتفاع اسلایدر */
-    margin: 20px auto; /* برای وسط چین کردن */
-    overflow: hidden;
-    border-radius: 25px; /* لبه‌های گرد */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.slider {
-    display: flex;
-    width: 500%; /* 5 تصاویر * 100% */
-    height: 100%;
-    transition: transform 0.5s ease-in-out; /* انیمیشن انتقال */
-}
-
-.slide {
-    width: 20%; /* 100% / 5 تصاویر */
-    height: 100%; /* این مقدار height باید درست عمل کند */
-    display: none; /* مخفی کردن تصاویر به صورت پیش‌فرض */
-    opacity: 0; /* شفافیت اولیه صفر */
-    transition: opacity 1s ease-in-out; /* انیمیشن شفافیت */
-}
-
-.slide.active {
-    display: block; /* نمایش تصویر فعال */
-    opacity: 1; /* شفافیت کامل */
-}
-
-.slide img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover ; /* پوشاندن کل فضا بدون تغییر نسبت تصویر */
-    display: block;
-}
-.prev-btn, .next-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    font-size: 18px;
-    cursor: pointer;
-    z-index: 10;
-    border-radius: 50%;
-    margin: 0 10px;
-}
-
-.prev-btn {
-    left: 10px;
-}
-
-.next-btn {
-    right: 10px;
-}
-
-.prev-btn:hover, .next-btn:hover {
-    background-color: rgba(0, 0, 0, 0.8);
-}
-
-
-
-    .top-actions {
-    display: flex;
-    justify-content: center; /* وسط چین شدن */
-    align-items: center;     /* عمودی وسط */
-    flex-wrap: wrap;         /* اگر صفحه کوچک بود به خط بعد برود */
-    gap: 15px;               /* فاصله بین دکمه‌ها */
-    margin: 60px 0 40px 0;   /* فاصله از بالا و پایین */
-    padding: 10px 20px;      /* فاصله داخلی */
-    background: rgba(0,0,0,0.25); /* پس‌زمینه شفاف شیک */
-    border-radius: 15px;     /* گوشه‌های گرد */
-    box-shadow: 0 8px 25px rgba(0,0,0,0.4); /* سایه */
-    backdrop-filter: blur(10px); /* افکت Glassmorphism */
-    animation: fadeInUp 1s ease forwards;
-}
-
-.top-actions a {
-    padding: 12px 22px;
-    border-radius: 12px;
-    text-decoration: none;
-    font-weight: bold;
-    background: rgba(255,255,255,0.15);
-    color: #fff;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-
-.top-actions a:hover {
-    background: rgba(255,255,255,0.3);
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
-}
-
-/* ریسپانسیو موبایل */
-@media (max-width: 500px) {
-    .top-actions {
-        flex-direction: column;
-        margin: 40px 20px;
-        gap: 12px;
-    }
-    .top-actions a {
-        width: 100%;
-        text-align: center;
-    }
-}
-/* ================== فونت و بدنه ================== */
-@import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css');
-
-body {
-    font-family: 'Vazir', sans-serif;
-    background: linear-gradient(to bottom right, rgba(0,0,0,0.6), rgba(0,0,0,0.8)),
-                url("{% static 'image/background.jpg' %}") center / cover no-repeat fixed;
-    min-height: 100vh;
-    margin: 0;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-}
-
-/* ================== انیمیشن ها ================== */
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* ================== دکمه‌های بالای صفحه ================== */
-.top-actions {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin-top: 40px;
-    animation: fadeInUp 1s ease forwards;
-}
-
-.top-actions a {
-    padding: 12px 20px;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: bold;
-    background: rgba(255,255,255,0.15);
-    color: #fff;
-    transition: all 0.3s ease;
-}
-
-.top-actions a:hover {
-    background: rgba(255,255,255,0.3);
-    transform: translateY(-2px);
-}
-
-/* ================== کارت اطلاع‌رسانی ================== */
-.info-card {
-    max-width: 720px;
-    margin: 40px auto 20px auto;
-    background: rgba(255,255,255,0.95);
-    color: #333;
-    border-radius: 20px;
-    padding: 30px 35px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
-    text-align: right;
-    animation: fadeInUp 1s 0.2s ease forwards;
-    opacity: 0;
-}
-
-.info-card a {
-    color: #3f51b5;
-    font-weight: bold;
-    text-decoration: none;
-}
-
-.info-card a:hover {
-    text-decoration: underline;
-}
-
-/* ================== کارت فرم ورود ================== */
-.login-card {
-    max-width: 420px;
-    margin: 40px auto;
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(16px);
-    border-radius: 20px;
-    padding: 40px 35px;
-    box-shadow: 0 25px 70px rgba(0,0,0,0.55);
-    text-align: center;
-    animation: fadeInUp 1s 0.4s ease forwards;
-    opacity: 0;
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
-}
-
-.login-card:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 35px 80px rgba(0,0,0,0.65);
-}
-
-.login-card h2 {
-    font-size: 2em;
-    margin-bottom: 25px;
-    font-weight: bold;
-}
-
-.login-card label {
-    display: block;
-    text-align: right;
-    margin-bottom: 8px;
-    font-size: 0.95em;
-}
-
-.login-card input {
-    width: 100%;
-    padding: 12px 14px;
-    border-radius: 12px;
-    border: none;
-    margin-bottom: 18px;
-    font-size: 0.95em;
-    background: rgba(255,255,255,0.95);
-    color: #333;
-    transition: all 0.3s ease;
-}
-
-.login-card input:focus {
-    outline: none;
-    box-shadow: 0 0 10px #3f51b5;
-}
-
-/* ================== دکمه ورود ================== */
-.login-card button {
-    width: 100%;
-    padding: 14px;
-    border-radius: 12px;
-    border: none;
-    font-size: 1.05em;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.4s ease;
-}
-
-.login-card button.is-primary {
-    background: linear-gradient(90deg, #3f51b5, #5c6bc0);
-    color: #fff;
-    box-shadow: 0 5px 20px rgba(63,81,181,0.4);
-}
-
-.login-card button.is-primary:hover {
-    background: linear-gradient(90deg, #303f9f, #3f51b5);
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 8px 25px rgba(63,81,181,0.6);
-}
-
-/* ================== پیام موفقیت و خطا ================== */
-.success-text, .error-text {
-    border-radius: 12px;
-    padding: 14px;
-    margin-bottom: 18px;
-    font-weight: bold;
-    text-align: center;
-    animation: fadeInUp 0.8s ease forwards;
-    opacity: 0;
-}
-
-.success-text {
-    background: #d4edda;
-    color: #155724;
-}
-
-.error-text {
-    background: #f8d7da;
-    color: #721c24;
-}
-
-/* ================== ریسپانسیو ================== */
-@media (max-width: 500px) {
-    .info-card, .login-card {
-        margin: 20px;
-        padding: 25px;
+    
+    .slider {
+        order: 3;
     }
 }
 
-
-</style>
+/* فیکس اضافی برای موبایل‌های کوچک */
+@media (max-width: 480px) {
+    .slider-container {
+        height: 240px !important;
+        padding: 15px;
+    }
+    
+    .slider {
+        min-width: 250px;
+    }
+}
+    </style>
 
 
 <div class="top-actions">
@@ -532,14 +419,16 @@ body {
     <button class="next-btn">&#10095;</button>
 </div>
 
-<!-- ================== دکمه‌های بالای صفحه ================== -->
-<div class="top-actions">
+<!-- ==================  لینک های صفحه ================== -->
+
+<!--  <div class="top-actions">
 
     <a href="{% url 'home' %}">🔄 بروزرسانی صفحه</a>
     <a href="{% url 'quiz_list' %}">📋 لیست آزمون‌ها</a>
     <a href="{% url 'about' %}">📃 درباره ما</a>
     <a href="{% url 'accounts:login' %}">👤 ورود به پنل کاربری</a> 
 </div>
+--> 
 <section class="hero-section">
     <div class="hero-content">
         <h1 class="hero-headline">آینده هنری خود را همین امروز بسازید!</h1>
@@ -549,9 +438,11 @@ body {
         <!-- <a href="/login" class="cta-button secondary">ورود / ثبت نام</a> -->
     </div>
     <!-- می‌توانید یک تصویر یا انیمیشن مرتبط در اینجا اضافه کنید -->
-    <!-- <div class="hero-image">
-        <img src="/path/to/your/hero-image.jpg" alt="تصویر مرتبط با هنر و کنکور">
-    </div> -->
+    <!--
+    <div class="hero-image">
+        <img src="" alt="تصویر مرتبط با هنر و کنکور">
+    </div>
+-->
 </section>
 
 <section class="features-section">
@@ -600,56 +491,45 @@ body {
 
 <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const slides = document.querySelectorAll('.slide');
-            const nextBtn = document.querySelector('.next-btn');
-            const prevBtn = document.querySelector('.prev-btn');
-            
-            let currentSlide = 0;
-            const slideInterval = 4000; // 4 ثانیه (می‌توانید تغییر دهید)
+    const slides = document.querySelectorAll('.slide');
+    const nextBtn = document.querySelector('.next-btn');
+    const prevBtn = document.querySelector('.prev-btn');
+    
+    let currentSlide = 0;
+    const slideInterval = 4000;
 
-            function showSlide(index) {
-                // همه را غیرفعال کن
-                slides.forEach((slide) => {
-                    slide.classList.remove('active');
-                });
-
-                // فعال کردن اسلاید جدید
-                if (slides[index]) {
-                    slides[index].classList.add('active');
-                }
+    function showSlide(index) {
+        slides.forEach((slide, i) => {
+            slide.classList.remove('active');
+            if (i === index) {
+                slide.classList.add('active');
             }
-
-            function nextSlide() {
-                currentSlide = (currentSlide + 1) % slides.length;
-                showSlide(currentSlide);
-            }
-
-            function prevSlide() {
-                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-                showSlide(currentSlide);
-            }
-
-            // رویدادهای دکمه‌ها
-            nextBtn.addEventListener('click', nextSlide);
-            prevBtn.addEventListener('click', prevSlide);
-
-            // اسلاید خودکار
-            let autoSliderInterval = setInterval(nextSlide, slideInterval);
-
-            // توقف اسلاید خودکار هنگام نگه داشتن موس
-            const sliderContainer = document.querySelector('.slider-container');
-            sliderContainer.addEventListener('mouseenter', () => {
-                clearInterval(autoSliderInterval);
-            });
-
-            // ادامه اسلاید خودکار
-            sliderContainer.addEventListener('mouseleave', () => {
-                autoSliderInterval = setInterval(nextSlide, slideInterval);
-            });
-
-            // نمایش اسلاید اولیه
-            showSlide(currentSlide);
         });
+    }
+
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+    }
+
+    function prevSlide() {
+        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+        showSlide(currentSlide);
+    }
+
+    nextBtn.addEventListener('click', nextSlide);
+    prevBtn.addEventListener('click', prevSlide);
+
+    let autoSliderInterval = setInterval(nextSlide, slideInterval);
+
+    const sliderContainer = document.querySelector('.slider-container');
+    sliderContainer.addEventListener('mouseenter', () => clearInterval(autoSliderInterval));
+    sliderContainer.addEventListener('mouseleave', () => {
+        autoSliderInterval = setInterval(nextSlide, slideInterval);
+    });
+
+    showSlide(currentSlide);
+});
     </script>
 
 {% endblock %}
