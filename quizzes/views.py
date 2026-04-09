@@ -42,17 +42,7 @@ def home(request):
         "error": None
     }
 
-    if request.method == "POST":
-        password = request.POST.get("password")
 
-        try:
-            quiz = Quiz.objects.get(password=password)
-            request.session["allowed_quiz"] = quiz.id
-            messages.success(request, f"دسترسی به '{quiz.title}' فعال شد.")
-            return redirect('quiz_detail', pk=quiz.id)
-        except Quiz.DoesNotExist:
-            context["error"] = "رمز اشتباه است."
-            messages.error(request, "رمز عبور اشتباه است.")
 
     return render(request, 'quizzes/home.html', context)
 

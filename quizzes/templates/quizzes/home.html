@@ -458,17 +458,6 @@
     </div>
 </section>
 
-<!-- فرم رمز (اضافه کن) -->
-<div class="password-section">
-    <form method="post">
-        {% csrf_token %}
-        {% if error %}
-        <div class="alert alert-error">{{ error }}</div>
-        {% endif %}
-        <input type="password" name="password" placeholder="رمز آزمون را وارد کنید" required>
-        <button type="submit">ورود به آزمون</button>
-    </form>
-</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
