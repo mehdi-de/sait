@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
+{% load humanize %}
+
 
 <style>
 /* 🔥 استایل‌های فوق‌العاده حرفه‌ای - صد% تلاش! 🔥 */
@@ -384,7 +386,8 @@
                 <div class="plan-name">🎯 {{ plan.name }}</div>
                 
                 {% if plan.price %}
-                    <div class="plan-price">{{ plan.price }}<span style="font-size: 1.5rem;">تومان</span></div>
+                    <div class="plan-price">{{ plan.price|floatformat:0|intcomma }}<span style="font-size: 1.5rem;">تومان</span></div>
+
                 {% else %}
                     <div class="plan-price" style="color: #ef4444 !important;">قیمت نامشخص</div>
                 {% endif %}

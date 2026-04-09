@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'quizzes.apps.QuizzesConfig',
     'accounts',
+    'django.contrib.humanize'
 ]
 
 MIDDLEWARE = [

@@ -315,56 +315,80 @@
     </div>
 
     <script>
-        // تایمر ساده و تضمینی
-        let secondsLeft = 60; // 30 دقیقه = 1800 ثانیه
-        
-        function startTimer() {
-            const timerElement = document.getElementById('timerDisplay');
-            
-            // تابع آپدیت تایمر
-            function tick() {
-                const minutes = Math.floor(secondsLeft / 60);
-                const seconds = secondsLeft % 60;
-                
-                // نمایش
-                timerElement.innerHTML = `⏰ ${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
-                
-                // هشدار آخر
-                if (secondsLeft <= 300) {
-                    timerElement.style.background = 'linear-gradient(135deg, #ff4757, #ff3838)';
-                    timerElement.style.boxShadow = '0 8px 25px rgba(255,71,87,0.6)';
-                }
-                
-                secondsLeft--;
-                
-                // تمام شد
-                if (secondsLeft < 0) {
-                    document.querySelector('form').submit();
-                    return;
-                }
+    // دریافت زمان باقی‌مانده از ویوی جنگو
+    // فرض می‌کنیم که متغیر remaining_seconds در context قالب وجود دارد
+    let secondsLeft = parseInt('{{ remaining_seconds }}', 10);
+    const timerElement = document.getElementById('timerDisplay');
+    const quizForm = document.querySelector('form'); // گرفتن فرم سوال فعلی
+
+    function startTimer() {
+        // تابع آپدیت تایمر
+        function tick() {
+            if (secondsLeft < 0) { // اگر زمان قبل از شروع به اتمام رسیده بود
+                timerElement.innerHTML = `⏰ 00:00`;
+                quizForm.submit(); // ارسال خودکار فرم
+                return;
             }
-            
-            // شروع
-            tick(); // اولین نمایش
-            setInterval(tick, 1000); // هر ثانیه
+
+            const minutes = Math.floor(secondsLeft / 60);
+            const seconds = secondsLeft % 60;
+
+            // نمایش زمان
+            timerElement.innerHTML = `⏰ ${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+
+            // هشدار آخر (اختیاری)
+            if (secondsLeft <= 300 && secondsLeft > 0) { // فقط اگر هنوز زمان داریم
+                timerElement.style.background = 'linear-gradient(135deg, #ff4757, #ff3838)';
+                timerElement.style.boxShadow = '0 8px 25px rgba(255,71,87,0.6)';
+            } else if (secondsLeft > 300) { // بازگرداندن حالت عادی اگر زمان زیاد است
+                timerElement.style.background = ''; // یا استایل اصلی خودت
+                timerElement.style.boxShadow = '';
+            }
+
+            secondsLeft--;
+
+            // پایان تایمر
+            if (secondsLeft < 0) {
+                // اینجا اگر فرم هنوز ارسال نشده بود، ارسالش کن
+                // این چک اضافی است چون در ابتدای تابع هم چک میکنیم
+                // اما برای اطمینان بد نیست.
+                quizForm.submit();
+                // alert("زمان آزمون به پایان رسید!"); // در صورت نیاز پیام نمایش بده
+                clearInterval(intervalId); // مهم: توقف تایمر بعد از اتمام
+                return;
+            }
         }
-        
-        // شروع تایمر بعد از لود صفحه
-        window.addEventListener('load', startTimer);
-        
-        // پیشرفت (امن)
-        window.addEventListener('load', function() {
-            const progressSection = document.querySelector('.progress-section');
-            if (progressSection) {
-                const currentQ = parseInt(progressSection.dataset.current) || 1;
-                const totalQ = parseInt(progressSection.dataset.total) || 1;
-                const progress = Math.round((currentQ / totalQ) * 100);
-                
-                document.getElementById('progressFill').style.width = progress + '%';
-                document.getElementById('currentQ').textContent = currentQ;
-                document.getElementById('totalQ').textContent = totalQ;
-            }
-        });
-    </script>
+
+        // شروع تایمر
+        tick(); // نمایش اولیه
+        const intervalId = setInterval(tick, 1000); // هر ثانیه آپدیت کن
+
+        // اگر زمان اولیه از اول صفر یا منفی بود
+        if (secondsLeft < 0) {
+            clearInterval(intervalId);
+            quizForm.submit();
+        }
+    }
+
+    // شروع تایمر بعد از لود کامل صفحه
+    window.addEventListener('load', startTimer);
+
+    // این قسمت پیشرفت رو هم چک میکنه
+    // لطفا مطمئن شو که data-current و data-total در تگ progress-section وجود دارند
+    window.addEventListener('load', function() {
+        const progressSection = document.querySelector('.progress-section');
+        if (progressSection) {
+            const currentQ = parseInt(progressSection.dataset.current) || 1;
+            const totalQ = parseInt(progressSection.dataset.total) || 1;
+            const progress = Math.round((currentQ / totalQ) * 100);
+
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('currentQ').textContent = currentQ;
+            // باید یک id="totalQ" در HTML داشته باشی یا این خط را حذف کنی
+            // document.getElementById('totalQ').textContent = totalQ;
+        }
+    });
+</script>
+
 </body>
 </html>

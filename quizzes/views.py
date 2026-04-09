@@ -254,11 +254,16 @@ def quiz_results_view(request, quiz_id):
 # ------------------------
 # اشتراک
 # ------------------------
+
 @login_required
 def subscribe_view(request):
+    # پاکسازی پیام‌های موجود در سشن قبل از نمایش صفحه اشتراک
+    storage = messages.get_messages(request)
+    storage.used = True 
+
     try:
-        subscription = request.user.subscription  # OneToOneField
-        is_currently_active = subscription.check_status()  # آپدیت status
+        subscription = request.user.subscription
+        is_currently_active = subscription.check_status()
     except Subscription.DoesNotExist:
         subscription = None
         is_currently_active = False
