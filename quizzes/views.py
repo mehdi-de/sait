@@ -12,6 +12,8 @@ from django.contrib import messages
 from accounts.models import Plan
 from django.http import HttpResponse
 from accounts.models import Subscription
+import requests
+from django.conf import settings
 
 # ------------------------
 # لیست آزمون‌ها
@@ -305,17 +307,74 @@ def initiate_purchase_view(request, plan_id):
         return redirect('subscribe')
 
     plan = get_object_or_404(Plan, pk=plan_id, is_active=True)
+    
+    # 1. تنظیمات اولیه (در settings.py تعریف کن)
+    merchant_id = settings.ZARINPAL_MERCHANT
+    amount = int(plan.price) # فرض بر اینکه قیمت به تومان است
+    callback_url = request.build_absolute_uri(reverse('verify_payment'))
+    
+    # 2. ارسال درخواست به زرین‌پال
+    data = {
+        "merchant_id": merchant_id,
+        "amount": amount,
+        "currency": "IRT", # یا IRR بسته به واحد پولت
+        "description": f"خرید اشتراک {plan.name}",
+        "callback_url": callback_url,
+    }
+    
+    url = 'https://sandbox.zarinpal.com/pg/v4/payment/request.json' # در حالت تست
+    
+    response = requests.post(url, json=data)
+    res_data = response.json()
 
-    subscription, created = Subscription.objects.update_or_create(
-        user=request.user,
-        defaults={
-            'plan': plan,
-            'start_date': timezone.now(),
-            'end_date': timezone.now() + timedelta(days=plan.duration_days),
-            'is_active': True,
-            'status': 'فعال',
+    if res_data['data']['code'] == 100:
+        authority = res_data['data']['authority']
+        # ذخیره در سشن برای مرحله بعد
+        request.session['plan_id'] = plan_id
+        # 3. هدایت به درگاه
+        return redirect(f"https://sandbox.zarinpal.com/pg/StartPay/{authority}")
+    else:
+        messages.error(request, "خطا در اتصال به درگاه پرداخت")
+        return redirect('subscribe')
+
+
+@login_required
+def verify_payment_view(request):
+    authority = request.GET.get('Authority')
+    status = request.GET.get('Status')
+    plan_id = request.session.get('plan_id')
+
+    if status == 'OK':
+        plan = get_object_or_404(Plan, pk=plan_id)
+        
+        # تایید تراکنش در زرین‌پال
+        data = {
+            "merchant_id": settings.ZARINPAL_MERCHANT,
+            "amount": int(plan.price),
+            "authority": authority,
         }
-    )
+        url = 'https://sandbox.zarinpal.com/pg/v4/payment/verify.json'
+        response = requests.post(url, json=data)
+        res_data = response.json()
 
-    messages.success(request, f"پلن '{plan.name}' برای شما فعال شد تا {subscription.end_date.strftime('%Y/%m/%d')}.")
-    return redirect('accounts:dashboard')
+        if res_data['data']['code'] == 100:
+            # حالا اشتراک رو فعال کن
+            Subscription.objects.update_or_create(
+                user=request.user,
+                defaults={
+                    'plan': plan,
+                    'start_date': timezone.now(),
+                    'end_date': timezone.now() + timedelta(days=plan.duration_days),
+                    'is_active': True,
+                    'status': 'فعال',
+                }
+            )
+            messages.success(request, "پرداخت موفق بود و اشتراک شما فعال شد.")
+            return redirect('accounts:dashboard')
+        else:
+            messages.error(request, "پرداخت تایید نشد.")
+    else:
+        messages.error(request, "پرداخت توسط کاربر لغو شد.")
+    
+    return redirect('subscribe')
+

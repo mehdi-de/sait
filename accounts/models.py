@@ -49,21 +49,40 @@ class Subscription(models.Model):
 
     # بهبود: check_status (status رو هم آپدیت می‌کنه)
     def check_status(self):
-        now = timezone.now()
+            """
+            Checks and updates the subscription status based on end_date.
+            Returns True if status changed, False otherwise.
+            """
+            now = timezone.now()
+            status_changed = False
 
-        if self.end_date and now > self.end_date:
-            self.is_active = False
-            self.status = 'منقضی'
-        elif self.end_date and now <= self.end_date:
-            self.is_active = True
-            self.status = 'فعال'
+            if self.end_date and now > self.end_date:
+                if self.status != 'منقضی':
+                    self.is_active = False
+                    self.status = 'منقضی'
+                    status_changed = True
+            elif self.end_date and now <= self.end_date:
+                if self.status != 'فعال':
+                    self.is_active = True
+                    self.status = 'فعال'
+                    status_changed = True
+            else: # No end_date or not set yet
+                if self.status != 'ندارد':
+                    self.is_active = False
+                    self.status = 'ندارد'
+                    status_changed = True
+            
+            return status_changed
+
+    def save(self, *args, **kwargs):
+        # Check and update status before saving
+        if self.check_status():
+            # Only save the fields that might have changed
+            super().save(update_fields=['is_active', 'status', 'end_date']) # end_date هم ممکنه تغییر کنه
         else:
-            self.is_active = False
-            self.status = 'ندارد'
-        # ذخیره فقط فیلدهای تغییرکرده برای بهینه‌سازی
-        super().save(update_fields=['is_active', 'status'])
-
+            super().save(*args, **kwargs)
     # اضافه: property برای نمایش status در template (سازگار با get_status_display قبلی)
+    
     @property
     def get_status_display(self):
         self.check_status()  # مطمئن شو status به‌روز باشه

@@ -345,7 +345,8 @@
     {% endif %}
 
     <!-- وضعیت فعلی -->
-    {% if is_currently_active %}
+    {# --- تغییر در این قسمت برای استفاده از user_status --- #}
+    {% if user_status and user_status.status == 'فعال' %}
         <div class="message-item success">
             <span>✅</span>
             <strong>اشتراک فعال!</strong><br>
@@ -372,7 +373,8 @@
             <div>پلن موجود</div>
         </div>
         <div class="stat-item">
-            <div class="stat-number">{% if is_currently_active %}فعال{% else %}غیرفعال{% endif %}</div>
+            {# --- این قسمت قبلاً درست شده بود --- #}
+            <div class="stat-number">{{ user_status.get_status_display|default:"ندارد" }}</div>
             <div>وضعیت اشتراک</div>
         </div>
     </div>
@@ -382,44 +384,47 @@
     {% if available_plans %}
         <div class="plans-grid">
             {% for plan in available_plans %}
-            <div class="subscription-card {% if forloop.counter == available_plans|length|add:-1 %}popular{% endif %}">
+            {# --- اضافه شدن کلاس current-active-plan برای استایل دهی به پلن فعال کاربر --- #}
+            <div class="subscription-card {% if forloop.counter == available_plans|length|add:-1 %}popular{% endif %} {% if user_status and user_status.plan == plan and user_status.status == 'فعال' %}current-active-plan{% endif %}">
                 <div class="plan-name">🎯 {{ plan.name }}</div>
-                
+
                 {% if plan.price %}
                     <div class="plan-price">{{ plan.price|floatformat:0|intcomma }}<span style="font-size: 1.5rem;">تومان</span></div>
-
                 {% else %}
                     <div class="plan-price" style="color: #ef4444 !important;">قیمت نامشخص</div>
                 {% endif %}
 
                 <ul class="plan-features">
-                    {% if plan.duration_days %}
-                        <li>⏰ مدت اعتبار: {{ plan.duration_days }} روز</li>
+                    {# --- این قسمت هم قبلاً درست شده بود --- #}
+                    {% if user_status and user_status.plan == plan and user_status.status == 'فعال' %}
+                        <li>⏰ انقضا: {{ user_status.end_date|date:"Y/m/d" }}</li>
+                    {% elif plan.duration_days %}
+                        <li>⏰ اعتبار: {{ plan.duration_days }} روز</li>
                     {% else %}
-                        <li>⏰ مدت اعتبار: نامشخص</li>
+                        <li>⏰ اعتبار: نامشخص</li>
                     {% endif %}
                     <li>🌟 دسترسی کامل به آزمون‌ها</li>
                     <li>📊 آمار و گزارش‌گیری</li>
                     <li>🎨 رابط کاربری ویژه</li>
                 </ul>
 
-                {% if is_currently_active %}
-                    <button class="purchase-btn" disabled>
+                {# --- تغییر در این قسمت برای نمایش دکمه مناسب --- #}
+                {% if user_status and user_status.plan == plan and user_status.status == 'فعال' %}
+                    {# اگر کاربر این پلن را فعال دارد، دکمه خرید غیرفعال نمایش داده شود #}
+                    <button class="purchase-btn disabled">
                         ✅ اشتراک فعال
                     </button>
                 {% else %}
-                
+                    {# در غیر این صورت، دکمه خرید نمایش داده شود #}
                     <form method="post" action="{% url 'initiate_purchase' plan.id %}">
                         {% csrf_token %}
                         <button type="submit" class="purchase-btn">
                             🚀 خرید این پلن
                         </button>
                     </form>
-
                 {% endif %}
 
             </div>
-
             {% endfor %}
         </div>
     {% else %}

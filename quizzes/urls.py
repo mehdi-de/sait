@@ -30,4 +30,11 @@ urlpatterns = [
     path('purchase/<int:plan_id>/', views.initiate_purchase_view, name='initiate_purchase'),
 
     path('admin/', admin.site.urls),
+
+
+        # مسیر شروع پرداخت (همان initiate_purchase که دارید)
+    path('purchase/<int:plan_id>/', views.initiate_purchase_view, name='initiate_purchase'),
+    
+    # مسیر بازگشت از زرین‌پال (Callback)
+    path('payment/verify/', views.verify_payment_view, name='verify_payment'),
 ]
