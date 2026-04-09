@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.db.models import Count
 import random
 from datetime import timedelta
-from .models import Quiz, Question, Choice, QuizAttempt,UserAnswer
+from .models import Quiz, Question, Choice, QuizAttempt,UserAnswer,HomeSlider
 import datetime
 from django.urls import reverse
 from django.contrib import messages
@@ -34,7 +34,13 @@ def quiz_list_view(request):
 # صفحه ورود رمز آزمون
 # ------------------------
 def home(request):
-    context = {"error": None}
+    # اسلایدرها
+    sliders = HomeSlider.objects.filter(is_active=True).order_by('order')[:5]
+    
+    context = {
+        "sliders": sliders,
+        "error": None
+    }
 
     if request.method == "POST":
         password = request.POST.get("password")
@@ -49,7 +55,6 @@ def home(request):
             messages.error(request, "رمز عبور اشتباه است.")
 
     return render(request, 'quizzes/home.html', context)
-
 
 # ------------------------
 # شروع آزمون

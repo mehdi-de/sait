@@ -86,5 +86,25 @@ class UserAnswer(models.Model):
     def __str__(self):
         return f"{self.attempt} - {self.question}"
     
+class HomeSlider(models.Model):
+    title = models.CharField(max_length=100, verbose_name="عنوان")
+    image = models.FileField(upload_to='sliders/', verbose_name="تصویر", blank=True)  # ✅ FileField
+    is_active = models.BooleanField(default=True, verbose_name="فعال")
+    order = models.PositiveIntegerField(default=0, verbose_name="ترتیب")
+    created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['order']
+        verbose_name = "اسلاید首页"
+        verbose_name_plural = "اسلایدها"
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def image_url(self):
+        if self.image:
+            return self.image.url
+        return "/static/image/slide1.jpg"
+    
     

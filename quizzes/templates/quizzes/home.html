@@ -389,60 +389,36 @@
 }
     </style>
 
-
 <div class="top-actions">
-<h5> تصاویر ارسالی شما برای ما </h5>
-<a href="https://rubika.ir/@FMaehzdei" target="_blank" rel="noopener noreferrer">
-  📱 تصاویر دوس داشتنی خودتون رو برای نمایش در اینجا برای ما بفرستید
-</a>
+    <h5>🖼️ تصاویر ارسالی شما برای ما</h5>
+    <a href="https://rubika.ir/@FMaehzdei" target="_blank" rel="noopener noreferrer">
+        📱 تصاویر دوست‌داشتنی خودتون رو برای نمایش در اینجا بفرستید
+    </a>
 </div>
 
 <div class="slider-container">
     <div class="slider">
+        {% for slider in sliders %}
+        <div class="slide {% if forloop.first %}active{% endif %}">
+            <img src="{{ slider.image_url }}" alt="{{ slider.title }}">
+        </div>
+        {% empty %}
         <div class="slide active">
-            <img src="/static/image/slide1.jpg" alt="اسلاید 1">
+            <img src="/static/image/slide1.jpg" alt="اسلاید پیش‌فرض">
         </div>
-        <div class="slide">
-            <img src="/static/image/slide2.jpg" alt="اسلاید 2">
-        </div>
-        <div class="slide">
-            <img src="/static/image/slide3.jpg" alt="اسلاید 3">
-        </div>
-        <div class="slide">
-            <img src="/static/image/slide4.jpg" alt="اسلاید 4">
-        </div>
-        <div class="slide">
-            <img src="/static/image/slide5.jpg" alt="اسلاید 5">
-        </div>
+        {% endfor %}
     </div>
     <button class="prev-btn">&#10094;</button>
     <button class="next-btn">&#10095;</button>
 </div>
 
-<!-- ==================  لینک های صفحه ================== -->
-
-<!--  <div class="top-actions">
-
-    <a href="{% url 'home' %}">🔄 بروزرسانی صفحه</a>
-    <a href="{% url 'quiz_list' %}">📋 لیست آزمون‌ها</a>
-    <a href="{% url 'about' %}">📃 درباره ما</a>
-    <a href="{% url 'accounts:login' %}">👤 ورود به پنل کاربری</a> 
-</div>
---> 
+<!-- ================== بقیه HTML بدون تغییر ================== -->
 <section class="hero-section">
     <div class="hero-content">
         <h1 class="hero-headline">آینده هنری خود را همین امروز بسازید!</h1>
         <p class="hero-subheadline">با شبیه‌ساز کنکور هنر، مسیر موفقیت را هموار کنید و با اطمینان قدم به دانشگاه بگذارید.</p>
-        <a href="{% url 'quiz_list' %}" class="cta-button">شروع آزمون رایگان  </a>
-        <!-- یا می‌توانید از لینک ورود/ثبت نام استفاده کنید -->
-        <!-- <a href="/login" class="cta-button secondary">ورود / ثبت نام</a> -->
+        <a href="{% url 'quiz_list' %}" class="cta-button">شروع آزمون رایگان</a>
     </div>
-    <!-- می‌توانید یک تصویر یا انیمیشن مرتبط در اینجا اضافه کنید -->
-    <!--
-    <div class="hero-image">
-        <img src="" alt="تصویر مرتبط با هنر و کنکور">
-    </div>
--->
 </section>
 
 <section class="features-section">
@@ -450,7 +426,6 @@
     <div class="features-container">
         <div class="feature-card">
             <div class="icon-container">
-                <!-- آیکون بانک سوالات جامع -->
                 <img src="/static/image/data.jpg" alt="بانک سوالات جامع">
             </div>
             <h3>بانک سوالات جامع</h3>
@@ -459,7 +434,6 @@
 
         <div class="feature-card">
             <div class="icon-container">
-                <!-- آیکون آزمون‌های شبیه‌سازی شده -->
                 <img src="/static/image/help.jpg" alt="آزمون‌های شبیه‌سازی شده">
             </div>
             <h3>آزمون‌های شبیه‌سازی شده</h3>
@@ -468,19 +442,14 @@
 
         <div class="feature-card">
             <div class="icon-container">
-                <!-- آیکون تحلیل کارنامه -->
                 <img src="/static/image/rotbe.jpg" alt="تحلیل کارنامه">
             </div>
             <h3>تحلیل کارنامه</h3>
             <p>گزارش‌های دقیق و تحلیلی از عملکرد شما در هر آزمون و شناسایی نقاط ضعف.</p>
         </div>
 
-
-
-        <!-- اگر مشاوره تحصیلی ارائه می‌دهید، این کارت را هم اضافه کنید -->
         <div class="feature-card">
             <div class="icon-container">
-                <!-- آیکون مشاوره تحصیلی -->
                 <img src="/static/image/help.jpg" alt="مشاوره تحصیلی">
             </div>
             <h3>مشاوره تحصیلی</h3>
@@ -489,22 +458,35 @@
     </div>
 </section>
 
+<!-- فرم رمز (اضافه کن) -->
+<div class="password-section">
+    <form method="post">
+        {% csrf_token %}
+        {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+        {% endif %}
+        <input type="password" name="password" placeholder="رمز آزمون را وارد کنید" required>
+        <button type="submit">ورود به آزمون</button>
+    </form>
+</div>
+
 <script>
-        document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
     const slides = document.querySelectorAll('.slide');
+    
+    if (slides.length === 0) return;
+    
     const nextBtn = document.querySelector('.next-btn');
     const prevBtn = document.querySelector('.prev-btn');
+    const sliderContainer = document.querySelector('.slider-container');
     
     let currentSlide = 0;
-    const slideInterval = 4000;
+    const slideInterval = 3000;  // ✅ 3 ثانیه
+    let autoSliderInterval;
 
     function showSlide(index) {
-        slides.forEach((slide, i) => {
-            slide.classList.remove('active');
-            if (i === index) {
-                slide.classList.add('active');
-            }
-        });
+        slides.forEach(slide => slide.classList.remove('active'));
+        slides[index].classList.add('active');
     }
 
     function nextSlide() {
@@ -517,19 +499,28 @@
         showSlide(currentSlide);
     }
 
-    nextBtn.addEventListener('click', nextSlide);
-    prevBtn.addEventListener('click', prevSlide);
-
-    let autoSliderInterval = setInterval(nextSlide, slideInterval);
-
-    const sliderContainer = document.querySelector('.slider-container');
-    sliderContainer.addEventListener('mouseenter', () => clearInterval(autoSliderInterval));
-    sliderContainer.addEventListener('mouseleave', () => {
-        autoSliderInterval = setInterval(nextSlide, slideInterval);
+    nextBtn.addEventListener('click', (e) => {
+        e.preventDefault(); nextSlide(); resetAutoSlide();
+    });
+    prevBtn.addEventListener('click', (e) => {
+        e.preventDefault(); prevSlide(); resetAutoSlide();
     });
 
+    function startAutoSlide() {
+        autoSliderInterval = setInterval(nextSlide, slideInterval);
+    }
+
+    function resetAutoSlide() {
+        clearInterval(autoSliderInterval);
+        startAutoSlide();
+    }
+
+    sliderContainer.addEventListener('mouseenter', () => clearInterval(autoSliderInterval));
+    sliderContainer.addEventListener('mouseleave', startAutoSlide);
+
     showSlide(currentSlide);
+    startAutoSlide();
 });
-    </script>
+</script>
 
 {% endblock %}
