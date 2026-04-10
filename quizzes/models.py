@@ -11,6 +11,9 @@ class Quiz(models.Model):
     description = models.TextField(verbose_name="توضیحات آزمون", blank=True, null=True)
     is_premium = models.BooleanField(default=False, verbose_name="آزمون ویژه است؟")
     duration_minutes = models.PositiveIntegerField(default=30)
+
+    is_active = models.BooleanField(default=True,verbose_name="آزمون فعال باشد؟")
+
     created_at = models.DateTimeField(default=timezone.now, verbose_name="تاریخ ایجاد")
 
     class Meta:

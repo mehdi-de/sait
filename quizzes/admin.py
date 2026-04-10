@@ -12,13 +12,6 @@ class HomeSliderAdmin(admin.ModelAdmin):
     list_filter = ['is_active']
     search_fields = ['title']
 
-# آزمون
-@admin.register(Quiz)
-class QuizAdmin(admin.ModelAdmin):
-    list_display = ['title', 'is_premium', 'duration_minutes', 'created_at']
-    list_filter = ['is_premium']
-    search_fields = ['title', 'password']
-
 # سوال
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
@@ -34,3 +27,11 @@ class ChoiceAdmin(admin.ModelAdmin):
 
 # بقیه مدل‌ها (ساده)
 admin.site.register([QuizAttempt, UserAnswer])
+
+# آزمون
+@admin.register(Quiz)
+class QuizAdmin(admin.ModelAdmin):
+    list_display = ['title', 'is_active', 'is_premium', 'duration_minutes', 'created_at']
+    list_editable = ['is_active']  # ⭐ فعال/غیرفعال سریع از لیست
+    list_filter = ['is_active', 'is_premium']  # ⭐ فیلتر وضعیت
+    search_fields = ['title', 'password']

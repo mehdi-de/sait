@@ -20,9 +20,11 @@ from django.conf import settings
 # ------------------------
 @login_required(login_url='accounts:login')
 def quiz_list_view(request):
-    quizzes = Quiz.objects.all()
+    # ⭐ فقط همین یک خط رو تغییر بده:
+    # با اضافه کردن این فیلتر، آزمون‌های غیرفعال کلاً از لیست حذف می‌شن
+    quizzes = Quiz.objects.filter(is_active=True)
+    
     user_attempts = QuizAttempt.objects.filter(user=request.user, is_completed=True)
-    # یک دیکشنری بسازیم که id آزمون‌های تکمیل شده را نگه دارد
     completed_quiz_ids = user_attempts.values_list('quiz_id', flat=True)
 
     return render(request, 'quizzes/quiz_list.html', {
@@ -30,6 +32,7 @@ def quiz_list_view(request):
         'completed_quiz_ids': completed_quiz_ids,
         'page_title': 'لیست آزمون‌ها'
     })
+
 # ------------------------
 # صفحه ورود رمز آزمون
 # ------------------------
