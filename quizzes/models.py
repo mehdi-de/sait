@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
@@ -98,7 +99,7 @@ class HomeSlider(models.Model):
 
     class Meta:
         ordering = ['order']
-        verbose_name = "اسلاید首页"
+        verbose_name = "اسلاید"
         verbose_name_plural = "اسلایدها"
 
     def __str__(self):
@@ -110,4 +111,28 @@ class HomeSlider(models.Model):
             return self.image.url
         return "/static/image/slide1.jpg"
     
-    
+
+# آمارگیری
+class Visitor(models.Model):
+
+    visitor_id = models.UUIDField(
+        default=uuid.uuid4,
+        editable=False,      
+        unique=True,        
+        db_index=True,       
+        verbose_name="شناسه بازدیدکننده" 
+    )
+
+
+    visit_time = models.DateTimeField(
+        verbose_name="زمان بازدید",
+        default=timezone.now 
+    )
+
+    def __str__(self):
+        return f"Visitor: {self.visitor_id} on {self.visit_time.strftime('%Y-%m-%d %H:%M')}"
+
+    class Meta:
+        verbose_name = "بازدیدکننده" 
+        verbose_name_plural = "بازدیدکنندگان" 
+        ordering = ['-visit_time']

@@ -10,7 +10,10 @@
     border: 1px solid rgba(100, 150, 255, 0.2);
     border-bottom: 2px solid transparent;
     position: fixed;
-    top: 0;
+    border-radius: 20px; /* گوشه گرد */
+    top: 20px; /* فاصله از بالا */
+    margin: 0 20px; /* فاصله از کناره‌ها */
+    max-width: calc(100% - 40px);
     width: 100%;
     z-index: 10000;
     padding: 1rem 0;
@@ -29,7 +32,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 70px;
+    height: 45px;
 }
 
 .site-identity a {
@@ -187,81 +190,24 @@
     transform: rotate(-45deg) translate(7px, -7px);
 }
 
-@media (max-width: 1024px) {
-    .nav-links {
-        position: fixed;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        background: rgba(10, 10, 10, 0.98);
-        flex-direction: column;
-        padding: 30px 0;
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.4s ease;
-        backdrop-filter: blur(30px);
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    }
 
-    .nav-links.active {
-        max-height: 600px;
-    }
 
-    .nav-link {
-        padding: 25px 50px;
-        width: 100%;
-        text-align: center;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 0;
-    }
-
-    .menu-toggle {
-        display: flex;
-    }
-
-    .auth-controls {
-        margin-left: auto;
-    }
-}
-
-@media (max-width: 768px) {
-    .navbar-container {
-        height: 50px;
-        padding: 0 20px;
-    }
-    
-    .site-identity a {
-        font-size: 1.7rem;
-    }
-    
-    .btn-neon {
-        padding: 12px 22px;
-        font-size: 13px;
-    }
-}
-.menu-toggle {
-    display: none; /* موبایل نشون میده */
-    flex-direction: column;
-    cursor: pointer;
-    padding: 4px;
-}
-
-.hamburger {
-    width: 25px;
-    height: 3px;
-    background: #fff;
-    margin: 3px 0;
-    transition: 0.3s;
-    border-radius: 3px;
-}
 
 /* موبایل */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
+    .navbar {
+        top: 10px;
+    }
+
+
     .menu-toggle { display: flex; }
     
     .nav-links {
+        
         position: fixed;
         top: 70px; right: -100%;
+        margin: 0 15px;
+        max-width: calc(100% - 30px);
         width: 80%;
         height: calc(100vh - 70px);
         background: linear-gradient(135deg, #9dea66 30%, #ff0de7 100%);
@@ -274,9 +220,17 @@
     }
     
     .nav-links.active {
-        right: 0; /* باز میشه */
+        right: 0; /* منو از راست باز میشه */
     }
-    
+
+    .site-identity {
+        order: 1; /* لوگو چپ */
+    }
+        .menu-toggle {
+        order: -1; /* منو راست */
+        margin-left: auto;
+    }
+
     .nav-link {
         font-size: 1.3rem;
         padding: 1rem 2rem;
@@ -328,11 +282,11 @@
                 <a href="{% url 'accounts:login' %}" class="btn-neon btn-primary">🔐 ورود</a>
                 <a href="{% url 'accounts:register' %}" class="btn-neon btn-secondary">📝 ثبت‌نام</a>
             {% else %}
-                <form method="post" action="{% url 'accounts:logout' %}" style="display: inline-block;">
+             <!--   <form method="post" action="{% url 'accounts:logout' %}" style="display: inline-block;">
                     {% csrf_token %}
                     <button type="submit" class="btn-neon btn-danger">🚪 خروج</button>
                 </form>
-            {% endif %}
+            {% endif %}-->
         </div>
 
         <!-- 🔥 Mobile Toggle -->

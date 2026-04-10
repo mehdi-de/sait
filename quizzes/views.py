@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.db.models import Count
 import random
 from datetime import timedelta
-from .models import Quiz, Question, Choice, QuizAttempt,UserAnswer,HomeSlider
+from .models import Quiz, Question, Choice, QuizAttempt,UserAnswer,HomeSlider,Visitor
 import datetime
 from django.urls import reverse
 from django.contrib import messages
@@ -14,7 +14,7 @@ from django.http import HttpResponse
 from accounts.models import Subscription
 import requests
 from django.conf import settings
-
+from django.db.models.functions import TruncDay
 # ------------------------
 # لیست آزمون‌ها
 # ------------------------
@@ -37,15 +37,30 @@ def quiz_list_view(request):
 # صفحه ورود رمز آزمون
 # ------------------------
 def home(request):
-    # اسلایدرها
+    # --- بخش آمار بازدیدکنندگان ---
+    today = timezone.now()
+    one_week_ago = today - datetime.timedelta(days=7)
+    one_month_ago = today - datetime.timedelta(days=30)
+    
+    #تعداد بازدیدکنندگان در 24ساعت  گذشته
+    unique_visitors_total = Visitor.objects.values('visitor_id').distinct().count()
+
+    # تعداد بازدیدکنندگان در ماه گذشته
+    unique_visitors_last_month = Visitor.objects.filter(visit_time__gte=one_month_ago).values('visitor_id').distinct().count()
+
+    # تعداد بازدیدکنندگان در هفته گذشته
+    unique_visitors_last_week = Visitor.objects.filter(visit_time__gte=one_week_ago).values('visitor_id').distinct().count()
+
+    # --- بخش اسلایدرها ---
     sliders = HomeSlider.objects.filter(is_active=True).order_by('order')[:5]
     
     context = {
         "sliders": sliders,
-        "error": None
+        "error": None, # اگر خطایی داریم، اینجا نمایش داده می‌شه
+        "unique_visitors_total": unique_visitors_total,
+        "unique_visitors_last_month": unique_visitors_last_month,
+        "unique_visitors_last_week": unique_visitors_last_week,
     }
-
-
 
     return render(request, 'quizzes/home.html', context)
 
