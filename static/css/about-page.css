@@ -1,0 +1,287 @@
+
+    body {
+        background: 
+            radial-gradient(circle at 20% 80%, rgba(120,119,198,0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(255,119,198,0.3) 0%, transparent 50%),
+            radial-gradient(circle at 40% 40%, rgba(120,219,255,0.3) 0%, transparent 50%),
+            linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+        background-size: 800% 800%, 400% 400%, 600% 600%, 600% 600%;
+        animation: gradientFlow 18s ease infinite;
+        min-height: 100vh;
+        font-family: 'Vazir', -apple-system, BlinkMacSystemFont, sans-serif;
+        overflow-x: hidden;
+    }
+
+    @keyframes gradientFlow {
+        0%, 100% { background-position: 0% 50%, 0% 50%, 0% 50%, 0% 50%; }
+        33% { background-position: 100% 50%, 0% 0%, 100% 30%, 100% 50%; }
+        66% { background-position: 0% 100%, 100% 50%, 30% 100%, 0% 100%; }
+    }
+
+    /* ستاره‌های شناور */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: 
+            radial-gradient(1.5px 1.5px at 30px 40px, #fff, transparent),
+            radial-gradient(1px 1px at 80px 70px, rgba(255,255,255,0.8), transparent),
+            radial-gradient(0.8px 0.8px at 120px 30px, #fff, transparent);
+        background-repeat: repeat;
+        background-size: 250px 250px;
+        animation: starsDrift 25s linear infinite;
+        pointer-events: none;
+        z-index: -1;
+        opacity: 0.4;
+    }
+
+    @keyframes starsDrift {
+        0% { transform: translate(0, 0); }
+        100% { transform: translate(60px, 60px); }
+    }
+
+    .top-actions {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(25px);
+        padding: 15px 30px;
+        text-align: center;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+        border-radius: 0 0 20px 20px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        margin-bottom: 20px;
+    }
+
+    .top-actions .button {
+        background: linear-gradient(45deg, #667eea, #764ba2) !important;
+        border: none !important;
+        color: white !important;
+        padding: 12px 30px !important;
+        border-radius: 25px !important;
+        font-weight: 600 !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 8px 25px rgba(102,126,234,0.3) !important;
+    }
+
+    .top-actions .button:hover {
+        transform: translateY(-3px) !important;
+        box-shadow: 0 15px 35px rgba(102,126,234,0.5) !important;
+    }
+
+    /* هدر */
+    .page-header {
+        background: rgba(255,255,255,0.2);
+        backdrop-filter: blur(30px);
+        color: white;
+        padding: 30px 40px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        border-radius: 25px;
+        text-align: center;
+        font-size: clamp(1.5rem, 4vw, 2.2rem);
+        font-weight: 800;
+        margin: 0 auto 60px;
+        max-width: 900px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+
+    /* کانتینر اصلی */
+    .about-container {
+        max-width: 1000px;
+        margin: 0 auto 80px;
+        padding: 0 20px;
+    }
+
+    /* معرفی */
+    .about-intro {
+        text-align: center;
+        margin-bottom: 70px;
+        background: rgba(255,255,255,0.12);
+        backdrop-filter: blur(20px);
+        border-radius: 25px;
+        padding: 50px 40px;
+        border: 1px solid rgba(255,255,255,0.2);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        animation: floatIn 1.5s ease-out;
+    }
+
+    @keyframes floatIn {
+        0% {
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .about-intro h2 {
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 900;
+        background: linear-gradient(135deg, #fff 0%, #f8f9ff 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 25px;
+        text-shadow: 0 5px 20px rgba(255,255,255,0.5);
+    }
+
+    .about-intro p {
+        font-size: 1.2rem;
+        color: rgba(255,255,255,0.95);
+        line-height: 1.9;
+        max-width: 700px;
+        margin: 0 auto;
+        font-weight: 300;
+    }
+
+    /* کارت‌های ویژگی */
+    .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 35px;
+        margin-bottom: 70px;
+    }
+
+    .feature-card {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(25px);
+        border-radius: 22px;
+        padding: 40px 30px;
+        text-align: center;
+        border: 1px solid rgba(255,255,255,0.25);
+        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        position: relative;
+        overflow: hidden;
+        animation: cardSlideIn 0.8s ease-out forwards;
+        opacity: 0;
+        transform: translateY(50px);
+    }
+
+    .feature-card:nth-child(1) { animation-delay: 0.1s; }
+    .feature-card:nth-child(2) { animation-delay: 0.2s; }
+    .feature-card:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes cardSlideIn {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #667eea, #f5576c, #4facfe);
+        border-radius: 22px 22px 0 0;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-12px) scale(1.02);
+        background: rgba(255,255,255,0.25);
+        box-shadow: 0 30px 60px rgba(0,0,0,0.25);
+    }
+
+    .feature-card h3 {
+        font-size: 1.4rem;
+        font-weight: 800;
+        margin-bottom: 18px;
+        color: white;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .feature-card p {
+        color: rgba(255,255,255,0.95);
+        font-size: 1.05rem;
+        line-height: 1.8;
+        font-weight: 300;
+    }
+
+    /* تماس */
+    .contact {
+        text-align: center;
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 40px 30px;
+        border: 1px solid rgba(255,255,255,0.2);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+    }
+
+    .contact p {
+        color: rgba(255,255,255,0.9);
+        font-size: 1.2rem;
+        margin-bottom: 25px;
+        font-weight: 500;
+    }
+
+    .contact a {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0 15px;
+        padding: 15px 25px;
+        background: linear-gradient(45deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
+        color: white;
+        text-decoration: none;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255,255,255,0.3);
+        backdrop-filter: blur(15px);
+    }
+
+    .contact a:hover {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(102,126,234,0.4);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .about-container {
+            padding: 0 15px;
+        }
+        
+        .about-intro {
+            padding: 30px 20px;
+            margin-bottom: 40px;
+        }
+        
+        .features {
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+        
+        .page-header {
+            margin: 0 auto 40px;
+            padding: 25px 20px;
+        }
+    }

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="analysis-container">
+    <div class="analysis-header">
+        <h1>📋 مرور آزمون {{ quiz.title }}</h1>
+        <p>تاریخ: {{ attempt.completed_at|date:"Y/m/d H:i" }} | {{ total_questions }} سوال</p>
+    </div>
+
+    <table class="analysis-table">
+        <thead>
+            <tr>
+                <th>شماره</th>
+                <th>متن سوال</th>
+                <th>پاسخ شما</th>
+                <th>پاسخ صحیح</th>
+                <th>وضعیت</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ans in user_answers %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td style="max-width: 250px;">{{ ans.question_text|truncatechars:60 }}</td>
+                <td style="max-width: 150px;">
+                    {% if ans.selected_choice_text == 'پاسخ نداده' %}
+                        <span style="color: #95a5a6; font-style: italic;">{{ ans.selected_choice_text }}</span>
+                    {% else %}
+                        {{ ans.selected_choice_text|truncatechars:40 }}
+                    {% endif %}
+                </td>
+                <td style="max-width: 150px;">
+                    {% if ans.correct_choice_text == 'نامشخص' %}
+                        <span style="color: #95a5a6;">نامشخص</span>
+                    {% else %}
+                        <span style="font-weight: bold; color: #27ae60;">{{ ans.correct_choice_text|truncatechars:40 }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if ans.is_correct %}
+                        <span class="correct">✅ صحیح</span>
+                    {% elif not ans.is_answered %}
+                        <span class="unanswered">⭕ خالی</span>
+                    {% else %}
+                        <span class="wrong">❌ غلط</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">تحلیلی موجود نیست</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="btn-group">
+        <a href="javascript:window.print()" class="btn btn-primary">🖨️ چاپ کارنامه</a>
+        <a href="{% url 'quiz_results' quiz.id %}" class="btn btn-success">🔙 بازگشت به کارنامه</a>
+    </div>
+    
+</div>
+<p>کلیه حقوق این  سند متعلق به سایت AR TEST بوده و استفاده بدون اجازه از ان پیگرد قانونی دارد!</p>
+{% endblock %}

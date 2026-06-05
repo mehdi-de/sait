@@ -13,9 +13,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-0c@wrrep8e2!=glmx172c%0y(oi1qixrv@0&5c=z8u#f+7yht!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # مسیر بعد از ورود موفق
@@ -46,7 +46,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'quizzes.middleware.UniqueVisitorMiddleware'
+    'quizzes.middleware.VisitorTrackingMiddleware',
+    'quizzes.middleware.VisitorTrackingMiddleware',
 ]
 
 ROOT_URLCONF = 'QuizPlatform.urls'
@@ -117,8 +118,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / "account" / "static", 
+    BASE_DIR / "static",
+
 ]
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 ZARINPAL_MERCHANT = '00000000-0000-0000-0000-000000000000'
 ZARINPAL_SANDBOX = True

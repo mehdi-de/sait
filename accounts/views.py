@@ -10,6 +10,7 @@ from django.db.models import Q, Sum, Avg, F, Count
 from accounts.models import Plan, Subscription 
 from quizzes.models import Quiz, QuizAttempt
 from accounts.utils import get_user_rank
+from accounts.utils import persian_date, persian_full_date 
 
 
 
@@ -43,34 +44,45 @@ def login_view(request):
         form = AuthenticationForm()
     return render(request, 'accounts/login.html', {'form': form})
 
-# Dashboard view: نمایش داشبورد کاربر با quizzes و subscription
+# Dashboard view: نمایش داشبورد کاربر با
 @login_required
 def dashboard_view(request):
+    # 🆕 پیغام خوش‌آمدگویی - فقط بار اول بعد از لاگین
+    welcome_message = None
+    if 'dashboard_welcome_shown' not in request.session:
+        welcome_message = """
+        دوست عزیز! 👋
+
+        هر ماه، چهار تا آزمون رو توی سایت براتون بارگذاری می‌کنیم. 
+        یادتون باشه که این آزمون‌ها فقط تا آخر ماه فعال هستن و بعدش دیگه از دسترس خارج می‌شن.
+
+        پس حتماً حواستون به تقویمتون باشه که این فرصت‌های عالی رو از دست ندین! 😉
+
+        یه رقابت دوستانه با بقیه کاربران در انتظارتونه. 
+        خودتون رو نشون بدید و حسابی لذت ببرید!
+
+        منتظر حضورتون هستیم! ✨
+        """
+        request.session['dashboard_welcome_shown'] = True  # فلگ برای بار بعدی
+
     # دریافت اطلاعات اشتراک کاربر
     subscription = getattr(request.user, 'subscription', None)
-    subscription_status = "-"  # مقدار پیش‌فرض
-    subscription_end = "-"    # مقدار پیش‌فرض
+    subscription_status = "اشتراک ندارید"  
+    subscription_end = None    
 
     if subscription:
-        # فرض می‌کنیم متد check_status() وضعیت اشتراک را به‌روز می‌کند
-        # و attributeهایی مانند 'status' و 'end_date' را در دسترس قرار می‌دهد
         subscription.check_status()
         subscription_status = subscription.status if hasattr(subscription, 'status') else "-"
-        # فرض بر این است که end_date یک شیء تاریخ یا datetime است
-        # اگر فرمت آن نیاز به تغییر دارد، اینجا اصلاح شود
         if hasattr(subscription, 'end_date') and subscription.end_date:
-            # مثال: فرمت‌بندی تاریخ به صورت YYYY-MM-DD
-            # subscription_end = subscription.end_date.strftime('%Y-%m-%d')
-            # یا فقط نمایش مستقیم اگر فرمت مناسب است
             subscription_end = subscription.end_date
         else:
-            subscription_end = "-" # اگر تاریخ پایان وجود ندارد
+            subscription_end = None
 
     # رتبه کاربر
     user_rank_data = get_user_rank(request.user)
 
     # نتایج آزمون‌ها
-    quizzes = Quiz.objects.prefetch_related('questions')
+    quizzes = Quiz.objects.prefetch_related('questions').select_related()
     attempts = {a.quiz_id: a for a in QuizAttempt.objects.filter(user=request.user, is_completed=True)}
 
     quiz_results = []
@@ -85,20 +97,23 @@ def dashboard_view(request):
             'correct_answers': correct,
             'total_questions': total,
             'percentage': percent,
-            # این وضعیت را می‌توان کمی واضح‌تر کرد
-            'status': f"{'گذرانده شده' if attempt else 'آزمون داده نشده'} – {percent}%"
+            'status': f"{'گذرانده شده' if attempt else 'آزمون داده نشده'}",
+            'attempted': bool(attempt),
+            'is_active': quiz.is_active
         })
+    
+    subscription_end_persian = persian_date(subscription_end)
 
-    # ارسال متغیرهای جدید به template
     return render(request, 'accounts/dashboard.html', {
+        'welcome_message': welcome_message,
         'subscription_status': subscription_status,
         'subscription_end': subscription_end,
         'quiz_results': quiz_results,
         'user_rank': user_rank_data,
-        # 'subscription': subscription, # اگر خود شیء subscription هم لازم است، آن را هم نگه دارید
+        'subscription_end_persian': subscription_end_persian,
     })
+    
 # Logout view: خروج کاربر
-
 @login_required
 def logout_view(request):
     logout(request)
@@ -180,7 +195,8 @@ def leaderboard_view(request):
     # 1. کوئری برای محاسبه مجموع امتیازات فقط برای QuizAttempt های مربوط به Quiz های پریمیوم
     leaderboard_data = QuizAttempt.objects.filter(
         is_completed=True,
-        quiz__is_premium=True  # <-- این شرط فقط آزمون های پرمیوم را فیلتر می کند
+        quiz__is_premium=True,  # <-- این شرط فقط آزمون های پرمیوم را فیلتر می کند
+        quiz__is_active=True 
     ).select_related('user').values(
         'user_id', 
         'user__username'

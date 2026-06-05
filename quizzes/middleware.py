@@ -1,39 +1,36 @@
-import uuid
-from datetime import date, timedelta
+import socket
 from django.utils import timezone
-from .models import Visitor 
+from django.http import HttpResponse
+from .models import VisitorStats, IPVisit
 
-class UniqueVisitorMiddleware:
+class VisitorTrackingMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
-        visitor_id = request.COOKIES.get('visitor_id')
-        today = timezone.now().date()
-
+        ip = self.get_client_ip(request)
         
-        if not visitor_id:
-            visitor_id = str(uuid.uuid4())
+        if request.path in ['/', '/home/']:
+            today = timezone.now().date()
             
-            response = self.get_response(request)
-           
-            response.set_cookie('visitor_id', visitor_id, max_age=60*60*24*365, httponly=True, samesite='Lax')
-        else:
+            # فقط unique IP track کن
+            ip_visit, created = IPVisit.objects.get_or_create(
+                ip_address=ip,
+                date=today
+            )
             
-            response = self.get_response(request)
-
+            # فقط unique visitors آپدیت کن (visits_today حذف شد)
+            stats, _ = VisitorStats.objects.get_or_create(date=today)
+            stats.unique_visitors_today = IPVisit.objects.filter(date=today).count()
+            stats.save()
         
-        try:
-          
-            last_visit = Visitor.objects.filter(visitor_id=visitor_id, visit_time__date=today).first()
-
-            
-            if not last_visit:
-                Visitor.objects.create(visitor_id=visitor_id, visit_time=timezone.now())
-        except Exception as e:
-            
-            print(f"Error saving visitor: {e}")
-
-       
-        request.visitor_id = visitor_id
+        response = self.get_response(request)
         return response
+    
+    def get_client_ip(self, request):
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+        return ip.strip()

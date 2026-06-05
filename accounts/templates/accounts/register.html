@@ -1,148 +1,158 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
+    <link rel="shortcut icon" href="{% static 'image/logoo.png' %}" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ثبت‌نام کهکشانی | AR TEST</title>
-    <style>
-        @import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css');
-        
+    <title>ثبت‌نام</title>
+
+<style>
+
+        :root {
+            --bg-primary: #0a0a1f;
+            --bg-gradient: radial-gradient(ellipse at center, #0a0a1f 0%, #000 70%);
+            --glass-bg: rgba(156,39,176,0.18);
+            --border-glass: rgba(255,255,255,0.2);
+            --text-primary: #fff;
+            --text-secondary: rgba(255,255,255,0.92);
+            --accent-primary: #9c27b0;
+            --accent-secondary: #e91e63;
+            --accent-glow: #ff5722;
+            --error-bg: rgba(244,67,54,0.25);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Vazir', Arial, sans-serif;
             min-height: 100vh;
-            background: radial-gradient(ellipse at center, #0a0a1f 0%, #000 70%);
+            background: var(--bg-gradient);
             position: relative;
             overflow-x: hidden;
         }
 
-        /* 🌌 پس‌زمینه */
         .nebula-bg {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 0;
+            inset: 0;
             background: 
-                radial-gradient(circle at 20% 80%, rgba(120,119,198,0.4) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255,119,198,0.3) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(120,219,255,0.2) 0%, transparent 50%);
+                radial-gradient(circle at 20% 80%, rgba(120,119,198,0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,119,198,0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120,219,255,0.15) 0%, transparent 50%);
+            z-index: 1;
         }
 
-        /* ⭐ ذرات */
         .particles {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 2; /* بالاتر */
+            inset: 0;
+            z-index: 2;
             pointer-events: none;
         }
 
         .particle {
             position: absolute;
-            background: radial-gradient(circle, #9c27b0, transparent);
+            width: 8px; height: 8px;
+            background: radial-gradient(circle, var(--accent-primary), transparent);
             border-radius: 50%;
             animation: float 20s infinite linear;
         }
 
-        .particle:nth-child(1) { width: 8px; height: 8px; top: 10%; left: 10%; animation-delay: 0s; }
-        .particle:nth-child(2) { width: 12px; height: 12px; top: 60%; right: 15%; animation-delay: 5s; }
-        .particle:nth-child(3) { width: 6px; height: 6px; top: 80%; left: 70%; animation-delay: 8s; }
-        .particle:nth-child(4) { width: 10px; height: 10px; top: 30%; right: 60%; animation-delay: 12s; }
-
-        @keyframes float {
-            0% { transform: translateY(100vh) scale(0); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-50px) scale(1.2); opacity: 0; }
+        .particle:nth-child(2) { 
+            width: 12px; height: 12px; 
+            top: 60%; right: 15%; 
+            animation-delay: 5s; 
+        }
+        .particle:nth-child(3) { 
+            width: 6px; height: 6px; 
+            top: 80%; left: 70%; 
+            animation-delay: 8s; 
+        }
+        .particle:nth-child(4) { 
+            width: 10px; height: 10px; 
+            top: 30%; right: 60%; 
+            animation-delay: 12s; 
         }
 
-        /* 🔥 لوگو - z-index بالاتر + بالاتر */
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10%, 90% { opacity: 1; }
+        }
+
+        /* 🔥 لوگو - بالاتر و جدا از فرم */
         .neon-title {
-            position: absolute;
-            top: 15px; /* بالاتر */
+            position: fixed; /* تغییر از absolute به fixed */
+            top: 25px; /* بالاتر */
             left: 50%;
             transform: translateX(-50%);
-            z-index: 30; /* خیلی بالاتر ✅ */
-            font-size: clamp(1.6rem, 5vw, 3.2rem);
+            z-index: 40; /* بالاتر */
+            font-size: clamp(1.8rem, 5vw, 3.5rem); /* کمی بزرگ‌تر */
             font-weight: 900;
-            background: linear-gradient(135deg, #9c27b0, #e91e63, #ff5722);
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary), var(--accent-glow));
             background-size: 300% 300%;
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             background-clip: text;
+            -webkit-text-fill-color: transparent;
             animation: gradientFlow 8s ease infinite;
-            filter: drop-shadow(0 0 20px rgba(156,39,176,0.8));
-            text-decoration: none; /* لینک بدون زیرخط */
-            display: block;
+            filter: drop-shadow(0 0 25px rgba(156,39,176,0.7));
+            text-decoration: none;
         }
 
         @keyframes gradientFlow {
-            0% { background-position: 0% 50%; }
+            0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
         }
 
-        /* کانتینر */
+        /* فرم - فاصله بیشتر از بالا */
         .register-container {
             position: relative;
-            z-index: 25; /* کمتر از لوگو */
+            z-index: 25;
             max-width: 480px;
             width: 90%;
-            margin: 120px auto 50px; /* فاصله بیشتر از بالا */
+            margin: 180px auto 50px; /* 180px فاصله از بالا ✅ */
             padding: 40px 30px;
-            background: rgba(156,39,176,0.18);
-            backdrop-filter: blur(25px);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
             border-radius: 25px;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid var(--border-glass);
             box-shadow: 
-                0 30px 80px rgba(0,0,0,0.85),
-                0 0 50px rgba(156,39,176,0.4);
-            color: #fff;
+                0 30px 80px rgba(0,0,0,0.8),
+                0 0 40px rgba(156,39,176,0.3);
+            color: var(--text-primary);
             text-align: center;
-            animation: slideUp 1.5s ease-out;
+            animation: slideUp 1s ease-out;
         }
 
         @keyframes slideUp {
-            0% { opacity: 0; transform: translateY(40px); }
-            100% { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* حلقه */
         .register-container::before {
             content: '';
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 280px;
-            height: 280px;
-            border: 1px solid rgba(255,255,255,0.1);
+            inset: 0;
+            margin: auto;
+            width: 280px; height: 280px;
+            border: 1px solid var(--border-glass);
             border-radius: 50%;
-            transform: translate(-50%, -50%);
             animation: rotateRing 12s linear infinite;
-            z-index: 0;
         }
 
-        .register-container > * {
-            position: relative;
-            z-index: 2;
-        }
+        .register-container > * { position: relative; z-index: 2; }
 
         @keyframes rotateRing {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
+            to { transform: rotate(360deg); }
         }
 
         .register-container h2 {
             font-size: clamp(1.8rem, 4vw, 2.3rem);
             margin-bottom: 28px;
-            background: linear-gradient(45deg, #fff, #e91e63);
+            background: linear-gradient(45deg, var(--text-primary), var(--accent-secondary));
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        /* فیلدها */
         .form-field {
             margin-bottom: 20px;
         }
@@ -150,28 +160,27 @@
         .form-field label {
             display: block;
             margin-bottom: 8px;
-            color: rgba(255,255,255,0.92);
+            color: var(--text-secondary);
             font-weight: 600;
             font-size: 0.95rem;
         }
 
         .form-field input {
-            width: 100% !important;
+            width: 100%;
             padding: 16px 20px;
-            border: 2px solid rgba(255,255,255,0.25);
+            border: 2px solid var(--border-glass);
             border-radius: 18px;
-            background: rgba(255,255,255,0.08);
-            backdrop-filter: blur(15px);
-            color: #fff;
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(12px);
+            color: var(--text-primary);
             font-size: 1rem;
-            transition: all 0.4s ease;
             font-family: inherit;
+            transition: all 0.3s ease;
         }
 
         .form-field input:focus {
-            border-color: #e91e63;
-            box-shadow: 0 0 25px rgba(233,30,99,0.5);
-            transform: translateY(-2px);
+            border-color: var(--accent-secondary);
+            box-shadow: 0 0 20px rgba(233,30,99,0.4);
             outline: none;
         }
 
@@ -179,109 +188,90 @@
             color: rgba(255,255,255,0.4);
         }
 
-        /* دکمه */
         .register-container button {
             width: 100%;
             padding: 20px;
-            background: linear-gradient(135deg, #9c27b0, #e91e63, #ff5722);
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary), var(--accent-glow));
             border: none;
             border-radius: 22px;
-            color: #fff;
+            color: var(--text-primary);
             font-size: 1.2rem;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.5s ease;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 15px 40px rgba(156,39,176,0.5);
             font-family: inherit;
             margin-top: 10px;
+            transition: all 0.4s ease;
+            box-shadow: 0 12px 30px rgba(156,39,176,0.4);
+            position: relative;
+            overflow: hidden;
         }
 
         .register-container button:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 25px 50px rgba(156,39,176,0.7);
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(156,39,176,0.6);
         }
 
-        /* لینک */
         .login-link {
             margin-top: 25px;
             padding-top: 20px;
-            border-top: 1px solid rgba(255,255,255,0.15);
+            border-top: 1px solid var(--border-glass);
         }
 
         .login-link p {
-            color: rgba(255,255,255,0.9);
+            color: var(--text-secondary);
             font-size: 1rem;
         }
 
         .login-link a {
-            color: #ff5722;
+            color: var(--accent-glow);
             text-decoration: none;
             font-weight: 700;
-            transition: all 0.4s ease;
+            transition: all 0.3s ease;
         }
 
         .login-link a:hover {
             color: #ffd93d;
-            text-shadow: 0 0 20px rgba(255,217,61,0.8);
+            text-shadow: 0 0 15px rgba(255,217,61,0.7);
         }
 
-        /* خطاها */
         .errorlist {
-            background: rgba(244,67,54,0.25);
-            border: 1px solid rgba(244,67,54,0.5);
+            background: var(--error-bg);
+            border: 1px solid rgba(244,67,54,0.4);
             color: #ffcccb;
-            padding: 15px;
-            border-radius: 15px;
-            margin: 10px 0 20px 0;
-            animation: shake 0.5s ease;
+            padding: 12px;
+            border-radius: 12px;
+            margin: 10px 0 20px;
+            animation: shake 0.4s ease;
         }
 
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
         }
 
         /* موبایل */
         @media (max-width: 768px) {
-            body {
-                overflow-y: auto;
-                padding: 10px 0;
-            }
-            
-            .neon-title {
-                top: 10px; /* بالاتر در موبایل ✅ */
+            .neon-title { 
+                top: 15px; 
                 font-size: clamp(1.4rem, 7vw, 2.2rem);
             }
-            
             .register-container {
-                margin: 60px auto 30px !important;
-                max-width: 95%;
+                margin: 100px auto 30px; /* کمتر در موبایل */
                 width: 95%;
-                padding: 35px 25px;
-            }
-            
-            .form-field input {
-                padding: 15px 18px;
-                font-size: 16px;
+                padding: 30px 25px;
             }
         }
 
         @media (max-width: 480px) {
-            .register-container {
-                padding: 30px 20px;
-                margin: 50px auto 20px;
+            .register-container { 
+                margin: 80px auto 20px; 
+                padding: 25px 20px; 
             }
         }
     </style>
 </head>
 <body>
-    <!-- پس‌زمینه -->
     <div class="nebula-bg"></div>
-    
-    <!-- ذرات -->
     <div class="particles">
         <div class="particle"></div>
         <div class="particle"></div>
@@ -289,13 +279,10 @@
         <div class="particle"></div>
     </div>
 
-    <!-- لوگو - z-index 30 -->
     <a href="{% url 'home' %}" class="neon-title">AR TEST</a>
 
-    <!-- فرم - z-index 25 -->
     <div class="register-container">
         <h2>💜 ستاره جدید بسازید</h2>
-
         <form method="post">
             {% csrf_token %}
             {% for field in form %}
@@ -313,7 +300,6 @@
             {% endfor %}
             <button type="submit">🌟 ثبت‌نام در کهکشان</button>
         </form>
-
         <div class="login-link">
             <p>از قبل ستاره دارید؟ <a href="{% url 'accounts:login' %}">ورود کنید 🔥</a></p>
         </div>

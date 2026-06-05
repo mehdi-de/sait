@@ -351,16 +351,126 @@ table td {
         padding: 25px;
     }
 }
+/* برای جدول آزمون ها قسمت فعالیت*/
+.status-active {
+    color: #4caf50;
+    font-weight: bold;
+}
+.status-inactive {
+    color: #f44336;
+    font-weight: bold;
+}
 
+.welcome-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+}
+
+.welcome-content {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 40px;
+    border-radius: 20px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    animation: popupSlide 0.5s ease-out;
+}
+
+@keyframes popupSlide {
+    from { opacity: 0; transform: scale(0.8) translateY(-20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #fff;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+    background: rgba(255,255,255,0.2);
+    transform: rotate(90deg);
+}
+
+.welcome-text {
+    color: #fff;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 25px;
+    text-align: center;
+    direction: rtl;
+}
+
+.welcome-ok {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(45deg, #ff6b6b, #feca57);
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.welcome-ok:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(255,107,107,0.4);
+}
+
+/* موبایل */
+@media (max-width: 768px) {
+    .welcome-content {
+        padding: 30px 20px;
+        margin: 20px;
+    }
+    .welcome-text {
+        font-size: 1rem;
+    }
+}
 </style>
 
+{% if welcome_message %}
+<div class="welcome-popup">
+    <div class="welcome-content">
+        <button class="close-btn" onclick="this.parentElement.parentElement.style.display='none'">×</button>
+        <div class="welcome-text">{{ welcome_message|linebreaks }}</div>
+        <button class="welcome-ok" onclick="this.parentElement.parentElement.style.display='none'">باشه، فهمیدم! ✨</button>
+    </div>
+</div>
+{% endif %}
 <div class="dashboard-container">
 
     <div class="dashboard-header">
-        <h2>🚀 داشبورد شما</h2>
+        <h2> 🚀 داشبورد شما</h2>
         <div class="user-box">
-            {{ request.user.username }}
-
+            {{ request.user.username  }}
+ 
             <!-- دکمه خروج -->
             <form action="{% url 'accounts:logout' %}" method="post" style="margin:0;">
                 {% csrf_token %}
@@ -376,10 +486,10 @@ table td {
             <p>{{ subscription_status }}</p>
         </div>
 
-        <div class="stat-card">
-            <h3>تاریخ پایان</h3>
-            <p>{% if subscription_end %}{{ subscription_end }}{% else %}-{% endif %}</p>
-        </div>
+    <div class="stat-card">
+        <h3>تاریخ پایان</h3>
+        <p>{{ subscription_end_persian }}</p>
+    </div>
 
         <div class="stat-card">
             <h3>تعداد آزمون‌ها</h3>
@@ -388,40 +498,48 @@ table td {
     </div>
 
     <!-- جدول آزمون‌ها -->
-    <h3 style="margin-bottom:20px;">📚 آزمون‌های شما</h3>
+<table>
+    <tr>
+        <th>عنوان</th>
+        <th>نوع</th>
+        <th>وضعیت</th>
+        <th>فعالیت</th>  <!-- ستون جدید -->
+        <th>عملیات</th>
+    </tr>
 
-    <table>
-        <tr>
-            <th>عنوان</th>
-            <th>نوع</th>
-            <th>وضعیت</th>
-            <th>عملیات</th>
-        </tr>
-
-        {% for result in quiz_results %}
-<tr>
-    <td>{{ result.quiz.title }}</td>
-    <td>
-        {% if result.quiz.is_premium %}
-            🔒 پرمیوم
-        {% else %}
-            🆓 رایگان
-        {% endif %}
-    </td>
-    <td>{{ result.status }}</td>
-    <td>
-        {# ✅ اینجا از result.attempted استفاده می‌کنیم #}
-        {% if result.quiz.is_premium and result.attempted %}
-            <span class="start-quiz-btn disabled-btn">انجام شده</span>
-        {% else %}
-            <a href="{% url 'quiz_list' %}" class="start-quiz-btn">
-                شروع آزمون
-            </a>
-        {% endif %}
-    </td>
-</tr>
-{% endfor %}
-    </table>
+    {% for result in quiz_results %}
+    <tr>
+        <td>{{ result.quiz.title }}</td>
+        <td>
+            {% if result.quiz.is_premium %}
+                🔒 پرمیوم
+            {% else %}
+                🆓 رایگان
+            {% endif %}
+        </td>
+        <td>{{ result.status }}</td>
+        <td>
+            {% if result.quiz.is_active %}
+                <span class="status-active">🟢 فعال</span>
+            {% else %}
+                <span class="status-inactive">🔴 غیرفعال</span>
+            {% endif %}
+        </td>
+        <td>
+            {% if result.quiz.is_premium and result.attempted %}
+                <span class="start-quiz-btn disabled-btn">انجام شده</span>
+            {% elif not result.quiz.is_active %}
+                <span class="start-quiz-btn disabled-btn">غیرفعال</span>
+            {% else %}
+                <a href="{% url 'quiz_list' %}" class="start-quiz-btn">
+                    شروع آزمون
+                </a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+    
 <!-- قسمت رتبه بندی  -->
  {% if user_rank %}
 <div class="ranking-summary-card">
@@ -442,7 +560,7 @@ table td {
         </p>
 
         <p>مجموع امتیازات:  
-            <strong class="user-rank">{{ user_rank.total_score }}</strong>
+            <strong class="user-rank">{{ user_rank.total_score|floatformat:2 }}</strong>
         </p>
 
         <p>میانگین نمره:  

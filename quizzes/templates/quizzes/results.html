@@ -1,116 +1,60 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
-<style>
-    .result-container {
-        max-width: 600px;
-        margin: 40px auto;
-        padding: 30px;
-        background: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        text-align: center;
-        font-family: sans-serif;
-    }
 
-    .result-container h1 {
-        margin-bottom: 20px;
-        color: #333;
-    }
 
-    .score-text {
-        font-size: 18px;
-        margin-bottom: 15px;
-        color: #555;
-    }
-
-    .percentage {
-        font-size: 42px;
-        font-weight: bold;
-        color: #4CAF50;
-        margin: 20px 0;
-    }
-
-    .progress-bar {
-        width: 100%;
-        height: 28px;
-        background-color: #eee;
-        border-radius: 20px;
-        overflow: hidden;
-        margin: 20px 0;
-    }
-
-    .progress-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #4CAF50, #81C784);
-        text-align: center;
-        line-height: 28px;
-        color: #fff;
-        font-weight: bold;
-        transition: width 0.6s ease;
-    }
-
-    .home-btn {
-        display: inline-block;
-        margin-top: 25px;
-        padding: 10px 25px;
-        background-color: #2196F3;
-        color: #fff;
-        border-radius: 8px;
-        text-decoration: none;
-        transition: background-color 0.3s;
-    }
-
-    .home-btn:hover {
-        background-color: #1976D2;
-    }
-</style>
-
-<div class="result-container">
-
-    <h1>🎯 نتایج آزمون شما</h1>
-
-    <p class="score-text">
-        شما از <strong>{{ total_questions }}</strong> سوال، 
-        <strong>{{ correct_answers }}</strong> سوال را درست پاسخ دادید.
-    </p>
-
-    <div class="percentage">
-        {{ percentage|floatformat:0 }}%
+<div class="print-report">
+    <div class="header">
+        <h1>📄 کارنامه آزمون {{ quiz.title }}</h1>
+        <p> آزمون های  کنکوری در سایت AR TEST</p>
+        <!--<p>فرمول: {{ unit_score }}% × {{ correct_count }} - ({{ unit_score }}/3)% × {{ wrong_count }} = {{ net_score }}%</p>-->
     </div>
 
+    <div class="score-grid">
+        <!-- همه کارت‌های قبلی -->
+        <div class="score-card">
+            <div class="score-label">تعداد سوالات</div>
+            <div class="score-value">{{ total_questions }}</div>
+        </div>
 
-            {{ percentage|floatformat:0 }}%
+        <div class="score-card">
+            <div class="score-label">تعداد جواب های صحیح</div>
+            <div class="score-value">{{ correct_count }}</div>
+        </div>
+        <div class="score-card">
+            <div class="score-label">تعداد جواب های اشتباه </div>
+            <div class="score-value" style="color: #f39c12;">{{ wrong_count }}</div>
+        </div>
+        <div class="score-card">
+            <div class="score-label">تعدادسوال های بدون جواب</div>
+            <div class="score-value" style="color: #95a5a6;">{{ unanswered_count }}</div>
+        </div>
+        <div class="score-card total-score">
+            <div class="score-label">نمره مثبت</div>
+            <div class="score-value" style="color: #27ae60;">{{ positive_score }}%</div>
+        </div>
+        <div class="score-card total-score">
+            <div class="score-label">نمره منفی</div>
+            <div class="score-value" style="color: #e74c3c;">{{ negative_score }}%</div>
+        </div>
+        <div class="score-card total-score">
+            <div class="score-label">نهایی</div>
+            <div class="score-value">{{ net_score }}%</div>
         </div>
     </div>
 
-    {% if user_answers %}
-        <h3>جزئیات پاسخ‌ها</h3>
-        <table class="answers-table">
-            <tr>
-                <th>سوال</th>
-                <th>پاسخ شما</th>
-                <th>پاسخ درست</th>
-                <th>وضعیت</th>
-            </tr>
-            {% for ans in user_answers %}
-            <tr>
-                <td>{{ ans.question_text }}</td>
-                <td>{{ ans.selected_choice_text }}</td>
-                <td>{{ ans.correct_choice_text }}</td>
-                <td>
-                    {% if ans.is_correct %}
-                        <span class="correct">✅ صحیح</span>
-                    {% else %}
-                        <span class="wrong">❌ غلط</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-    {% endif %}
+    <!--<div class="rank-badge" style="font-size: 16px;">
+        🎯 درصد نهایی: {{ net_score }}% ({{ positive_score }} - {{ negative_score }})
+    </div>-->
 
-    <a href="{% url 'accounts:dashboard' %}" class="home-btn">🏠 بازگشت به خانه</a>
-
+    <!-- ✅ دکمه‌های جدید -->
+    <div class="btn-group">
+        <a href="javascript:window.print()" class="btn btn-primary">🖨️ چاپ کارنامه</a>
+        <a href="{% url 'quiz_analysis' quiz.id %}" class="btn btn-success">📋 مرور آزمون</a>
+        <a href="{% url 'quiz_list' %}" class="btn btn-primary">🔄 آزمون جدید</a>
+        <a href="{% url 'accounts:dashboard' %}" class="btn btn-primary">🏠 داشبورد</a>
+    </div>
 </div>
+
+
 {% endblock %}

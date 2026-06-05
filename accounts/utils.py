@@ -1,15 +1,15 @@
 from django.db.models import Sum, Count
 from quizzes.models import QuizAttempt
+from jdatetime import datetime as jdatetime  # 🔥 اضافه
 
 def get_user_rank(user):
     """
     رتبه، مجموع و میانگین نمره کاربر را برمی‌گرداند.
-    اگر کاربر هیچ آزمون پریمیومی نداده باشد، None برمی‌گردد.
     """
-
     leaderboard_data = QuizAttempt.objects.filter(
         is_completed=True,
-        quiz__is_premium=True
+        quiz__is_premium=True,
+        quiz__is_active=True,
     ).values(
         'user_id'
     ).annotate(
@@ -22,7 +22,6 @@ def get_user_rank(user):
 
     for entry in leaderboard_data:
         score = entry['total_score']
-
         if score != last_score:
             rank += 1
 
@@ -34,7 +33,30 @@ def get_user_rank(user):
                 'average': round(avg_score, 2),
                 'quizzes_taken': entry['quizzes_taken']
             }
-
         last_score = score
 
-    return None
+    return None  # 🔥 بدون تغییر
+
+# 🔥 توابع تاریخ ایرانی - جدید!
+def persian_date(dt):
+    """تبدیل به شمسی: 1405/02/14"""
+    if not dt:
+        return "-"
+    jdate = jdatetime.fromgregorian(datetime=dt)
+    return jdate.strftime("%Y/%m/%d")
+
+def persian_full_date(dt):
+    """کامل: 1405/02/14 - 15:56"""
+    if not dt:
+        return "-"
+    jdate = jdatetime.fromgregorian(datetime=dt)
+    return f"{jdate.strftime('%Y/%m/%d')} - {dt.strftime('%H:%M')}"
+
+def persian_short_date(dt):
+    """کوتاه: 14 اردیبهشت"""
+    if not dt:
+        return "-"
+    jdate = jdatetime.fromgregorian(datetime=dt)
+    months = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
+              'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند']
+    return f"{jdate.day} {months[jdate.month-1]}"

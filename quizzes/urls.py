@@ -37,4 +37,7 @@ urlpatterns = [
     
     # مسیر بازگشت از زرین‌پال (Callback)
     path('payment/verify/', views.verify_payment_view, name='verify_payment'),
+
+
+    path('quiz/<int:quiz_id>/analysis/', views.quiz_analysis_view, name='quiz_analysis'),
 ]

@@ -94,3 +94,5 @@ class Subscription(models.Model):
     class Meta:
         verbose_name = "اشتراک کاربر"
         verbose_name_plural = "اشتراک‌های کاربران"
+
+

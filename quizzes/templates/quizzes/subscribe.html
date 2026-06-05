@@ -1,441 +1,686 @@
 {% extends "base.html" %}
-{% block content %}
+{% load static %}
 {% load humanize %}
 
+{% block content %}
+<div class="subscription-page">
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="bg-particle p1"></div>
+        <div class="bg-particle p2"></div>
+        <div class="bg-particle p3"></div>
+        <div class="bg-particle p4"></div>
+    </div>
+
+    <div class="container">
+        <!-- Hero Header -->
+        <div class="hero">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="title-glow">💎</span>
+                    پلن‌های <span class="gradient-text">ویژه</span>
+                    <span class="title-glow">💎</span>
+                </h1>
+                <p class="hero-desc">دسترسی کامل • آزمون‌های پرمیوم • آمار حرفه‌ای • رتبه‌بندی زنده</p>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message-item message-{{ message.tags }} pulse-animation">
+                <span class="msg-icon">📢</span>
+                <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- User Status -->
+        {% if user_status %}
+            {% if user_status.is_active %}
+            <div class="status-card status-active glass-effect">
+                <div class="status-header">
+                    <div class="status-icon active-icon">✅</div>
+                    <h3>اشتراک <strong>{{ user_status.plan.name }}</strong> فعال</h3>
+                </div>
+                <div class="status-details">
+                    <div class="detail-row">
+                        <span>📅 انقضا:</span>
+                        <strong>{{ user_status.end_date|date:"Y/m/d H:i" }}</strong>
+                    </div>
+
+                </div>
+            </div>
+            {% else %}
+            <div class="status-card status-expired glass-effect">
+                <div class="status-header">
+                    <div class="status-icon expired-icon">⚠️</div>
+                    <h3>اشتراک منقضی</h3>
+                </div>
+                <div class="status-details">
+                    <p>زمان تمدید اشتراک شماست 🚀</p>
+                </div>
+            </div>
+            {% endif %}
+        {% else %}
+        <div class="status-card status-new glass-effect">
+            <div class="status-header">
+                <div class="status-icon new-icon">✨</div>
+                <h3>خوش آمدید!</h3>
+            </div>
+            <div class="status-details">
+                <p>اولین اشتراک خود را فعال کنید</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">{{ available_plans.count }}</div>
+                <div class="stat-label">پلن موجود</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">
+                    {% if user_status %}{{ user_status.status }}{% else %}فعال نشده{% endif %}
+                </div>
+                <div class="stat-label">وضعیت</div>
+            </div>
+        </div>
+
+        <!-- Plans -->
+        {% if available_plans %}
+        <div class="plans-wrapper">
+            <div class="plans-grid">
+                {% for plan in available_plans %}
+                <div class="plan-card glass-effect 
+                    {% if forloop.counter == available_plans|length|add:-1 %}plan-premium{% endif %}
+                    {% if user_status and user_status.plan.id == plan.id and user_status.is_active %}plan-active{% endif %}">
+                    
+                    <div class="plan-badge premium-badge">
+                        {% if forloop.counter == available_plans|length|add:-1 %}🔥 محبوب{% endif %}
+                    </div>
+                    
+                    <div class="plan-header">
+                        <div class="plan-emoji">🎯</div>
+                        <h2 class="plan-name">{{ plan.name }}</h2>
+                    </div>
+
+                    <div class="plan-price-section">
+                        <div class="price-main">
+                            <span class="price-number">{{ plan.price|floatformat:0|intcomma }}</span>
+                            <span class="price-unit">تومان</span>
+                        </div>
+                    </div>
+
+                    <div class="plan-features">
+                        {% if user_status and user_status.plan.id == plan.id and user_status.is_active %}
+                        <div class="feature-item active-feature">
+                            <span>⏰</span>
+                            <span>فعال تا {{ user_status.end_date|date:"Y/m/d" }}</span>
+                        </div>
+                        {% else %}
+                        <div class="feature-item">
+                            <span>⏰</span>
+                            <span>{{ plan.duration_days }} روز اعتبار</span>
+                        </div>
+                        {% endif %}
+                        <div class="feature-item"><span>🌟</span> آزمون‌های پرمیوم</div>
+                        <div class="feature-item"><span>📊</span> آمار کامل</div>
+                        <div class="feature-item"><span>🏆</span> رتبه‌بندی</div>
+                        <div class="feature-item"><span>⚡</span> سرعت بالا</div>
+                    </div>
+
+                    {% if user_status and user_status.plan.id == plan.id and user_status.is_active %}
+                        <div class="plan-action">
+                            <button class="action-btn active-btn" disabled>
+                                <span>✅</span> فعال
+                            </button>
+                        </div>
+                    {% else %}
+                        <form method="post" action="/purchase/{{ plan.id }}/" class="plan-action">
+                            {% csrf_token %}
+                            <button type="submit" class="action-btn gradient-btn pulse-hover">
+                                <span>🚀</span>
+                                <span>خرید {{ plan.price|floatformat:0|intcomma }} تومان</span>
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-plans">
+            <div class="empty-emoji">📭</div>
+            <h3>پلنی موجود نیست</h3>
+            <p>به زودی اضافه می‌شود ✨</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
 
 <style>
-/* 🔥 استایل‌های فوق‌العاده حرفه‌ای - صد% تلاش! 🔥 */
-* {
-    font-family: 'Vazir', 'Segoe UI', Tahoma, sans-serif !important;
+/* ========== VARIABLES ========== */
+:root {
+    --primary: #00f0ff;
+    --secondary: #ff03ab;
+    --dark-bg: #0a0f23;
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --text-light: #e8f4ff;
+    --text-muted: #8899bb;
+    --glass-border: rgba(100, 150, 255, 0.15);
+    --gold: #ffd700;
 }
 
-.subscription-hero {
-    max-width: 1400px;
-    margin: 40px auto;
-    padding: 50px;
-    background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(248,250,252,0.9));
-    border-radius: 30px;
-    box-shadow: 
-        0 30px 80px rgba(0,0,0,0.15),
-        0 0 0 1px rgba(255,255,255,0.8);
-    backdrop-filter: blur(25px);
+/* ========== PAGE BASE ========== */
+.subscription-page {
+    min-height: 100vh;
+    padding: 120px 0 60px;
+    background: var(--dark-bg);
     position: relative;
     overflow: hidden;
+    direction: rtl;
 }
 
-.subscription-hero::before {
-    content: '';
-    position: absolute;
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 2;
+}
+
+/* ========== BACKGROUND PARTICLES ========== */
+.bg-animation {
+    position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    height: 5px;
-    background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3, #54a0ff);
-    animation: gradientShift 3s ease infinite;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
 }
 
-@keyframes gradientShift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+.bg-particle {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.15;
+    animation: floatParticle 8s ease-in-out infinite alternate;
 }
 
-.page-title {
+.bg-particle.p1 {
+    width: 400px;
+    height: 400px;
+    background: var(--primary);
+    top: -100px;
+    left: -100px;
+}
+
+.bg-particle.p2 {
+    width: 300px;
+    height: 300px;
+    background: var(--secondary);
+    bottom: 10%;
+    right: -50px;
+    animation-delay: 2s;
+}
+
+.bg-particle.p3 {
+    width: 250px;
+    height: 250px;
+    background: var(--gold);
+    top: 50%;
+    left: 10%;
+    animation-delay: 4s;
+}
+
+.bg-particle.p4 {
+    width: 200px;
+    height: 200px;
+    background: #00ff88;
+    bottom: 5%;
+    right: 20%;
+    animation-delay: 6s;
+}
+
+@keyframes floatParticle {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(50px, -50px) scale(1.2); }
+}
+
+/* ========== HERO ========== */
+.hero {
     text-align: center;
     margin-bottom: 50px;
-    position: relative;
 }
 
-.page-title h2 {
-    font-size: 3.5rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+.hero-title {
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--text-light);
+    margin-bottom: 15px;
+}
+
+.title-glow {
+    display: inline-block;
+    animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.gradient-text {
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin: 0;
-    font-weight: 800;
+    -webkit-text-fill-color: transparent;
 }
 
-.page-title::after {
-    content: '💎✨ خرید اشتراک 💎✨';
-    display: block;
-    font-size: 1.3rem;
-    color: #7c3aed;
-    margin-top: 15px;
-    opacity: 0.8;
-    font-weight: 600;
+.hero-desc {
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.8;
 }
 
-/* پیام‌ها */
+/* ========== GLASS EFFECT ========== */
+.glass-effect {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+}
+
+/* ========== MESSAGES ========== */
 .messages {
     margin-bottom: 30px;
 }
 
 .message-item {
-    padding: 20px 25px;
-    border-radius: 20px;
-    margin-bottom: 15px;
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    border-radius: 15px;
+    padding: 16px 20px;
     display: flex;
     align-items: center;
-    gap: 15px;
-    font-weight: 600;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    animation: slideInUp 0.5s ease-out;
-    border-right: 5px solid;
+    gap: 12px;
+    color: var(--text-light);
+    margin-bottom: 10px;
+    animation: slideDown 0.5s ease;
 }
 
-@keyframes slideInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+@keyframes slideDown {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
-.message-item.success {
-    background: linear-gradient(135deg, #d4edda, #c3e6cb);
-    color: #155724;
-    border-right-color: #28a745;
-}
-
-.message-item.warning {
-    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
-    color: #856404;
-    border-right-color: #ffc107;
-}
-
-.message-item.success .btn {
-    background: #28a745;
-    color: white;
-    border: none;
-    padding: 8px 20px;
-    border-radius: 25px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.message-item.success .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(40,167,69,0.4);
-}
-
-/* پلن‌ها */
-.plans-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-    gap: 30px;
-    margin-top: 20px;
-}
-
-.subscription-card {
-    background: rgba(255,255,255,0.95);
-    border-radius: 25px;
-    padding: 40px 30px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 
-        0 20px 40px rgba(0,0,0,0.1),
-        0 0 0 1px rgba(255,255,255,0.5);
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255,255,255,0.2);
-}
-
-.subscription-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24);
-}
-
-.subscription-card:hover {
-    transform: translateY(-15px) scale(1.02);
-    box-shadow: 
-        0 40px 80px rgba(0,0,0,0.2),
-        0 0 0 1px rgba(255,255,255,0.8);
-}
-
-.subscription-card.popular {
-    background: linear-gradient(145deg, rgba(120,119,198,0.1), rgba(255,119,198,0.1));
-    border: 2px solid #8b5cf6;
-    transform: scale(1.05);
-}
-
-.subscription-card.popular::after {
-    content: '🔥 محبوب‌ترین';
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background: #ef4444;
-    color: white;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    box-shadow: 0 4px 15px rgba(239,68,68,0.4);
-}
-
-.plan-name {
-    font-size: 1.8rem;
-    font-weight: 800;
-    margin-bottom: 20px;
-    color: #1e293b;
-    position: relative;
-}
-
-.plan-price {
-    font-size: 4rem;
-    font-weight: 900;
-    background: linear-gradient(135deg, #8b5cf6, #ec4899);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin: 20px 0;
-    line-height: 1;
-}
-
-.plan-features {
-    list-style: none;
-    padding: 0;
-    margin: 30px 0;
-}
-
-.plan-features li {
-    padding: 12px 0;
-    font-size: 1.1rem;
-    color: #475569;
-    position: relative;
-    padding-right: 40px;
-}
-
-.plan-features li::before {
-    content: '✅';
-    position: absolute;
-    right: 0;
-    font-size: 1.2rem;
-}
-
-.plan-features li:last-child {
-    font-weight: 700;
-    color: #8b5cf6;
-    font-size: 1.15rem;
-}
-
-.purchase-btn {
-    width: 100%;
-    padding: 18px 40px;
-    border: none;
-    border-radius: 50px;
-    font-size: 1.2rem;
-    font-weight: 800;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.4s ease;
-    background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
-    color: white;
-    box-shadow: 0 12px 35px rgba(139,92,246,0.4);
-}
-
-.purchase-btn:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 45px rgba(139,92,246,0.6);
-}
-
-.purchase-btn:active {
-    transform: translateY(-2px);
-}
-
-.purchase-btn:disabled {
-    background: linear-gradient(135deg, #6b7280, #4b5563);
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: 0 8px 25px rgba(107,114,128,0.3);
-}
-
-.no-plans {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 80px 40px;
-    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-    border-radius: 25px;
-    color: #64748b;
+.msg-icon {
     font-size: 1.3rem;
 }
 
-.stats-bar {
+/* ========== STATUS CARDS ========== */
+.status-card {
+    padding: 25px 30px;
+    margin-bottom: 30px;
+}
+
+.status-header {
     display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.status-header h3 {
+    color: var(--text-light);
+    font-size: 1.3rem;
+    margin: 0;
+}
+
+.status-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    gap: 40px;
-    margin: 30px 0;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.status-active .status-icon {
+    background: rgba(0, 255, 136, 0.2);
+    border: 2px solid #00ff88;
+}
+
+.status-expired .status-icon {
+    background: rgba(255, 71, 107, 0.2);
+    border: 2px solid #ff416c;
+}
+
+.status-new .status-icon {
+    background: rgba(0, 240, 255, 0.2);
+    border: 2px solid var(--primary);
+}
+
+.status-details {
+    color: var(--text-muted);
+    padding-right: 65px;
+}
+
+.detail-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.detail-row strong {
+    color: var(--text-light);
+}
+
+/* ========== STATS GRID ========== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 50px;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 15px;
     padding: 25px;
-    background: rgba(139,92,246,0.1);
-    border-radius: 20px;
-}
-
-.stat-item {
     text-align: center;
+    transition: all 0.3s ease;
 }
 
-.stat-number {
+.stat-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary);
+    box-shadow: 0 10px 30px rgba(0, 240, 255, 0.1);
+}
+
+.stat-value {
     font-size: 2rem;
-    font-weight: 800;
-    color: #8b5cf6;
+    font-weight: 900;
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 5px;
 }
 
-/* ریسپانسیو */
-@media (max-width: 992px) {
+.stat-label {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* ========== PLANS GRID ========== */
+.plans-wrapper {
+    margin-bottom: 50px;
+}
+
+.plans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+}
+
+.plan-card {
+    padding: 35px 30px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+}
+
+.plan-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--primary);
+    box-shadow: 0 20px 60px rgba(0, 240, 255, 0.15);
+}
+
+/* Premium Card Highlight */
+.plan-premium {
+    border: 2px solid var(--gold);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.1);
+    transform: scale(1.05);
+}
+
+.plan-premium:hover {
+    box-shadow: 0 20px 60px rgba(255, 215, 0, 0.2);
+}
+
+.plan-active {
+    border: 2px solid #00ff88;
+}
+
+/* Badge */
+.plan-badge {
+    position: absolute;
+    top: 20px;
+    right: -35px;
+    background: linear-gradient(45deg, var(--gold), #ff8c00);
+    color: #000;
+    padding: 5px 40px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    transform: rotate(45deg);
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+}
+
+/* Header */
+.plan-header {
+    margin-bottom: 25px;
+}
+
+.plan-emoji {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.plan-name {
+    color: var(--text-light);
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin: 0;
+}
+
+/* Price */
+.plan-price-section {
+    margin-bottom: 25px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.price-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.price-number {
+    font-size: 3rem;
+    font-weight: 900;
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.price-unit {
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+
+/* Features */
+.plan-features {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 30px;
+    text-align: right;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    color: var(--text-light);
+    transform: translateX(-5px);
+}
+
+.feature-item span:first-child {
+    font-size: 1.2rem;
+}
+
+.active-feature {
+    color: #00ff88 !important;
+}
+
+/* Action Button */
+.plan-action {
+    margin-top: auto;
+}
+
+.action-btn {
+    width: 100%;
+    padding: 16px 24px;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.4s ease;
+    font-family: 'Vazir', sans-serif;
+}
+
+.gradient-btn {
+    background: linear-gradient(45deg, var(--primary), #0099ff);
+    color: #000;
+    box-shadow: 0 8px 25px rgba(0, 240, 255, 0.4);
+}
+
+.gradient-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(0, 240, 255, 0.6);
+}
+
+.active-btn {
+    background: rgba(0, 255, 136, 0.15);
+    color: #00ff88;
+    border: 2px solid #00ff88;
+    cursor: not-allowed;
+}
+
+.pulse-hover:hover {
+    animation: pulseBtn 0.6s ease;
+}
+
+@keyframes pulseBtn {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+}
+
+/* ========== EMPTY STATE ========== */
+.empty-plans {
+    text-align: center;
+    padding: 60px 20px;
+    background: var(--card-bg);
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+}
+
+.empty-emoji {
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+
+.empty-plans h3 {
+    color: var(--text-light);
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.empty-plans p {
+    color: var(--text-muted);
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .subscription-page {
+        padding: 100px 0 40px;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .hero-desc {
+        font-size: 1rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
     .plans-grid {
         grid-template-columns: 1fr;
-        gap: 25px;
     }
-    
-    .subscription-hero {
-        margin: 20px;
-        padding: 30px;
+
+    .plan-premium {
+        transform: none;
+    }
+
+    .plan-card {
+        padding: 25px 20px;
+    }
+
+    .price-number {
+        font-size: 2.5rem;
     }
 }
 
-@media (max-width: 768px) {
-    .page-title h2 {
-        font-size: 2.5rem;
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
     }
-    
-    .plan-price {
-        font-size: 3rem;
+
+    .status-card {
+        padding: 20px;
     }
-    
-    .stats-bar {
-        flex-direction: column;
-        gap: 20px;
-    }
-    
-    .message-item {
+
+    .status-header {
         flex-direction: column;
         text-align: center;
-        gap: 10px;
+    }
+
+    .status-details {
+        padding-right: 0;
+        text-align: center;
     }
 }
 </style>
-
-<div class="subscription-hero">
-    <!-- عنوان -->
-    <div class="page-title">
-        <h2>💎 پلن‌های اشتراک 💎</h2>
-    </div>
-
-    <!-- پیام‌ها -->
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li class="message-item alert alert-{{ message.tags }}">
-            <span>📢</span>
-            {{ message }}
-        </li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-
-    <!-- وضعیت فعلی -->
-    {# --- تغییر در این قسمت برای استفاده از user_status --- #}
-    {% if user_status and user_status.status == 'فعال' %}
-        <div class="message-item success">
-            <span>✅</span>
-            <strong>اشتراک فعال!</strong><br>
-            تاریخ انقضا: <strong>{{ user_status.end_date|date:"Y/m/d H:i" }}</strong>
-            <div style="margin-top: 15px;">
-                <a href="{% url 'manage_subscription' %}" class="btn">
-                    ⚙️ مدیریت اشتراک
-                </a>
-            </div>
-        </div>
-    {% elif user_status %}
-        <div class="message-item warning">
-            <span>⚠️</span>
-            <strong>اشتراک منقضی شده!</strong><br>
-            لطفاً پلن جدیدی انتخاب کنید 🚀
-        </div>
-    {% endif %}
-
-    <!-- آمار -->
-    {% if available_plans %}
-    <div class="stats-bar">
-        <div class="stat-item">
-            <div class="stat-number">{{ available_plans.count }}</div>
-            <div>پلن موجود</div>
-        </div>
-        <div class="stat-item">
-            {# --- این قسمت قبلاً درست شده بود --- #}
-            <div class="stat-number">{{ user_status.get_status_display|default:"ندارد" }}</div>
-            <div>وضعیت اشتراک</div>
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- پلن‌ها -->
-    {% if available_plans %}
-        <div class="plans-grid">
-            {% for plan in available_plans %}
-            {# --- اضافه شدن کلاس current-active-plan برای استایل دهی به پلن فعال کاربر --- #}
-            <div class="subscription-card {% if forloop.counter == available_plans|length|add:-1 %}popular{% endif %} {% if user_status and user_status.plan == plan and user_status.status == 'فعال' %}current-active-plan{% endif %}">
-                <div class="plan-name">🎯 {{ plan.name }}</div>
-
-                {% if plan.price %}
-                    <div class="plan-price">{{ plan.price|floatformat:0|intcomma }}<span style="font-size: 1.5rem;">تومان</span></div>
-                {% else %}
-                    <div class="plan-price" style="color: #ef4444 !important;">قیمت نامشخص</div>
-                {% endif %}
-
-                <ul class="plan-features">
-                    {# --- این قسمت هم قبلاً درست شده بود --- #}
-                    {% if user_status and user_status.plan == plan and user_status.status == 'فعال' %}
-                        <li>⏰ انقضا: {{ user_status.end_date|date:"Y/m/d" }}</li>
-                    {% elif plan.duration_days %}
-                        <li>⏰ اعتبار: {{ plan.duration_days }} روز</li>
-                    {% else %}
-                        <li>⏰ اعتبار: نامشخص</li>
-                    {% endif %}
-                    <li>🌟 دسترسی کامل به آزمون‌ها</li>
-                    <li>📊 آمار و گزارش‌گیری</li>
-                    <li>🎨 رابط کاربری ویژه</li>
-                </ul>
-
-                {# --- تغییر در این قسمت برای نمایش دکمه مناسب --- #}
-                {% if user_status and user_status.plan == plan and user_status.status == 'فعال' %}
-                    {# اگر کاربر این پلن را فعال دارد، دکمه خرید غیرفعال نمایش داده شود #}
-                    <button class="purchase-btn disabled">
-                        ✅ اشتراک فعال
-                    </button>
-                {% else %}
-                    {# در غیر این صورت، دکمه خرید نمایش داده شود #}
-                    <form method="post" action="{% url 'initiate_purchase' plan.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="purchase-btn">
-                            🚀 خرید این پلن
-                        </button>
-                    </form>
-                {% endif %}
-
-            </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="no-plans">
-            <div style="font-size: 5rem; margin-bottom: 30px;">📭</div>
-            <h3 style="color: #8b5cf6; font-size: 2.5rem; margin-bottom: 20px;">
-                هیچ پلنی موجود نیست!
-            </h3>
-            <p style="font-size: 1.3rem;">به زودی پلن‌های جذاب اضافه خواهد شد... ✨</p>
-        </div>
-    {% endif %}
-</div>
-
 {% endblock %}

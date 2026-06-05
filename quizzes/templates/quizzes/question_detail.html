@@ -1,393 +1,201 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/question-detail.css' %}">
+
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
+    <link rel="shortcut icon" href="{% static 'image/logoo.png' %}" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سوال آزمون | {{ quiz.title }}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-    
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+    <title>سوال {{ current_question_index }} | {{ quiz.title }}</title>
 
-    html, body {
-        height: 100%;
-        overflow: hidden; /* بدون اسکرول */
-    }
 
-    body {
-        font-family: Arial, Tahoma, sans-serif;
-        background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-        padding: 10px;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-    }
-
-    /* ⭐ ستاره‌های سبک */
-    body::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: 
-            radial-gradient(1px 1px at 30px 40px, rgba(255,255,255,0.4), transparent),
-            radial-gradient(1px 1px at 90px 70px, rgba(255,255,255,0.3), transparent);
-        background-repeat: repeat;
-        background-size: 180px 180px;
-        animation: starsFloat 40s linear infinite;
-        z-index: -1;
-        opacity: 0.3;
-    }
-
-    @keyframes starsFloat {
-        0% { transform: translateY(0px); }
-        100% { transform: translateY(-50px); }
-    }
-
-    .main-container {
-        flex: 1;
-        max-width: 100%;
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        padding: 10px;
-    }
-
-    /* 🔥 تایمر ثابت */
-    .timer {
-        position: fixed;
-        top: 15px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-        color: white;
-        padding: 12px 24px;
-        border-radius: 25px;
-        font-size: 1.2rem;
-        font-weight: 700;
-        box-shadow: 0 8px 25px rgba(255,107,107,0.4);
-        z-index: 1000;
-        min-width: 120px;
-        text-align: center;
-    }
-
-    /* 🔥 نوار پیشرفت */
-    .progress-section {
-        padding: 15px 20px;
-        background: rgba(255,255,255,0.08);
-        backdrop-filter: blur(15px);
-        border-radius: 15px;
-        margin-bottom: 15px;
-        border: 1px solid rgba(255,255,255,0.15);
-    }
-
-    .progress-bar-custom {
-        background: rgba(255,255,255,0.1);
-        border-radius: 10px;
-        height: 10px;
-        overflow: hidden;
-    }
-
-    .progress-fill {
-        background: linear-gradient(90deg, #00d4ff, #0099cc);
-        height: 100%;
-        border-radius: 10px;
-        transition: width 0.4s ease;
-    }
-
-    .question-counter {
-        color: #f8f9fa;
-        font-size: 1rem;
-        font-weight: 600;
-        text-align: center;
-        margin-bottom: 5px;
-    }
-
-    /* 🔥 کارت سوال - ارتفاع کامل */
-    .question-card {
-        flex: 1;
-        background: rgba(255,255,255,0.06);
-        backdrop-filter: blur(20px);
-        border-radius: 20px;
-        border: 1px solid rgba(255,255,255,0.12);
-        box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        margin-bottom: 10px;
-    }
-
-    .question-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 20px 25px;
-        text-align: center;
-        flex-shrink: 0;
-    }
-
-    .question-header h3 {
-        margin: 0;
-        font-size: 1.4rem;
-        font-weight: 700;
-    }
-
-    .question-body {
-        flex: 1;
-        padding: 25px 25px 20px;
-        display: flex;
-        flex-direction: column;
-        overflow-y: auto;
-        scrollbar-width: thin;
-        scrollbar-color: rgba(0,212,255,0.5) transparent;
-    }
-
-    .question-body::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    .question-body::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    .question-body::-webkit-scrollbar-thumb {
-        background: rgba(0,212,255,0.5);
-        border-radius: 3px;
-    }
-
-    .question-text {
-        color: #f8f9fa;
-        font-size: 1.15rem;
-        font-weight: 500;
-        margin-bottom: 25px;
-        line-height: 1.6;
-        padding: 20px;
-        background: rgba(255,255,255,0.05);
-        border-radius: 15px;
-        border-right: 3px solid #00d4ff;
-    }
-
-    /* گزینه‌ها */
-    .options-container {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .answer-option {
-        background: rgba(255,255,255,0.07);
-        border-radius: 15px;
-        padding: 18px 22px;
-        border: 2px solid rgba(255,255,255,0.1);
-        transition: all 0.3s ease;
-        cursor: pointer;
-        position: relative;
-    }
-
-    .answer-option:hover {
-        border-color: rgba(0,212,255,0.5);
-        transform: translateX(-5px);
-        box-shadow: 0 10px 25px rgba(0,212,255,0.15);
-    }
-
-    .form-check-input {
-        width: 20px !important;
-        height: 20px !important;
-        margin-left: 0 !important;
-        accent-color: #00d4ff !important;
-        transform: scale(1.1);
-    }
-
-    .form-check-label {
-        font-size: 1.15rem;
-        color: #f8f9fa !important;
-        font-weight: 500;
-        cursor: pointer;
-        padding-right: 20px;
-        line-height: 1.5;
-    }
-
-    .form-check-input:checked + .form-check-label {
-        color: #00d4ff !important;
-        font-weight: 600;
-    }
-
-    /* دکمه */
-    .submit-section {
-        padding-top: 20px;
-        border-top: 1px solid rgba(255,255,255,0.1);
-        flex-shrink: 0;
-    }
-
-    .submit-btn {
-        background: linear-gradient(45deg, #28a745, #20c997) !important;
-        border: none !important;
-        color: white !important;
-        padding: 18px 40px !important;
-        font-size: 1.15rem !important;
-        font-weight: 700 !important;
-        border-radius: 30px !important;
-        cursor: pointer !important;
-        width: 100% !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 10px 25px rgba(40,167,69,0.3) !important;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .submit-btn:hover {
-        transform: translateY(-3px) !important;
-        box-shadow: 0 15px 35px rgba(40,167,69,0.5) !important;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        body { padding: 5px; }
-        .question-header { padding: 18px 20px !important; }
-        .question-header h3 { font-size: 1.25rem !important; }
-        .question-text { 
-            font-size: 1.1rem !important; 
-            padding: 15px !important;
-        }
-        .form-check-label { font-size: 1.1rem !important; }
-        .timer { 
-            font-size: 1.1rem;
-            padding: 10px 20px;
-        }
-    }
-
-    /* انیمیشن سریع */
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .question-card { animation: fadeInUp 0.6s ease-out; }
-</style>
 </head>
 <body>
     <!-- تایمر -->
-    <div class="timer" id="timerDisplay">⏰ 1:00</div>
+    <div class="timer" id="timerDisplay">⏰ {{ quiz.duration_minutes }}:00</div>
 
     <div class="main-container">
-        <!-- پیشرفت -->
-        <div class="progress-section">
-            <div class="question-counter" id="questionCounter">
-                سوال <span id="currentQ">{{ current_question_index }}</span> از {{ total_questions }}
-            </div>
-            <div class="progress-bar-custom">
-                <div class="progress-fill" id="progressFill"></div>
+        <!-- هدر -->
+        <div class="quiz-header">
+            <h2>{{ quiz.title }}</h2>
+            <div class="quiz-info">
+                ⏱️ {{ quiz.duration_minutes }} دقیقه | 
+                {{ current_question_index }} از {{ total_questions }}
             </div>
         </div>
 
-        <!-- کارت سوال -->
+        <!-- پیشرفت -->
+        <div class="progress-section">
+            <div class="question-counter">
+                سوال {{ current_question_index }} از {{ total_questions }}
+            </div>
+            <div class="progress-bar-custom">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- سوال -->
         <div class="question-card">
             <div class="question-header">
-                <h3>{{ quiz.title }}</h3>
+                <h3>سوال {{ current_question_index }}</h3>
             </div>
             <div class="question-body">
-                <div class="question-text">{{ question.text }}</div>
+                <div class="question-text">{{ question.text|default:"سوال بارگذاری می‌شود..." }}</div>
                 
-                <div class="options-container">
-                    <form method="post" action="{% url 'quiz_question' quiz.id %}">
-                        {% csrf_token %}
+                <!-- ✅ فرم انتخاب -->
+                <form id="mainForm" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="choice" id="selectedChoice" value="">
+                    
+                    <div class="options-container">
                         {% for choice in question.choices.all %}
-                        <div class="answer-option form-check">
-                            <input class="form-check-input" type="radio" name="choice" id="choice{{ choice.id }}" value="{{ choice.id }}" required>
+                        <div class="answer-option form-check" onclick="selectOption(this)">
+                            <input class="form-check-input" type="radio" 
+                                   name="choice_radio" 
+                                   id="choice{{ choice.id }}" 
+                                   value="{{ choice.id }}"
+                                   onchange="updateHiddenChoice('{{ choice.id }}')">
                             <label class="form-check-label" for="choice{{ choice.id }}">
-                                {{ choice.choice_text }}
+                                {{ choice.choice_text|default:"گزینه..." }}
                             </label>
                         </div>
+                        {% empty %}
+                        <div class="answer-option">گزینه‌ای موجود نیست</div>
                         {% endfor %}
-                        <div class="submit-section">
-                            <button type="submit" class="submit-btn">ثبت و سوال بعدی</button>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- ✅ دکمه - همیشه فعال -->
+            <div class="submit-section">
+                <form method="post" action="{% url 'quiz_question' quiz.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="choice" id="submitChoice" value="">
+                    <button type="submit" class="submit-btn" onclick="submitAnswer()">
+                        ⏭️ بعدی (خالی هم OK)
+                    </button>
+                </form>
             </div>
         </div>
     </div>
 
-    <script>
-    // دریافت زمان باقی‌مانده از ویوی جنگو
-    // فرض می‌کنیم که متغیر remaining_seconds در context قالب وجود دارد
-    let secondsLeft = parseInt('{{ remaining_seconds }}', 10);
-    const timerElement = document.getElementById('timerDisplay');
-    const quizForm = document.querySelector('form'); // گرفتن فرم سوال فعلی
+<script>
+// دریافت زمان باقی‌مانده از قالب Django (این مقدار باید از ویو پاس داده شده باشد)
+let secondsLeft = parseInt("{{ remaining_seconds|default:'0' }}");
+  // اگر مقدار عددی است، سپس مقدار را چک کن
+  if (isNaN(secondsLeft)) {
+    secondsLeft = 0;  // در صورت نادرستی مقدار، صفر پذیرش می‌شود
+  }
 
-    function startTimer() {
-        // تابع آپدیت تایمر
-        function tick() {
-            if (secondsLeft < 0) { // اگر زمان قبل از شروع به اتمام رسیده بود
-                timerElement.innerHTML = `⏰ 00:00`;
-                quizForm.submit(); // ارسال خودکار فرم
-                return;
-            }
+// دریافت عنصر نمایش تایمر
+const timerElement = document.getElementById('timerDisplay');
 
-            const minutes = Math.floor(secondsLeft / 60);
-            const seconds = secondsLeft % 60;
+// متغیرهایی برای مدیریت انتخاب کاربر
+let selectedValue = null;
+const selectedChoiceInput = document.getElementById('selectedChoice');
+const submitChoiceInput = document.getElementById('submitChoice');
 
-            // نمایش زمان
-            timerElement.innerHTML = `⏰ ${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
-
-            // هشدار آخر (اختیاری)
-            if (secondsLeft <= 300 && secondsLeft > 0) { // فقط اگر هنوز زمان داریم
-                timerElement.style.background = 'linear-gradient(135deg, #ff4757, #ff3838)';
-                timerElement.style.boxShadow = '0 8px 25px rgba(255,71,87,0.6)';
-            } else if (secondsLeft > 300) { // بازگرداندن حالت عادی اگر زمان زیاد است
-                timerElement.style.background = ''; // یا استایل اصلی خودت
-                timerElement.style.boxShadow = '';
-            }
-
-            secondsLeft--;
-
-            // پایان تایمر
-            if (secondsLeft < 0) {
-                // اینجا اگر فرم هنوز ارسال نشده بود، ارسالش کن
-                // این چک اضافی است چون در ابتدای تابع هم چک میکنیم
-                // اما برای اطمینان بد نیست.
-                quizForm.submit();
-                // alert("زمان آزمون به پایان رسید!"); // در صورت نیاز پیام نمایش بده
-                clearInterval(intervalId); // مهم: توقف تایمر بعد از اتمام
-                return;
-            }
+// ---- توابع مربوط به تایمر ----
+function startTimer() {
+    function tick() {
+        // بررسی اینکه آیا زمان تمام شده است
+        if (secondsLeft <= 0) {
+            timerElement.innerHTML = '⏰ 00:00';
+            // اگر زمان تمام شد، فرم را ارسال کن (به صورت خودکار)
+            submitAnswer(); 
+            return;
         }
 
-        // شروع تایمر
-        tick(); // نمایش اولیه
-        const intervalId = setInterval(tick, 1000); // هر ثانیه آپدیت کن
-
-        // اگر زمان اولیه از اول صفر یا منفی بود
-        if (secondsLeft < 0) {
-            clearInterval(intervalId);
-            quizForm.submit();
+        // محاسبه دقیقه و ثانیه برای نمایش
+        const minutes = Math.floor(secondsLeft / 60);
+        const seconds = secondsLeft % 60;
+        
+        // نمایش زمان در عنصر تایمر
+        timerElement.innerHTML = `⏰ ${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+        
+        // تغییر رنگ تایمر در ۵ دقیقه آخر (۳۰۰ ثانیه)
+        if (secondsLeft <= 300) {
+            timerElement.style.color = '#e74c3c'; // قرمز برای هشدار
+            timerElement.style.fontWeight = 'bold';
+        } else {
+            timerElement.style.color = ''; // رنگ پیش‌فرض
+            timerElement.style.fontWeight = '';
         }
+
+        // کاهش زمان باقی‌مانده
+        secondsLeft--;
     }
+    
+    // اجرای تابع tick هر ۱ ثانیه
+    setInterval(tick, 1000);
+    
+    // اجرای اولیه تابع tick برای نمایش زمان بلافاصله
+    tick(); 
+}
 
-    // شروع تایمر بعد از لود کامل صفحه
-    window.addEventListener('load', startTimer);
+// ---- توابع مربوط به انتخاب گزینه ----
+function selectOption(optionElement) {
+    // حذف کلاس 'selected' از گزینه‌های قبلی
+    document.querySelectorAll('.answer-option').forEach(opt => opt.classList.remove('selected'));
+    // اضافه کردن کلاس 'selected' به گزینه انتخاب شده
+    optionElement.classList.add('selected');
+    
+    // یافتن ورودی رادیویی درون گزینه
+    const radioInput = optionElement.querySelector('input[type="radio"]');
+    radioInput.checked = true; // فعال کردن رادیو باتن
+    
+    selectedValue = radioInput.value; // ذخیره مقدار انتخاب شده
+    
+    // به‌روزرسانی مقدار ورودی مخفی اول (برای فرم اصلی)
+    selectedChoiceInput.value = selectedValue;
+    // به‌روزرسانی مقدار ورودی مخفی دوم (برای فرم ارسال)
+    submitChoiceInput.value = selectedValue; 
+    
+    console.log('✅ گزینه انتخاب شد:', selectedValue);
+}
 
-    // این قسمت پیشرفت رو هم چک میکنه
-    // لطفا مطمئن شو که data-current و data-total در تگ progress-section وجود دارند
-    window.addEventListener('load', function() {
-        const progressSection = document.querySelector('.progress-section');
-        if (progressSection) {
-            const currentQ = parseInt(progressSection.dataset.current) || 1;
-            const totalQ = parseInt(progressSection.dataset.total) || 1;
-            const progress = Math.round((currentQ / totalQ) * 100);
+// تابع برای به‌روزرسانی ورودی مخفی در صورت انتخاب گزینه
+function updateHiddenChoice(choiceId) {
+    selectedValue = choiceId;
+    selectedChoiceInput.value = choiceId;
+    submitChoiceInput.value = choiceId;
+    console.log('✅ مقدار انتخابی در ورودی مخفی ذخیره شد:', choiceId);
+}
 
-            document.getElementById('progressFill').style.width = progress + '%';
-            document.getElementById('currentQ').textContent = currentQ;
-            // باید یک id="totalQ" در HTML داشته باشی یا این خط را حذف کنی
-            // document.getElementById('totalQ').textContent = totalQ;
-        }
-    });
+// ---- تابع ارسال پاسخ ----
+// این تابع در رویداد onclick دکمه "بعدی" فراخوانی می‌شود
+function submitAnswer() {
+    // اگر گزینه‌ای انتخاب شده بود، مقدار آن را در ورودی مخفی قرار بده
+    if (selectedValue) {
+        submitChoiceInput.value = selectedValue;
+        console.log('🚀 ارسال پاسخ:', selectedValue);
+    } else {
+        // اگر هیچ گزینه‌ای انتخاب نشده بود، ورودی مخفی را خالی بگذار (یا مقدار پیش‌فرض را بفرست)
+        // این مطابق با "خالی هم OK" است
+        submitChoiceInput.value = ''; 
+        console.log('🚀 ارسال پاسخ خالی');
+    }
+    // اجازه بده فرم به صورت عادی ارسال شود
+    return true; 
+}
+
+// ---- مقداردهی اولیه و راه‌اندازی ----
+
+// به‌روزرسانی نوار پیشرفت (این مقدار را هم باید از ویو دریافت کنی)
+// فعلا به صورت ثابت تنظیم شده، بهتر است از ویو پاس داده شود
+const progressFill = document.getElementById('progressFill');
+if (progressFill) {
+    // فرض بر اینکه progress_percentage از ویو پاس داده شده است
+    // progressFill.style.width = '{{ progress_percentage }}%'; 
+    // یا یک مقدار ثابت برای تست:
+     progressFill.style.width = '{{ progress_percentage }}%'; 
+}
+
+
+// راه‌اندازی تایمر پس از بارگذاری کامل صفحه
+window.addEventListener('load', startTimer); 
 </script>
 
 </body>

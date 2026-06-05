@@ -38,7 +38,7 @@
 .site-identity a {
     font-size: 2rem;
     font-weight: 900;
-    background: linear-gradient(45deg, #ff03ab, #00d4ff);
+    background: linear-gradient(45deg, #ff03ab, #ff6600);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -172,7 +172,7 @@
 .hamburger {
     width: 28px;
     height: 3px;
-    background: linear-gradient(45deg, #00f0ff, #00d4ff);
+    background: linear-gradient(45deg, #f5f7f7, #00d4ff);
     border-radius: 3px;
     transition: all 0.3s ease;
     transform-origin: center;
@@ -203,25 +203,46 @@
     .menu-toggle { display: flex; }
     
     .nav-links {
-        
         position: fixed;
-        top: 70px; right: -100%;
-        margin: 0 15px;
-        max-width: calc(100% - 30px);
-        width: 80%;
-        height: calc(100vh - 70px);
-        background: linear-gradient(135deg, #9dea66 30%, #ff0de7 100%);
-        backdrop-filter: blur(10px);
+        top: 90px;
+        right: -100%;
+        width: 320px;
+        max-width: 90vw;
+        height: calc(100vh - 90px);
+        background: 
+            radial-gradient(circle at 30% 20%, rgba(157, 234, 102, 0.3) 0%, transparent 50%),
+            linear-gradient(135deg, rgba(20, 25, 45, 0.98) 0%, rgba(35, 40, 70, 0.98) 100%);
+        backdrop-filter: blur(30px);
         flex-direction: column;
-        padding: 2rem 0;
-        transition: 0.4s ease-in-out;
-        box-shadow: -10px 0 30px rgba(0,0,0,0.3);
-        z-index: 1000;
+        padding: 3rem 0;
+        border-radius: 25px 0 25px 25px;
+        box-shadow: 
+            -20px 0 60px rgba(0, 0, 0, 0.5),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        transition: right 0.5s cubic-bezier(0.23, 1, 0.32, 1);
     }
     
     .nav-links.active {
-        right: 0; /* منو از راست باز میشه */
+        right: 0;
     }
+
+    .nav-link {
+        font-size: 1.4rem;
+        padding: 1.5rem 2.5rem;
+        opacity: 0;
+        transform: translateX(50px);
+        transition: all 0.4s ease;
+    }
+    
+    .nav-links.active .nav-link:nth-child(1) { transition-delay: 0.1s; }
+    .nav-links.active .nav-link:nth-child(2) { transition-delay: 0.2s; }
+    .nav-links.active .nav-link:nth-child(3) { transition-delay: 0.3s; }
+    
+    .nav-links.active .nav-link {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
 
     .site-identity {
         order: 1; /* لوگو چپ */
@@ -269,12 +290,19 @@
         <!-- 🔥 Navigation -->
         <ul class="nav-links" id="navLinks">
             <li><a href="{% url 'home' %}" class="nav-link{% if request.resolver_match.url_name == 'home' %} active{% endif %}">🏠 خانه</a></li>
+            <li><a href="{% url 'about' %}" class="nav-link{% if request.resolver_match.url_name == 'about' %} active{% endif %}">📃 درباره ما</a></li>
             {% if user.is_authenticated %}
                 <li><a href="{% url 'accounts:dashboard' %}" class="nav-link{% if request.resolver_match.url_name == 'accounts:dashboard' %} active{% endif %}">📊 داشبورد</a></li>
                 <li><a href="{% url 'subscribe' %}" class="nav-link{% if request.resolver_match.url_name == 'subscribe' %} active{% endif %}">💎 اشتراک</a></li>
                 <li><a href="{% url 'accounts:leaderboard' %}" class="nav-link{% if request.resolver_match.url_name == 'accounts:leaderboard' %} active{% endif %}">🏆 رتبه‌بندی</a></li>
-                <li><a href="{% url 'about' %}" class="nav-link{% if request.resolver_match.url_name == 'about' %} active{% endif %}">📃 درباره ما</a></li>
+                
+                <li><a><form method="post" action="{% url 'accounts:logout' %}" style="display: inline-block;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-neon btn-danger">🚪 خروج</button>
+                </form></a></li>
+
             {% endif %}
+            
         </ul>
         <!-- 🔥 Auth Controls -->
         <div class="auth-controls">
