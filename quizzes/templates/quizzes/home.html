@@ -764,17 +764,18 @@
     <div class="slider">
         {% for slider in sliders %}
         <div class="slide {% if forloop.first %}active{% endif %}">
-            <img src="{{ slider.image_url }}" alt="{{ slider.title }}">
-        </div>
+            <!-- اصلاح شد: استفاده از .url به جای .image_url -->
+            <img src="{{ slider.image.url }}" alt="{{ slider.title }}">
+        </div> <!-- دقت کن: تگ div باید درست بسته شود -->
         {% empty %}
         <div class="slide active">
-            <img src="/static/image/slide1.jpg" alt="اسلاید پیش‌فرض">
+            <!-- برای تصاویر استاتیک، بهتر است از تگ static استفاده کنی -->
+            <img src="{% static 'image/slide1.jpg' %}" alt="اسلاید پیش‌فرض">
         </div>
         {% endfor %}
     </div>
-    <button class="prev-btn">&#10094;</button>
-    <button class="next-btn">&#10095;</button>
-    
+    <button class="prev-btn">❮</button>
+    <button class="next-btn">❯</button>
 </div>
 
 
