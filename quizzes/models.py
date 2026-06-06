@@ -87,7 +87,8 @@ class UserAnswer(models.Model):
 
 class HomeSlider(models.Model):
     title = models.CharField(max_length=100, verbose_name="عنوان")
-    image = models.FileField(upload_to='sliders/', verbose_name="تصویر", blank=True)
+    # تغییر از FileField به ImageField برای امنیت و استاندارد بیشتر
+    image = models.ImageField(upload_to='sliders/', verbose_name="تصویر", blank=True)
     is_active = models.BooleanField(default=True, verbose_name="فعال")
     order = models.PositiveIntegerField(default=0, verbose_name="ترتیب")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -105,7 +106,6 @@ class HomeSlider(models.Model):
         if self.image:
             return self.image.url
         return "/static/image/slide1.jpg"
-
 # -----------------------------
 # مدل آمار بازدید ✅ جدید
 # -----------------------------
