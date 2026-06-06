@@ -425,11 +425,8 @@ def initiate_purchase_view(request, plan_id):
 
     plan = get_object_or_404(Plan, pk=plan_id, is_active=True)
 
-    import time
-    time.sleep(3)  # صبر کن تا محدودیت رد بشه
-
     merchant_id = settings.ZARINPAL_MERCHANT
-    amount_rial = int(plan.price) * 10
+    amount_rial = int(plan.price) * 10  # فقط اگر price به تومان ذخیره شده باشد
 
     callback_url = request.build_absolute_uri(reverse('verify_payment'))
 
@@ -441,15 +438,12 @@ def initiate_purchase_view(request, plan_id):
         "callback_url": callback_url,
     }
 
-    # ✅ API اصلی (نه sandbox!)
     request_url = 'https://payment.zarinpal.com/pg/v4/payment/request.json'
     start_pay_url = 'https://payment.zarinpal.com/pg/StartPay/'
 
     try:
         response = requests.post(request_url, json=data, timeout=10)
         res_data = response.json()
-
-        print("🔍 Response:", res_data)
 
         code = res_data.get('data', {}).get('code')
         authority = res_data.get('data', {}).get('authority')
@@ -458,14 +452,13 @@ def initiate_purchase_view(request, plan_id):
             request.session['plan_id'] = plan_id
             return redirect(f"{start_pay_url}{authority}")
         else:
-            messages.error(request, f"خطا: {res_data}")
+            messages.error(request, f"خطا در ایجاد پرداخت: {res_data}")
 
     except Exception as e:
         messages.error(request, f"خطا: {str(e)}")
 
     return redirect('subscribe')
 
-    
 @login_required
 def verify_payment_view(request):
     authority = request.GET.get('Authority')
@@ -476,21 +469,23 @@ def verify_payment_view(request):
         messages.error(request, "❌ پرداخت لغو شد.")
         return redirect('subscribe')
 
+    if not plan_id:
+        messages.error(request, "اطلاعات اشتراک یافت نشد.")
+        return redirect('subscribe')
+
     plan = get_object_or_404(Plan, pk=plan_id)
 
     data = {
-        "merchant_id": '1344b5d4-0048-11e8-94db-005056a205be',
-        "amount": int(plan.price) * 10,
+        "merchant_id": settings.ZARINPAL_MERCHANT,
+        "amount": int(plan.price) * 10,  # فقط اگر price به تومان ذخیره شده باشد
         "authority": authority,
     }
 
-    url = 'https://sandbox.zarinpal.com/pg/v4/payment/verify.json'
+    url = 'https://payment.zarinpal.com/pg/v4/payment/verify.json'
 
     try:
         response = requests.post(url, json=data, timeout=10)
         res_data = response.json()
-
-        print("🔍 Verify Response:", res_data)
 
         data_part = res_data.get('data', {})
         code = data_part.get('code')
@@ -507,6 +502,7 @@ def verify_payment_view(request):
                     'status': 'فعال',
                 }
             )
+            request.session.pop('plan_id', None)
             messages.success(request, f"✅ پرداخت موفق! شماره تراکنش: {ref_id}")
             return redirect('accounts:dashboard')
         else:
