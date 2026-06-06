@@ -461,30 +461,31 @@ def initiate_purchase_view(request, plan_id):
 
 @login_required
 def verify_payment_view(request):
-    authority = request.GET.get('Authority')
-    status = request.GET.get('Status')
+    # استفاده از .get با حروف بزرگ و کوچک برای اطمینان
+    authority = request.GET.get('Authority') or request.GET.get('authority')
+    status = request.GET.get('Status') or request.GET.get('status')
     plan_id = request.session.get('plan_id')
 
     if status != 'OK':
-        messages.error(request, "❌ پرداخت لغو شد.")
+        messages.error(request, "❌ پرداخت لغو شد یا با خطا مواجه شد.")
         return redirect('subscribe')
 
     if not plan_id:
-        messages.error(request, "اطلاعات اشتراک یافت نشد.")
+        messages.error(request, "اطلاعات پرداخت در نشست (Session) یافت نشد.")
         return redirect('subscribe')
 
     plan = get_object_or_404(Plan, pk=plan_id)
 
     data = {
-        "merchant_id": settings.ZARINPAL_MERCHANT,
-        "amount": int(plan.price) * 10,  # فقط اگر price به تومان ذخیره شده باشد
+        "merchant_id": settings.ZARINPAL_MERCHANT, # استفاده از تنظیمات
+        "amount": int(plan.price) * 10,
         "authority": authority,
     }
 
     url = 'https://payment.zarinpal.com/pg/v4/payment/verify.json'
 
     try:
-        response = requests.post(url, json=data, timeout=10)
+        response = requests.post(url, json=data, timeout=15) # افزایش تایم‌اوت
         res_data = response.json()
 
         data_part = res_data.get('data', {})
@@ -492,6 +493,7 @@ def verify_payment_view(request):
         ref_id = data_part.get('ref_id')
 
         if code in [100, 101]:
+            # عملیات فعال‌سازی اشتراک
             Subscription.objects.update_or_create(
                 user=request.user,
                 defaults={
@@ -503,14 +505,12 @@ def verify_payment_view(request):
                 }
             )
             request.session.pop('plan_id', None)
-            messages.success(request, f"✅ پرداخت موفق! شماره تراکنش: {ref_id}")
+            messages.success(request, f"✅ پرداخت با موفقیت انجام شد! شماره تراکنش: {ref_id}")
             return redirect('accounts:dashboard')
         else:
-            messages.error(request, f"❌ تایید نشد. کد: {code}")
+            messages.error(request, f"❌ پرداخت تایید نشد. کد خطا: {code}")
 
     except Exception as e:
-        messages.error(request, f"خطا: {str(e)}")
+        messages.error(request, f"خطای سیستم در تایید پرداخت: {str(e)}")
 
     return redirect('subscribe')
-
-

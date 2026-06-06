@@ -1,12 +1,9 @@
 from django.urls import path
 from . import views
-from .views import start_quiz_view
-from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
 
 urlpatterns = [
-
-    # صفحه اصلی (ورود رمز آزمون)
+    # صفحه اصلی
     path('', views.home, name='home'),
 
     # لیست آزمون‌ها
@@ -20,24 +17,19 @@ urlpatterns = [
 
     # نتایج آزمون
     path('quiz/<int:quiz_id>/results/', views.quiz_results_view, name='quiz_results'),
+    path('quiz/<int:quiz_id>/analysis/', views.quiz_analysis_view, name='quiz_analysis'),
 
-    # اشتراک
+    # اشتراک و پرداخت
     path('subscribe/', views.subscribe_view, name='subscribe'),
     path('subscription/manage/', views.manage_subscription_view, name='manage_subscription'),
-
-    path('about/', views.about, name='about'),
-
-    path('purchase/<int:plan_id>/', views.initiate_purchase_view, name='initiate_purchase'),
-
-    path('admin/', admin.site.urls),
-
-
-        # مسیر شروع پرداخت (همان initiate_purchase که دارید)
+    
+    # مسیر شروع پرداخت (فقط یک بار تعریف شد)
     path('purchase/<int:plan_id>/', views.initiate_purchase_view, name='initiate_purchase'),
     
     # مسیر بازگشت از زرین‌پال (Callback)
     path('payment/verify/', views.verify_payment_view, name='verify_payment'),
 
-
-    path('quiz/<int:quiz_id>/analysis/', views.quiz_analysis_view, name='quiz_analysis'),
+    # سایر
+    path('about/', views.about, name='about'),
+    path('admin/', admin.site.urls),
 ]

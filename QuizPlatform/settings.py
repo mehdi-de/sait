@@ -123,15 +123,10 @@ STATICFILES_DIRS = [
 
 ]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+ZARINPAL_MERCHANT = os.environ.get('ZARINPAL_MERCHANT', 'اینجا_مرچنت_آیدی_خودت_را_بگذار')
+ZARINPAL_SANDBOX = os.environ.get('ZARINPAL_SANDBOX', 'True').lower() == 'true'
 
-ZARINPAL_MERCHANT = '00000000-0000-0000-0000-000000000000'
-ZARINPAL_SANDBOX = True
-
-if ZARINPAL_SANDBOX:
-    ZARINPAL_REQUEST_URL = 'https://sandbox.zarinpal.com/pg/v4/payment/request.json'
-    ZARINPAL_VERIFY_URL = 'https://sandbox.zarinpal.com/pg/v4/payment/verify.json'
-    ZARINPAL_STARTPAY_URL = 'https://sandbox.zarinpal.com/pg/StartPay/{authority}'
-else:
-    ZARINPAL_REQUEST_URL = 'https://api.zarinpal.com/pg/v4/payment/request.json'
-    ZARINPAL_VERIFY_URL = 'https://api.zarinpal.com/pg/v4/payment/verify.json'
-    ZARINPAL_STARTPAY_URL = 'https://www.zarinpal.com/pg/StartPay/{authority}'
+# آدرس‌های API زرین‌پال
+ZARINPAL_REQUEST_URL = 'https://api.zarinpal.com/pg/v4/payment/request.json'
+ZARINPAL_VERIFY_URL = 'https://api.zarinpal.com/pg/v4/payment/verify.json'
+ZARINPAL_STARTPAY_URL = 'https://www.zarinpal.com/pg/startpay/{authority}'
