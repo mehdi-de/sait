@@ -289,8 +289,8 @@
         </div>
         <!-- 🔥 Navigation -->
         <ul class="nav-links" id="navLinks">
-            <li><a class="nav-link href="/admin/" class="admin-btn">ورود به پنل مدیریت</a></li>
             <li><a href="{% url 'home' %}" class="nav-link{% if request.resolver_match.url_name == 'home' %} active{% endif %}">🏠 خانه</a></li>
+            <li><a class="nav-link href="/admin/" class="admin-btn">👨‍💻پنل مدیریت</a></li>
             <li><a href="{% url 'about' %}" class="nav-link{% if request.resolver_match.url_name == 'about' %} active{% endif %}">📃 درباره ما</a></li>
             {% if user.is_authenticated %}
                 <li><a href="{% url 'accounts:dashboard' %}" class="nav-link{% if request.resolver_match.url_name == 'accounts:dashboard' %} active{% endif %}">📊 داشبورد</a></li>
