@@ -1,62 +1,114 @@
 from django.db.models import Sum, Count
+
 from quizzes.models import QuizAttempt
-from jdatetime import datetime as jdatetime  # 🔥 اضافه
+
+import jdatetime
+
+
+PERSIAN_MONTHS = [
+    'فروردین',
+    'اردیبهشت',
+    'خرداد',
+    'تیر',
+    'مرداد',
+    'شهریور',
+    'مهر',
+    'آبان',
+    'آذر',
+    'دی',
+    'بهمن',
+    'اسفند'
+]
+
 
 def get_user_rank(user):
-    """
-    رتبه، مجموع و میانگین نمره کاربر را برمی‌گرداند.
-    """
-    leaderboard_data = QuizAttempt.objects.filter(
-        is_completed=True,
-        quiz__is_premium=True,
-        quiz__is_active=True,
-    ).values(
-        'user_id'
-    ).annotate(
-        total_score=Sum('score'),
-        quizzes_taken=Count('id')
-    ).order_by('-total_score')
+
+    leaderboard_data = (
+        QuizAttempt.objects.filter(
+            is_completed=True,
+            quiz__is_premium=True,
+            quiz__is_active=True,
+        )
+        .values('user_id')
+        .annotate(
+            total_score=Sum('score'),
+            quizzes_taken=Count('id')
+        )
+        .order_by('-total_score')
+    )
 
     rank = 0
     last_score = None
 
-    for entry in leaderboard_data:
-        score = entry['total_score']
-        if score != last_score:
-            rank += 1
+    for index, entry in enumerate(leaderboard_data, start=1):
+
+        current_score = entry['total_score']
+
+        if current_score != last_score:
+            rank = index
 
         if entry['user_id'] == user.id:
-            avg_score = entry['total_score'] / entry['quizzes_taken']
+
+            quizzes_taken = entry['quizzes_taken'] or 1
+
+            avg_score = (
+                entry['total_score'] / quizzes_taken
+            )
+
             return {
                 'rank': rank,
-                'total_score': entry['total_score'],
+                'total_score': round(entry['total_score'], 2),
                 'average': round(avg_score, 2),
-                'quizzes_taken': entry['quizzes_taken']
+                'quizzes_taken': quizzes_taken
             }
-        last_score = score
 
-    return None  # 🔥 بدون تغییر
+        last_score = current_score
 
-# 🔥 توابع تاریخ ایرانی - جدید!
+    return {
+        'rank': '-',
+        'total_score': 0,
+        'average': 0,
+        'quizzes_taken': 0
+    }
+
+
 def persian_date(dt):
-    """تبدیل به شمسی: 1405/02/14"""
+
     if not dt:
-        return "-"
-    jdate = jdatetime.fromgregorian(datetime=dt)
-    return jdate.strftime("%Y/%m/%d")
+        return '-'
+
+    jdate = jdatetime.datetime.fromgregorian(
+        datetime=dt
+    )
+
+    return jdate.strftime('%Y/%m/%d')
+
 
 def persian_full_date(dt):
-    """کامل: 1405/02/14 - 15:56"""
+
     if not dt:
-        return "-"
-    jdate = jdatetime.fromgregorian(datetime=dt)
-    return f"{jdate.strftime('%Y/%m/%d')} - {dt.strftime('%H:%M')}"
+        return '-'
+
+    jdate = jdatetime.datetime.fromgregorian(
+        datetime=dt
+    )
+
+    return (
+        f"{jdate.strftime('%Y/%m/%d')} "
+        f"- {dt.strftime('%H:%M')}"
+    )
+
 
 def persian_short_date(dt):
-    """کوتاه: 14 اردیبهشت"""
+
     if not dt:
-        return "-"
-    jdate = jdatetime.fromgregorian(datetime=dt)
-    months = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
-              'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند']
-    return f"{jdate.day} {months[jdate.month-1]}"
+        return '-'
+
+    jdate = jdatetime.datetime.fromgregorian(
+        datetime=dt
+    )
+
+    return (
+        f"{jdate.day} "
+        f"{PERSIAN_MONTHS[jdate.month - 1]}"
+    )
