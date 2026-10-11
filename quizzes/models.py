@@ -110,6 +110,11 @@ class QuizAttempt(models.Model):
         on_delete=models.CASCADE,
     )
 
+    can_retake = models.BooleanField(
+    default=False,
+    verbose_name='اجازه شرکت مجدد'
+)
+
     quiz = models.ForeignKey(
         Quiz,
         on_delete=models.CASCADE,

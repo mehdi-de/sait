@@ -129,6 +129,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+
 STATIC_ROOT = BASE_DIR / "staticfiles"
 ZARINPAL_MERCHANT = os.environ.get('ZARINPAL_MERCHANT', 'اینجا_مرچنت_آیدی_خودت_را_بگذار')
 ZARINPAL_SANDBOX = os.environ.get('ZARINPAL_SANDBOX', 'True').lower() == 'true'

@@ -31,21 +31,21 @@ class Plan(models.Model):
         verbose_name='توضیحات'
     )
 
-    def __str__(self):
-        return f'{self.name} ({self.duration_days} روز)'
-
     class Meta:
         verbose_name = 'پلن اشتراک'
         verbose_name_plural = 'پلن‌های اشتراک'
 
-
-class SubscriptionStatus(models.TextChoices):
-    NONE = 'ندارد', 'ندارد'
-    ACTIVE = 'فعال', 'فعال'
-    EXPIRED = 'منقضی', 'منقضی'
+    def __str__(self):
+        return f'{self.name} ({self.duration_days} روز)'
 
 
 class Subscription(models.Model):
+
+    STATUS_CHOICES = [
+        ('ندارد', 'ندارد'),
+        ('فعال', 'فعال'),
+        ('منقضی', 'منقضی'),
+    ]
 
     user = models.OneToOneField(
         User,
@@ -59,6 +59,11 @@ class Subscription(models.Model):
         null=True,
         blank=True,
         verbose_name='پلن'
+    )
+
+    is_active = models.BooleanField(
+        default=False,
+        verbose_name='فعال'
     )
 
     start_date = models.DateTimeField(
@@ -76,52 +81,51 @@ class Subscription(models.Model):
     authority = models.CharField(
         max_length=100,
         blank=True,
-        null=True,
-        db_index=True
+        null=True
     )
 
     ref_id = models.CharField(
         max_length=100,
         blank=True,
-        null=True,
-        db_index=True
+        null=True
     )
 
     status = models.CharField(
-        max_length=20,
-        choices=SubscriptionStatus.choices,
-        default=SubscriptionStatus.NONE
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default='ندارد'
     )
-
-    def __str__(self):
-        return f'{self.user.username} - {self.status}'
-
-    @property
-    def is_active(self):
-        return self.status == SubscriptionStatus.ACTIVE
-
-    def update_status(self):
-
-        now = timezone.now()
-
-        if self.start_date and self.end_date:
-
-            if self.start_date <= now <= self.end_date:
-                self.status = SubscriptionStatus.ACTIVE
-
-            elif now > self.end_date:
-                self.status = SubscriptionStatus.EXPIRED
-
-            else:
-                self.status = SubscriptionStatus.NONE
-
-        else:
-            self.status = SubscriptionStatus.NONE
-
-    def save(self, *args, **kwargs):
-        self.update_status()
-        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'اشتراک'
         verbose_name_plural = 'اشتراک‌ها'
+
+    def __str__(self):
+        return f"{self.user.username} - {self.status}"
+
+    def check_status(self):
+
+        now = timezone.now()
+
+        if self.end_date:
+
+            if now > self.end_date:
+                self.is_active = False
+                self.status = 'منقضی'
+
+            else:
+                self.is_active = True
+                self.status = 'فعال'
+
+        else:
+            self.is_active = False
+            self.status = 'ندارد'
+
+        self.save(update_fields=['is_active', 'status'])
+
+    @property
+    def status_display(self):
+        return dict(self.STATUS_CHOICES).get(
+            self.status,
+            self.status
+        )

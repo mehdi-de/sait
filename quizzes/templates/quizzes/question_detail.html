@@ -251,189 +251,177 @@ html, body {
 
 </head>
 <body>
+
     <!-- تایمر -->
-    <div class="timer" id="timerDisplay">⏰ {{ quiz.duration_minutes }}:00</div>
+    <div class="timer" id="timerDisplay">
+        ⏰ {{ quiz.duration_minutes }}:00
+    </div>
 
     <div class="main-container">
+
         <!-- هدر -->
         <div class="quiz-header">
             <h2>{{ quiz.title }}</h2>
+
             <div class="quiz-info">
-                ⏱️ {{ quiz.duration_minutes }} دقیقه | 
+                ⏱️ {{ quiz.duration_minutes }} دقیقه |
                 {{ current_question_index }} از {{ total_questions }}
             </div>
         </div>
 
-        <!-- پیشرفت -->
+        <!-- نوار پیشرفت -->
         <div class="progress-section">
+
             <div class="question-counter">
                 سوال {{ current_question_index }} از {{ total_questions }}
             </div>
+
             <div class="progress-bar-custom">
-                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                <div
+                    class="progress-fill"
+                    id="progressFill"
+
+                ></div>
             </div>
+
         </div>
 
-        <!-- سوال -->
+        <!-- کارت سوال -->
         <div class="question-card">
+
             <div class="question-header">
                 <h3>سوال {{ current_question_index }}</h3>
             </div>
+
             <div class="question-body">
-                <div class="question-text">{{ question.text|default:"سوال بارگذاری می‌شود..." }}</div>
-                
-                <!-- ✅ فرم انتخاب -->
-                <form id="mainForm" method="post">
+
+                <div class="question-text">
+                    {{ question.text }}
+                </div>
+
+                <!-- فرم اصلی -->
+                <form id="quizForm" method="post">
+
                     {% csrf_token %}
-                    <input type="hidden" name="choice" id="selectedChoice" value="">
-                    
+
                     <div class="options-container">
+
                         {% for choice in question.choices.all %}
-                        <div class="answer-option form-check" onclick="selectOption(this)">
-                            <input class="form-check-input" type="radio" 
-                                   name="choice_radio" 
-                                   id="choice{{ choice.id }}" 
-                                   value="{{ choice.id }}"
-                                   onchange="updateHiddenChoice('{{ choice.id }}')">
-                            <label class="form-check-label" for="choice{{ choice.id }}">
-                                {{ choice.choice_text|default:"گزینه..." }}
+
+                            <label class="answer-option">
+
+                                <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    name="choice"
+                                    value="{{ choice.id }}"
+                                >
+
+                                <span>
+                                    {{ choice.choice_text }}
+                                </span>
+
                             </label>
-                        </div>
+
                         {% empty %}
-                        <div class="answer-option">گزینه‌ای موجود نیست</div>
+
+                            <div class="answer-option">
+                                گزینه‌ای وجود ندارد
+                            </div>
+
                         {% endfor %}
+
                     </div>
+
+                    <!-- دکمه -->
+                    <div class="submit-section">
+
+                        <button
+                            type="submit"
+                            class="submit-btn"
+                        >
+                            ⏭️ سوال بعدی
+                        </button>
+
+                    </div>
+
                 </form>
+
             </div>
-            
-            <!-- ✅ دکمه - همیشه فعال -->
-            <div class="submit-section">
-                <form method="post" action="{% url 'quiz_question' quiz.id %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="choice" id="submitChoice" value="">
-                    <button type="submit" class="submit-btn" onclick="submitAnswer()">
-                        ⏭️ بعدی (خالی هم OK)
-                    </button>
-                </form>
-            </div>
+
         </div>
+
     </div>
 
 <script>
-// دریافت زمان باقی‌مانده از قالب Django (این مقدار باید از ویو پاس داده شده باشد)
-let secondsLeft = parseInt("{{ remaining_seconds|default:'0' }}");
-  // اگر مقدار عددی است، سپس مقدار را چک کن
-  if (isNaN(secondsLeft)) {
-    secondsLeft = 0;  // در صورت نادرستی مقدار، صفر پذیرش می‌شود
-  }
 
-// دریافت عنصر نمایش تایمر
-const timerElement = document.getElementById('timerDisplay');
+let secondsLeft = parseInt(
+    "{{ remaining_seconds|default:'0' }}"
+);
 
-// متغیرهایی برای مدیریت انتخاب کاربر
-let selectedValue = null;
-const selectedChoiceInput = document.getElementById('selectedChoice');
-const submitChoiceInput = document.getElementById('submitChoice');
+if (isNaN(secondsLeft)) {
+    secondsLeft = 0;
+}
 
-// ---- توابع مربوط به تایمر ----
+const timerElement = document.getElementById(
+    'timerDisplay'
+);
+
 function startTimer() {
+
     function tick() {
-        // بررسی اینکه آیا زمان تمام شده است
+
         if (secondsLeft <= 0) {
+
             timerElement.innerHTML = '⏰ 00:00';
-            // اگر زمان تمام شد، فرم را ارسال کن (به صورت خودکار)
-            submitAnswer(); 
+
+            document.getElementById(
+                'quizForm'
+            ).submit();
+
             return;
         }
 
-        // محاسبه دقیقه و ثانیه برای نمایش
-        const minutes = Math.floor(secondsLeft / 60);
+        const minutes = Math.floor(
+            secondsLeft / 60
+        );
+
         const seconds = secondsLeft % 60;
-        
-        // نمایش زمان در عنصر تایمر
-        timerElement.innerHTML = `⏰ ${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
-        
-        // تغییر رنگ تایمر در ۵ دقیقه آخر (۳۰۰ ثانیه)
+
+        timerElement.innerHTML =
+            `⏰ ${minutes}:${
+                seconds < 10
+                ? '0' + seconds
+                : seconds
+            }`;
+
         if (secondsLeft <= 300) {
-            timerElement.style.color = '#e74c3c'; // قرمز برای هشدار
-            timerElement.style.fontWeight = 'bold';
+
+            timerElement.style.color =
+                '#e74c3c';
+
+            timerElement.style.fontWeight =
+                'bold';
+
         } else {
-            timerElement.style.color = ''; // رنگ پیش‌فرض
+
+            timerElement.style.color = '';
             timerElement.style.fontWeight = '';
         }
 
-        // کاهش زمان باقی‌مانده
         secondsLeft--;
     }
-    
-    // اجرای تابع tick هر ۱ ثانیه
+
+    tick();
+
     setInterval(tick, 1000);
-    
-    // اجرای اولیه تابع tick برای نمایش زمان بلافاصله
-    tick(); 
 }
 
-// ---- توابع مربوط به انتخاب گزینه ----
-function selectOption(optionElement) {
-    // حذف کلاس 'selected' از گزینه‌های قبلی
-    document.querySelectorAll('.answer-option').forEach(opt => opt.classList.remove('selected'));
-    // اضافه کردن کلاس 'selected' به گزینه انتخاب شده
-    optionElement.classList.add('selected');
-    
-    // یافتن ورودی رادیویی درون گزینه
-    const radioInput = optionElement.querySelector('input[type="radio"]');
-    radioInput.checked = true; // فعال کردن رادیو باتن
-    
-    selectedValue = radioInput.value; // ذخیره مقدار انتخاب شده
-    
-    // به‌روزرسانی مقدار ورودی مخفی اول (برای فرم اصلی)
-    selectedChoiceInput.value = selectedValue;
-    // به‌روزرسانی مقدار ورودی مخفی دوم (برای فرم ارسال)
-    submitChoiceInput.value = selectedValue; 
-    
-    console.log('✅ گزینه انتخاب شد:', selectedValue);
-}
+window.addEventListener(
+    'load',
+    startTimer
+);
 
-// تابع برای به‌روزرسانی ورودی مخفی در صورت انتخاب گزینه
-function updateHiddenChoice(choiceId) {
-    selectedValue = choiceId;
-    selectedChoiceInput.value = choiceId;
-    submitChoiceInput.value = choiceId;
-    console.log('✅ مقدار انتخابی در ورودی مخفی ذخیره شد:', choiceId);
-}
-
-// ---- تابع ارسال پاسخ ----
-// این تابع در رویداد onclick دکمه "بعدی" فراخوانی می‌شود
-function submitAnswer() {
-    // اگر گزینه‌ای انتخاب شده بود، مقدار آن را در ورودی مخفی قرار بده
-    if (selectedValue) {
-        submitChoiceInput.value = selectedValue;
-        console.log('🚀 ارسال پاسخ:', selectedValue);
-    } else {
-        // اگر هیچ گزینه‌ای انتخاب نشده بود، ورودی مخفی را خالی بگذار (یا مقدار پیش‌فرض را بفرست)
-        // این مطابق با "خالی هم OK" است
-        submitChoiceInput.value = ''; 
-        console.log('🚀 ارسال پاسخ خالی');
-    }
-    // اجازه بده فرم به صورت عادی ارسال شود
-    return true; 
-}
-
-// ---- مقداردهی اولیه و راه‌اندازی ----
-
-// به‌روزرسانی نوار پیشرفت (این مقدار را هم باید از ویو دریافت کنی)
-// فعلا به صورت ثابت تنظیم شده، بهتر است از ویو پاس داده شود
-const progressFill = document.getElementById('progressFill');
-if (progressFill) {
-    // فرض بر اینکه progress_percentage از ویو پاس داده شده است
-    // progressFill.style.width = '{{ progress_percentage }}%'; 
-    // یا یک مقدار ثابت برای تست:
-     progressFill.style.width = '{{ progress_percentage }}%'; 
-}
-
-
-// راه‌اندازی تایمر پس از بارگذاری کامل صفحه
-window.addEventListener('load', startTimer); 
 </script>
 
 </body>

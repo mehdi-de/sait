@@ -160,27 +160,39 @@ td {
 <div id="exam-modal" class="modal">
     <div class="modal-content">
         <span class="close-button">×</span>
+
         <h3>⚠️ تذکر مهم</h3>
+
         <p><strong>قبل از شروع:</strong></p>
-        <ul style="line-height: 1.6;">
+
+        <ul style="line-height: 1.8;">
             <li>صفحه را رفرش نکنید!</li>
-            <li>اتصال اینترنت پایدار!</li>
-            <li>زمان تمام شد = پایان آزمون!</li>
-            <li>بعد از ثبت سوال و رفتن به سوال بعدی امکان بازگشت به سوال وجود ندارد</li>
-            <li>توصیه میشود قبل از انجام آزمون های پرمیوم حتما چند بار آزمون رایگان ما رو تست کنید!</li>
-            <li>آزمون های پرمیوم را فقط یک بار میتوان انجام داد!</li>
+            <li>اتصال اینترنت پایدار باشد!</li>
+            <li>زمان تمام شود = پایان آزمون!</li>
+            <li>بعد از ثبت سوال و رفتن به سوال بعدی امکان بازگشت ندارید.</li>
+            <li>پیشنهاد می‌شود قبل از آزمون‌های پرمیوم، آزمون رایگان تست کنید.</li>
+            <li>آزمون‌های پرمیوم فقط یک بار قابل انجام هستند.</li>
         </ul>
-        <div style="text-align: center; margin-top: 20px;">
-            <button id="start-exam" class="start-quiz-btn">شروع آزمون</button>
+
+        <div style="text-align:center; margin-top:20px;">
+            <a
+                id="modal-start-link" href="#">
+                <button class="start-quiz-btn">
+                    🚀 شروع آزمون
+                </button>
+            </a>
         </div>
     </div>
 </div>
 
-<!-- محتوا -->
+
+<!-- محتوای اصلی -->
 <div class="dashboard-container">
+
     <h2>📚 لیست آزمون‌ها</h2>
-    
+
     {% if quizzes %}
+
     <table>
         <thead>
             <tr>
@@ -189,46 +201,150 @@ td {
                 <th>عملیات</th>
             </tr>
         </thead>
+
         <tbody>
+
             {% for quiz in quizzes %}
+
             <tr>
-                <td>{{ quiz.title }}</td>
+
                 <td>
+                    {{ quiz.title }}
+                </td>
+
+                <td>
+
                     {% if quiz.is_premium %}
-                        <span class="premium-badge premium">🔒 پرمیوم</span>
+
+                        <span class="premium-badge premium">
+                            🔒 پرمیوم
+                        </span>
+
                     {% else %}
-                        <span class="premium-badge free">✅ رایگان</span>
+
+                        <span class="premium-badge free">
+                            ✅ رایگان
+                        </span>
+
                     {% endif %}
+
                 </td>
+
                 <td>
-                    {% if quiz.id in completed_quiz_ids %}
-                        {# قبلاً انجام شده #}
-                        <button disabled class="start-quiz-btn">✅ انجام شده</button>
 
-                    {% elif quiz.is_premium and not has_subscription %}
-                        {# 🔥 پریمیوم + بدون اشتراک → مستقیم به subscribe #}
-                        <a href="{% url 'subscribe' %}" class="start-quiz-btn premium-lock">
-                            🔒 خرید اشتراک
-                        </a>
+                    {% if quiz.is_premium %}
+
+                        {% if quiz.id in completed_quiz_ids %}
+
+                            <!-- پریمیوم انجام شده -->
+                            <button disabled class="start-quiz-btn">
+                                ✅ انجام شده
+                            </button>
+
+                        {% elif not has_subscription %}
+
+                            <!-- پریمیوم بدون اشتراک -->
+                            <a href="{% url 'quizzes:subscribe' %}" class="start-quiz-btn premium-lock">
+                                🔒 خرید اشتراک
+                            </a>
+
+                        {% else %}
+
+                            <!-- پریمیوم با اشتراک -->
+                            <button
+                                class="start-quiz-btn open-modal-btn"
+                                data-url="{% url 'quizzes:start_quiz' quiz.id %}">
+                                🚀 شروع
+                            </button>
+
+                        {% endif %}
 
                     {% else %}
-                        {# ✅ رایگان یا پریمیوم با اشتراک فعال #}
-                        <a href="{% url 'start_quiz' quiz.id %}" class="start-quiz-btn">
-                            🚀 شروع
-                        </a>
+
+                        <!-- آزمون رایگان همیشه آزاد -->
+                        <button
+                            class="start-quiz-btn open-modal-btn"
+                            data-url="{% url 'quizzes:start_quiz' quiz.id %}">
+                            🚀 شروع مجدد
+                        </button>
+
                     {% endif %}
+
                 </td>
+
             </tr>
+
             {% endfor %}
+
         </tbody>
     </table>
+
     {% else %}
+
     <div style="text-align:center; padding:40px; color:#6b7280;">
-        <div style="font-size:3rem;">📭</div>
-        <h3>هیچ آزمونی نیست!</h3>
+
+        <div style="font-size:3rem;">
+            📭
+        </div>
+
+        <h3>
+            هیچ آزمونی وجود ندارد!
+        </h3>
+
     </div>
+
     {% endif %}
+
 </div>
+
+
+
+<script>
+
+const modal = document.getElementById('exam-modal');
+
+const closeButton = document.querySelector('.close-button');
+
+const modalStartLink = document.getElementById('modal-start-link');
+
+const openButtons = document.querySelectorAll('.open-modal-btn');
+
+
+// باز کردن مودال
+openButtons.forEach(button => {
+
+    button.addEventListener('click', function () {
+
+        const url = this.getAttribute('data-url');
+
+        modalStartLink.href = url;
+
+        modal.style.display = 'flex';
+    });
+
+});
+
+
+// بستن مودال
+closeButton.addEventListener('click', function () {
+
+    modal.style.display = 'none';
+
+});
+
+
+// بستن با کلیک بیرون مودال
+window.addEventListener('click', function (event) {
+
+    if (event.target === modal) {
+
+        modal.style.display = 'none';
+
+    }
+
+});
+
+</script>
 <script>
     
 // کد کامل و بدون ایراد - تضمینی کار می‌کند

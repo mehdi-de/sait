@@ -531,7 +531,7 @@ table td {
             {% elif not result.quiz.is_active %}
                 <span class="start-quiz-btn disabled-btn">غیرفعال</span>
             {% else %}
-                <a href="{% url 'quiz_list' %}" class="start-quiz-btn">
+                <a href="{% url 'quizzes:quiz_list' %}" class="start-quiz-btn">
                     شروع آزمون
                 </a>
             {% endif %}

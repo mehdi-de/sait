@@ -176,8 +176,8 @@
     <!-- ✅ دکمه‌های جدید -->
     <div class="btn-group">
         <a href="javascript:window.print()" class="btn btn-primary">🖨️ چاپ کارنامه</a>
-        <a href="{% url 'quiz_analysis' quiz.id %}" class="btn btn-success">📋 مرور آزمون</a>
-        <a href="{% url 'quiz_list' %}" class="btn btn-primary">🔄 آزمون جدید</a>
+        <a href="{% url 'quizzes:quiz_analysis' quiz.id %}" class="btn btn-success">📋 مرور آزمون</a>
+        <a href="{% url 'quizzes:quiz_list' %}" class="btn btn-primary">🔄 آزمون جدید</a>
         <a href="{% url 'accounts:dashboard' %}" class="btn btn-primary">🏠 داشبورد</a>
     </div>
 </div>

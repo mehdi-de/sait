@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from .forms import RegisterForm
-from .models import Plan, Subscription, SubscriptionStatus
+from .models import Plan, Subscription
 from .utils import get_user_rank, persian_date
 
 from quizzes.models import Quiz, QuizAttempt
@@ -110,10 +110,10 @@ def dashboard_view(request):
 
     if subscription:
 
-        subscription.update_status()
+        subscription.check_status()
 
         subscription_status = (
-            subscription.get_status_display()
+            subscription.get_status_display
         )
 
         subscription_end = subscription.end_date
