@@ -1,10 +1,11 @@
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+load_dotenv(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
@@ -131,10 +132,20 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
-ZARINPAL_MERCHANT = os.environ.get('ZARINPAL_MERCHANT', 'اینجا_مرچنت_آیدی_خودت_را_بگذار')
+ZARINPAL_MERCHANT = os.environ.get('ZARINPAL_MERCHANT', '')
 ZARINPAL_SANDBOX = os.environ.get('ZARINPAL_SANDBOX', 'True').lower() == 'true'
 
-# آدرس‌های API زرین‌پال
-ZARINPAL_REQUEST_URL = 'https://api.zarinpal.com/pg/v4/payment/request.json'
-ZARINPAL_VERIFY_URL = 'https://api.zarinpal.com/pg/v4/payment/verify.json'
-ZARINPAL_STARTPAY_URL = 'https://www.zarinpal.com/pg/startpay/{authority}'
+
+
+# آدرس‌های محیط آزمایشی زرین‌پال
+ZARINPAL_REQUEST_URL = (
+    'https://sandbox.zarinpal.com/pg/v4/payment/request.json'
+)
+
+ZARINPAL_VERIFY_URL = (
+    'https://sandbox.zarinpal.com/pg/v4/payment/verify.json'
+)
+
+ZARINPAL_STARTPAY_URL = (
+    'https://sandbox.zarinpal.com/pg/StartPay/{authority}'
+)
