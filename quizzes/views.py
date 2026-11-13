@@ -283,9 +283,6 @@ def start_quiz_view(request, pk):
     )
 
 
-# -----------------------------------
-# نمایش سوال و ثبت پاسخ
-# -----------------------------------
 @login_required
 def quiz_question_view(request, pk):
 
@@ -301,7 +298,7 @@ def quiz_question_view(request, pk):
     if not progress or not attempt_id:
         messages.warning(
             request,
-            'لطفاً آزمون را مجدد شروع کنید.'
+            'لطفاً آزمون را مجدداً شروع کنید.'
         )
         return redirect('quizzes:quiz_list')
 
@@ -319,17 +316,17 @@ def quiz_question_view(request, pk):
         quiz=quiz
     )
 
+    # اگر آزمون قبلاً تمام شده باشد
     if attempt.is_completed:
 
         request.session.pop('quiz_progress', None)
         request.session.pop('attempt_id', None)
 
         return redirect(
-            'quizzes:quiz_results',
+            'quizzes:quiz_analysis',
             quiz_id=quiz.id
         )
 
-    # محاسبه زمان آزمون از دیتابیس
     start_time = attempt.started_at
 
     end_time = start_time + timedelta(
@@ -341,7 +338,7 @@ def quiz_question_view(request, pk):
     ).count()
 
     # -----------------------------------
-    # پایان آزمون و محاسبه نمره
+    # تابع پایان آزمون و ثبت نمره
     # -----------------------------------
     def finish_attempt():
 
@@ -372,6 +369,7 @@ def quiz_question_view(request, pk):
             positive_score - negative_score
         )
 
+        # ذخیره نتیجه آزمون
         attempt.score = round(final_score, 2)
         attempt.is_completed = True
         attempt.completed_at = timezone.now()
@@ -384,15 +382,26 @@ def quiz_question_view(request, pk):
             ]
         )
 
+        # پاک کردن اطلاعات آزمون از Session
         request.session.pop('quiz_progress', None)
         request.session.pop('attempt_id', None)
 
+        request.session.modified = True
+
+        messages.success(
+            request,
+            'آزمون شما با موفقیت به پایان رسید.'
+        )
+
+        # انتقال مستقیم به صفحه تحلیل آزمون
         return redirect(
-            'quizzes:quiz_results',
+            'quizzes:quiz_analysis',
             quiz_id=quiz.id
         )
 
-    # آزمون بدون سوال فعال
+    # -----------------------------------
+    # بررسی تعداد سوالات
+    # -----------------------------------
     if total_questions == 0:
 
         messages.warning(
@@ -402,7 +411,9 @@ def quiz_question_view(request, pk):
 
         return finish_attempt()
 
-    # بررسی پایان زمان
+    # -----------------------------------
+    # بررسی اتمام زمان آزمون
+    # -----------------------------------
     if timezone.now() >= end_time:
 
         messages.warning(
@@ -412,10 +423,13 @@ def quiz_question_view(request, pk):
 
         return finish_attempt()
 
+    # -----------------------------------
+    # دریافت اطلاعات پیشرفت آزمون
+    # -----------------------------------
     question_ids = progress.get('question_ids', [])
+
     current_index = progress.get('current_index', 0)
 
-    # اعتبارسنجی اطلاعات Session
     if (
         not isinstance(question_ids, list)
         or not isinstance(current_index, int)
@@ -433,10 +447,16 @@ def quiz_question_view(request, pk):
 
         return redirect('quizzes:quiz_list')
 
-    # همه سوال‌ها پاسخ داده شده‌اند
+    # -----------------------------------
+    # بررسی پایان سوالات
+    # -----------------------------------
     if current_index >= len(question_ids):
+
         return finish_attempt()
 
+    # -----------------------------------
+    # دریافت سوال فعلی
+    # -----------------------------------
     question = get_object_or_404(
         Question.objects.prefetch_related('choices'),
         id=question_ids[current_index],
@@ -445,53 +465,49 @@ def quiz_question_view(request, pk):
     )
 
     # -----------------------------------
-    # ثبت پاسخ
+    # ثبت پاسخ کاربر
     # -----------------------------------
     if request.method == 'POST':
 
         choice_id = request.POST.get('choice')
 
-        if not choice_id:
+        # اگر کاربر گزینه‌ای انتخاب کرده باشد
+        if choice_id:
 
-            messages.warning(
-                request,
-                'لطفاً یکی از گزینه‌ها را انتخاب کنید.'
+            try:
+
+                selected_choice = Choice.objects.get(
+                    id=choice_id,
+                    question=question
+                )
+
+            except (
+                Choice.DoesNotExist,
+                ValueError,
+                TypeError
+            ):
+
+                messages.warning(
+                    request,
+                    'گزینه انتخاب‌شده معتبر نیست.'
+                )
+
+                return redirect(
+                    'quizzes:quiz_question',
+                    pk=quiz.id
+                )
+
+            # ثبت یا بروزرسانی پاسخ
+            UserAnswer.objects.update_or_create(
+                attempt=attempt,
+                question=question,
+                defaults={
+                    'selected_choice': selected_choice
+                }
             )
 
-            return redirect(
-                'quizzes:quiz_question',
-                pk=quiz.id
-            )
-
-        try:
-            selected_choice = Choice.objects.get(
-                id=choice_id,
-                question=question
-            )
-
-        except (
-            Choice.DoesNotExist,
-            ValueError,
-            TypeError
-        ):
-
-            messages.warning(
-                request,
-                'گزینه انتخاب‌شده معتبر نیست.'
-            )
-
-            return redirect(
-                'quizzes:quiz_question',
-                pk=quiz.id
-            )
-
-        UserAnswer.objects.update_or_create(
-            attempt=attempt,
-            question=question,
-            defaults={
-                'selected_choice': selected_choice
-            }
-        )
+        # اگر گزینه‌ای انتخاب نشده باشد،
+        # سوال بدون پاسخ رد می‌شود.
 
         progress['current_index'] += 1
 
@@ -503,16 +519,23 @@ def quiz_question_view(request, pk):
             pk=quiz.id
         )
 
-    # درصد پیشرفت
+    # -----------------------------------
+    # محاسبه درصد پیشرفت
+    # -----------------------------------
     progress_percentage = int(
         ((current_index + 1) / len(question_ids)) * 100
     )
 
-    # زمان باقی‌مانده
+    # -----------------------------------
+    # محاسبه زمان باقی‌مانده
+    # -----------------------------------
     remaining_seconds = int(
         (end_time - timezone.now()).total_seconds()
     )
 
+    # -----------------------------------
+    # اطلاعات ارسالی به قالب
+    # -----------------------------------
     context = {
         'quiz': quiz,
         'question': question,
@@ -528,8 +551,6 @@ def quiz_question_view(request, pk):
         'quizzes/question_detail.html',
         context
     )
-
-
 # -----------------------------------
 # نتایج آزمون
 # -----------------------------------
@@ -629,6 +650,7 @@ def quiz_analysis_view(request, quiz_id):
         pk=quiz_id
     )
 
+    # آخرین تلاش تکمیل‌شده کاربر
     attempt = QuizAttempt.objects.filter(
         user=request.user,
         quiz=quiz,
@@ -638,48 +660,119 @@ def quiz_analysis_view(request, quiz_id):
     ).first()
 
     if not attempt:
-
         messages.warning(
             request,
             'تحلیل آزمون یافت نشد.'
         )
-
         return redirect('quizzes:quiz_list')
+
+    # دریافت سوالات فعال
+    questions = quiz.questions.filter(
+        is_active=True
+    ).prefetch_related('choices').order_by('id')
+
+    # دریافت پاسخ‌های ثبت‌شده این تلاش
+    answers = attempt.answers.filter(
+        question__quiz=quiz
+    ).select_related(
+        'selected_choice'
+    )
+
+    # برای دسترسی سریع به پاسخ هر سوال
+    answer_map = {
+        answer.question_id: answer
+        for answer in answers
+    }
 
     user_answers_data = []
 
-    questions = quiz.questions.filter(
-        is_active=True
-    ).prefetch_related('choices')
+    correct_count = 0
+    wrong_count = 0
+    unanswered_count = 0
 
     for question in questions:
 
-        answer = attempt.answers.filter(
-            question=question
-        ).first()
+        answer = answer_map.get(question.id)
 
+        selected_choice = (
+            answer.selected_choice
+            if answer else None
+        )
+
+        # پیدا کردن گزینه صحیح
         correct_choice = question.choices.filter(
             is_correct=True
         ).first()
 
+        # بررسی پاسخ داده شده یا بدون پاسخ بودن
+        is_answered = selected_choice is not None
+
+        is_correct = (
+            selected_choice.is_correct
+            if is_answered else False
+        )
+
+        if is_correct:
+            correct_count += 1
+
+        elif is_answered:
+            wrong_count += 1
+
+        else:
+            unanswered_count += 1
+
+        # استخراج متن سوال و گزینه‌ها
+        question_text = (
+            getattr(question, 'text', None)
+            or getattr(question, 'question_text', None)
+            or str(question)
+        )
+
+        selected_choice_text = (
+            getattr(selected_choice, 'text', None)
+            or getattr(selected_choice, 'choice_text', None)
+            or str(selected_choice)
+            if is_answered else 'پاسخ نداده'
+        )
+
+        correct_choice_text = (
+            getattr(correct_choice, 'text', None)
+            or getattr(correct_choice, 'choice_text', None)
+            or str(correct_choice)
+            if correct_choice else 'نامشخص'
+        )
+
         user_answers_data.append({
+
+            # اطلاعات اصلی
             'question': question,
-            'selected_choice': (
-                answer.selected_choice
-                if answer else None
-            ),
+            'selected_choice': selected_choice,
             'correct_choice': correct_choice,
-            'is_correct': (
-                answer.selected_choice.is_correct
-                if answer and answer.selected_choice
-                else False
-            ),
+
+            # متن‌های مورد نیاز HTML
+            'question_text': question_text,
+            'selected_choice_text': selected_choice_text,
+            'correct_choice_text': correct_choice_text,
+
+            # وضعیت پاسخ
+            'is_answered': is_answered,
+            'is_correct': is_correct,
+
         })
+
+    total_questions = len(user_answers_data)
 
     context = {
         'quiz': quiz,
         'attempt': attempt,
+
         'user_answers': user_answers_data,
+
+        # آمار کلی
+        'total_questions': total_questions,
+        'correct_count': correct_count,
+        'wrong_count': wrong_count,
+        'unanswered_count': unanswered_count,
     }
 
     return render(
@@ -687,7 +780,6 @@ def quiz_analysis_view(request, quiz_id):
         'quizzes/analysis.html',
         context
     )
-
 
 # -----------------------------------
 # اشتراک
@@ -1082,3 +1174,28 @@ def verify_payment_view(request):
         )
 
     return redirect('quizzes:subscribe')
+
+# -----------------------------------
+# مرور آزمون‌های تکمیل‌شده کاربر
+# -----------------------------------
+@login_required
+def my_attempts_view(request):
+
+    attempts = QuizAttempt.objects.filter(
+        user=request.user,
+        is_completed=True
+    ).select_related(
+        'quiz'
+    ).order_by(
+        '-completed_at'
+    )
+
+    context = {
+        'attempts': attempts,
+    }
+
+    return render(
+        request,
+        'quizzes/my_attempts.html',
+        context
+    )

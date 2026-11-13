@@ -1,151 +1,563 @@
+
 {% extends "base.html" %}
 {% load static %}
+
 {% block content %}
 
+<link rel="stylesheet" href="{% static 'css/analysis.css' %}">
 
-<style>
-    
-.analysis-container {
-    max-width: 900px;
-    margin: 20px auto;
-    background: white;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    font-family: 'Vazir', Tahoma, sans-serif;
-}
-.analysis-header {
-    text-align: center;
-    border-bottom: 3px solid #3498db;
-    padding-bottom: 20px;
-    margin-bottom: 25px;
-}
-.analysis-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 25px 0;
-    background: #f8f9fa;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-}
-.analysis-table th {
-    background: #3498db;
-    color: white;
-    padding: 14px 12px;
-    text-align: center;
-    font-size: 14px;
-    font-weight: 600;
-}
-.analysis-table td {
-    padding: 14px 12px;
-    border-bottom: 1px solid #e1e8ed;
-    font-size: 13px;
-    text-align: right;
-    vertical-align: top;
-}
-.correct { color: #27ae60; font-weight: bold; }
-.wrong { color: #e74c3c; font-weight: bold; }
-.unanswered { color: #95a5a6; font-style: italic; }
-.btn-back {
-    display: inline-block;
-    margin-top: 25px;
-    padding: 12px 25px;
-    background: linear-gradient(45deg, #3498db, #2980b9);
-    color: white;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: 700;
-    transition: all 0.3s;
-}
-.btn-back:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(52,152,219,0.3);
-}
-@media (max-width: 768px) {
-    .analysis-table { font-size: 12px; }
-    .analysis-table th, .analysis-table td { padding: 10px 8px; }
-}
-.btn {
-    padding: 12px 25px;
-    border: none;
-    border-radius: 10px;
-    font-weight: 700;
-    text-decoration: none;
-    transition: all 0.3s;
-    font-size: 14px;
-}
-.btn-primary {
-    background: linear-gradient(45deg, #3498db, #2980b9);
-    color: white;
-}
-.btn-success {
-    background: linear-gradient(45deg, #27ae60, #2ecc71);
-    color: white;
-}
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-}
+<div class="analysis-container" dir="rtl">
 
-</style>
+    <!-- Background -->
+    <div class="bg-glow glow-one"></div>
+    <div class="bg-glow glow-two"></div>
 
-<div class="analysis-container">
-    <div class="analysis-header">
-        <h1>📋 مرور آزمون {{ quiz.title }}</h1>
-        <p>تاریخ: {{ attempt.completed_at|date:"Y/m/d H:i" }} | {{ total_questions }} سوال</p>
-    </div>
+    <!-- Header -->
+    <header class="analysis-header">
 
-    <table class="analysis-table">
-        <thead>
-            <tr>
-                <th>شماره</th>
-                <th>متن سوال</th>
-                <th>پاسخ شما</th>
-                <th>پاسخ صحیح</th>
-                <th>وضعیت</th>
-            </tr>
-        </thead>
-        <tbody>
+        <div class="header-top">
+            <div class="brand">
+                <div class="brand-icon">AR</div>
+                <div>
+                    <h2>AR TEST</h2>
+                    <span>ART EXAMINATION PLATFORM</span>
+                </div>
+            </div>
+
+            <div class="report-badge">
+                <span class="live-dot"></span>
+                گزارش آزمون
+            </div>
+        </div>
+
+        <div class="header-content">
+            <div class="header-text">
+                <span class="eyebrow">EXAMINATION REVIEW</span>
+
+                <h1>مرور و تحلیل <span>آزمون</span></h1>
+
+                <h3>{{ quiz.title }}</h3>
+
+                <p>
+                    عملکرد خود را بررسی کنید، اشتباهاتتان را بشناسید
+                    و برای موفقیت در آزمون بعدی آماده شوید.
+                </p>
+
+                <div class="header-meta">
+                    <span>📅 {{ attempt.completed_at|date:"Y/m/d H:i" }}</span>
+                    <span>📝 {{ total_questions }} سؤال</span>
+                </div>
+            </div>
+
+            <div class="header-art">
+                <div class="art-ring ring-one"></div>
+                <div class="art-ring ring-two"></div>
+                <div class="art-star">✦</div>
+                <div class="art-pencil">✎</div>
+                <div class="art-caption">CREATE<br>YOUR FUTURE</div>
+            </div>
+        </div>
+
+    </header>
+
+
+    <!-- Statistics -->
+    <section class="stats-grid">
+
+        <div class="stat-card total-card">
+            <div class="stat-icon">▤</div>
+            <span>کل سؤالات</span>
+            <strong id="totalCount">0</strong>
+            <small>تعداد سؤالات آزمون</small>
+        </div>
+
+        <div class="stat-card correct-card">
+            <div class="stat-icon">✓</div>
+            <span>پاسخ صحیح</span>
+            <strong id="correctCount">0</strong>
+            <small>عملکرد موفق</small>
+        </div>
+
+        <div class="stat-card wrong-card">
+            <div class="stat-icon">✕</div>
+            <span>پاسخ غلط</span>
+            <strong id="wrongCount">0</strong>
+            <small>نیازمند مرور بیشتر</small>
+        </div>
+
+        <div class="stat-card unanswered-card">
+            <div class="stat-icon">○</div>
+            <span>بدون پاسخ</span>
+            <strong id="emptyCount">0</strong>
+            <small>سؤالات بی‌پاسخ</small>
+        </div>
+
+    </section>
+
+
+    <!-- Analytics -->
+    <section class="analytics-section">
+
+        <div class="section-title">
+            <div>
+                <span class="eyebrow">PERFORMANCE ANALYSIS</span>
+                <h2>تحلیل عملکرد شما</h2>
+                <p>نگاهی دقیق به نتیجه آزمون</p>
+            </div>
+
+            <span class="title-decoration">✧</span>
+        </div>
+
+        <div class="analytics-grid">
+
+            <div class="analytics-card">
+                <h3>درصد پاسخ‌های صحیح</h3>
+
+                <div class="donut-wrapper">
+                    <div class="donut-chart" id="donutChart">
+                        <div class="donut-center">
+                            <strong id="accuracy">0%</strong>
+                            <span>درصد دقت</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-legend">
+                    <span><i class="legend-green"></i> صحیح</span>
+                    <span><i class="legend-red"></i> غلط</span>
+                    <span><i class="legend-gray"></i> نزده</span>
+                </div>
+            </div>
+
+
+            <div class="analytics-card progress-card">
+                <h3>جزئیات پاسخ‌گویی</h3>
+
+                <div class="progress-info">
+                    <span>پاسخ صحیح</span>
+                    <b id="correctPercent">0%</b>
+                </div>
+
+                <div class="progress-track">
+                    <div class="progress-fill green" id="correctBar"></div>
+                </div>
+
+                <div class="progress-info">
+                    <span>پاسخ غلط</span>
+                    <b id="wrongPercent">0%</b>
+                </div>
+
+                <div class="progress-track">
+                    <div class="progress-fill red" id="wrongBar"></div>
+                </div>
+
+                <div class="progress-info">
+                    <span>بدون پاسخ</span>
+                    <b id="emptyPercent">0%</b>
+                </div>
+
+                <div class="progress-track">
+                    <div class="progress-fill gray" id="emptyBar"></div>
+                </div>
+
+                <div class="performance-message" id="performanceMessage">
+                    در حال بررسی نتیجه آزمون...
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Questions -->
+    <section class="questions-section">
+
+        <div class="section-title">
+            <div>
+                <span class="eyebrow">QUESTION BREAKDOWN</span>
+                <h2>بررسی سؤالات آزمون</h2>
+                <p>پاسخ‌های خود را به‌صورت دقیق بررسی کنید.</p>
+            </div>
+
+            <span class="title-decoration">▤</span>
+        </div>
+
+
+        <!-- Search and Filter -->
+        <div class="table-tools">
+
+            <div class="search-box">
+                <span>⌕</span>
+                <input
+                    type="text"
+                    id="questionSearch"
+                    placeholder="جستجو در متن سؤالات..."
+                >
+            </div>
+
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">
+                    همه
+                </button>
+
+                <button class="filter-btn" data-filter="correct">
+                    صحیح
+                </button>
+
+                <button class="filter-btn" data-filter="wrong">
+                    غلط
+                </button>
+
+                <button class="filter-btn" data-filter="empty">
+                    نزده
+                </button>
+            </div>
+
+        </div>
+
+
+        <!-- Question List -->
+        <div class="questions-list" id="questionsList">
+
             {% for ans in user_answers %}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                <td style="max-width: 250px;">{{ ans.question_text|truncatechars:60 }}</td>
-                <td style="max-width: 150px;">
-                    {% if ans.selected_choice_text == 'پاسخ نداده' %}
-                        <span style="color: #95a5a6; font-style: italic;">{{ ans.selected_choice_text }}</span>
-                    {% else %}
-                        {{ ans.selected_choice_text|truncatechars:40 }}
-                    {% endif %}
-                </td>
-                <td style="max-width: 150px;">
-                    {% if ans.correct_choice_text == 'نامشخص' %}
-                        <span style="color: #95a5a6;">نامشخص</span>
-                    {% else %}
-                        <span style="font-weight: bold; color: #27ae60;">{{ ans.correct_choice_text|truncatechars:40 }}</span>
-                    {% endif %}
-                </td>
-                <td>
-                    {% if ans.is_correct %}
-                        <span class="correct">✅ صحیح</span>
-                    {% elif not ans.is_answered %}
-                        <span class="unanswered">⭕ خالی</span>
-                    {% else %}
-                        <span class="wrong">❌ غلط</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="5">تحلیلی موجود نیست</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
 
-    <div class="btn-group">
-        <a href="javascript:window.print()" class="btn btn-primary">🖨️ چاپ کارنامه</a>
-        <a href="{% url 'quizzes:quiz_results' quiz.id %}" class="btn btn-success">🔙 بازگشت به کارنامه</a>
+            <div class="question-item"
+                 data-status="{% if ans.is_correct %}correct{% elif not ans.is_answered %}empty{% else %}wrong{% endif %}">
+
+                <div class="question-row">
+
+                    <div class="question-number">
+                        {{ forloop.counter|stringformat:"02d" }}
+                    </div>
+
+                    <div class="question-main">
+
+                        <span class="question-caption">
+                            QUESTION {{ forloop.counter }}
+                        </span>
+
+                        <h3>
+                            {{ ans.question_text|truncatechars:100 }}
+                        </h3>
+
+                        {% if ans.is_correct %}
+
+                            <span class="status-badge correct-badge">
+                                ✓ پاسخ صحیح
+                            </span>
+
+                        {% elif not ans.is_answered %}
+
+                            <span class="status-badge empty-badge">
+                                ○ بدون پاسخ
+                            </span>
+
+                        {% else %}
+
+                            <span class="status-badge wrong-badge">
+                                ✕ پاسخ غلط
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                    <button class="detail-toggle" type="button"
+                            aria-expanded="false">
+                        <span>مشاهده جزئیات</span>
+                        <span class="toggle-arrow">⌄</span>
+                    </button>
+
+                </div>
+
+
+                <!-- Answer Details -->
+                <div class="question-details">
+
+                    <div class="answer-box user-answer">
+
+                        <div class="answer-heading">
+                            <span class="answer-dot purple-dot"></span>
+                            پاسخ شما
+                        </div>
+
+                        <p>
+                            {% if ans.selected_choice_text == 'پاسخ نداده' %}
+                                <em>پاسخی ثبت نشده است</em>
+                            {% else %}
+                                {{ ans.selected_choice_text }}
+                            {% endif %}
+                        </p>
+
+                    </div>
+
+
+                    <div class="answer-box correct-answer">
+
+                        <div class="answer-heading">
+                            <span class="answer-dot green-dot"></span>
+                            پاسخ صحیح
+                        </div>
+
+                        <p>
+                            {% if ans.correct_choice_text == 'نامشخص' %}
+                                <em>پاسخ صحیح مشخص نیست</em>
+                            {% else %}
+                                {{ ans.correct_choice_text }}
+                            {% endif %}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="empty-state">
+                <div>📭</div>
+                <h3>تحلیلی موجود نیست</h3>
+                <p>هنوز اطلاعاتی برای نمایش ثبت نشده است.</p>
+            </div>
+
+            {% endfor %}
+
+            <div class="no-results" id="noResults">
+                سؤالی با این مشخصات پیدا نشد.
+            </div>
+
+        </div>
+
+        <div class="results-count" id="resultsCount"></div>
+
+    </section>
+
+
+    <!-- Footer -->
+    <footer class="analysis-footer">
+
+        <div class="footer-brand">
+            <div class="brand-icon">AR</div>
+
+            <div>
+                <h3>AR TEST</h3>
+                <span>ART EXAMINATION PLATFORM</span>
+            </div>
+        </div>
+
+        <p>
+            هر آزمون، یک قدم به سوی خلاقیت و موفقیت.
+        </p>
+
+        <small>
+            کلیه حقوق این سند متعلق به سایت AR TEST بوده
+            و استفاده بدون اجازه از آن پیگرد قانونی دارد!
+        </small>
+
+    </footer>
+
+
+    <!-- Action Buttons -->
+    <div class="action-bar">
+
+        <a href="{% url 'quizzes:quiz_results' quiz.id %}"
+           class="action-btn back-btn">
+            ↩ بازگشت به کارنامه
+        </a>
+
+        <button onclick="window.print()"
+                class="action-btn print-btn">
+            🖨️ چاپ کارنامه
+        </button>
+
     </div>
-    
+
+
+    <button id="backToTop" class="back-to-top">
+        ↑
+    </button>
+
 </div>
-<p>کلیه حقوق این  سند متعلق به سایت AR TEST بوده و استفاده بدون اجازه از ان پیگرد قانونی دارد!</p>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const items = Array.from(
+        document.querySelectorAll('.question-item')
+    );
+
+    const total = items.length;
+
+    const correct = items.filter(
+        item => item.dataset.status === 'correct'
+    ).length;
+
+    const wrong = items.filter(
+        item => item.dataset.status === 'wrong'
+    ).length;
+
+    const empty = items.filter(
+        item => item.dataset.status === 'empty'
+    ).length;
+
+    const percent = value =>
+        total ? Math.round(value / total * 100) : 0;
+
+    const correctPercent = percent(correct);
+    const wrongPercent = percent(wrong);
+    const emptyPercent = percent(empty);
+
+    document.getElementById('totalCount').textContent = total;
+    document.getElementById('correctCount').textContent = correct;
+    document.getElementById('wrongCount').textContent = wrong;
+    document.getElementById('emptyCount').textContent = empty;
+
+    document.getElementById('accuracy').textContent =
+        correctPercent + '%';
+
+    document.getElementById('correctPercent').textContent =
+        correctPercent + '%';
+
+    document.getElementById('wrongPercent').textContent =
+        wrongPercent + '%';
+
+    document.getElementById('emptyPercent').textContent =
+        emptyPercent + '%';
+
+    document.getElementById('correctBar').style.width =
+        correctPercent + '%';
+
+    document.getElementById('wrongBar').style.width =
+        wrongPercent + '%';
+
+    document.getElementById('emptyBar').style.width =
+        emptyPercent + '%';
+
+    document.getElementById('donutChart').style.background =
+        `conic-gradient(
+            #35d69a 0% ${correctPercent}%,
+            #ff637d ${correctPercent}% ${correctPercent + wrongPercent}%,
+            #73758a ${correctPercent + wrongPercent}% 100%
+        )`;
+
+    const message = document.getElementById('performanceMessage');
+
+    if (!total) {
+        message.textContent = 'هنوز اطلاعاتی برای تحلیل وجود ندارد.';
+    } else if (correctPercent >= 90) {
+        message.textContent = '🏆 فوق‌العاده! عملکرد درخشانی داشتی.';
+    } else if (correctPercent >= 70) {
+        message.textContent = '✨ عالیه! با کمی تمرین بیشتر بهتر می‌شی.';
+    } else if (correctPercent >= 50) {
+        message.textContent = '💪 اشتباهاتت رو مرور کن و ادامه بده.';
+    } else {
+        message.textContent = '🎨 فرصت خوبی برای یادگیری و پیشرفته.';
+    }
+
+
+    // Expand question details
+    document.querySelectorAll('.detail-toggle').forEach(button => {
+
+        button.addEventListener('click', function () {
+
+            const item = this.closest('.question-item');
+
+            const expanded = item.classList.toggle('expanded');
+
+            this.setAttribute('aria-expanded', expanded);
+
+            this.querySelector('span:first-child').textContent =
+                expanded ? 'بستن جزئیات' : 'مشاهده جزئیات';
+
+        });
+
+    });
+
+
+    // Search and filter
+    const search = document.getElementById('questionSearch');
+
+    let activeFilter = 'all';
+
+    function filterQuestions() {
+
+        const term = search.value.trim().toLowerCase();
+
+        let visible = 0;
+
+        items.forEach(item => {
+
+            const matchesFilter =
+                activeFilter === 'all' ||
+                item.dataset.status === activeFilter;
+
+            const matchesSearch =
+                item.textContent.toLowerCase().includes(term);
+
+            const show = matchesFilter && matchesSearch;
+
+            item.hidden = !show;
+
+            if (show) visible++;
+
+        });
+
+        document.getElementById('noResults').style.display =
+            visible ? 'none' : 'block';
+
+        document.getElementById('resultsCount').textContent =
+            `نمایش ${visible} از ${total} سؤال`;
+
+    }
+
+    search.addEventListener('input', filterQuestions);
+
+    document.querySelectorAll('.filter-btn').forEach(button => {
+
+        button.addEventListener('click', function () {
+
+            document.querySelector('.filter-btn.active')
+                ?.classList.remove('active');
+
+            this.classList.add('active');
+
+            activeFilter = this.dataset.filter;
+
+            filterQuestions();
+
+        });
+
+    });
+
+    filterQuestions();
+
+
+    // Back to top
+    const topButton = document.getElementById('backToTop');
+
+    window.addEventListener('scroll', function () {
+
+        topButton.classList.toggle(
+            'visible',
+            window.scrollY > 350
+        );
+
+    });
+
+    topButton.addEventListener('click', function () {
+
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+
+    });
+
+});
+</script>
+
 {% endblock %}

@@ -1,3 +1,4 @@
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -34,6 +35,7 @@ class Plan(models.Model):
     class Meta:
         verbose_name = 'پلن اشتراک'
         verbose_name_plural = 'پلن‌های اشتراک'
+        ordering = ['price']
 
     def __str__(self):
         return f'{self.name} ({self.duration_days} روز)'
@@ -101,30 +103,52 @@ class Subscription(models.Model):
         verbose_name_plural = 'اشتراک‌ها'
 
     def __str__(self):
-        return f"{self.user.username} - {self.status}"
+        return f'{self.user.username} - {self.status}'
 
     def check_status(self):
+        """
+        بررسی اعتبار اشتراک بر اساس تاریخ پایان.
+
+        این متد وضعیت is_active و status را هماهنگ می‌کند
+        تا سایر اپلیکیشن‌ها، از جمله quizzes، بتوانند
+        از وضعیت به‌روز اشتراک استفاده کنند.
+        """
 
         now = timezone.now()
 
         if self.end_date:
-
-            if now > self.end_date:
-                self.is_active = False
-                self.status = 'منقضی'
-
+            if now >= self.end_date:
+                new_is_active = False
+                new_status = 'منقضی'
             else:
-                self.is_active = True
-                self.status = 'فعال'
-
+                new_is_active = True
+                new_status = 'فعال'
         else:
-            self.is_active = False
-            self.status = 'ندارد'
+            new_is_active = False
+            new_status = 'ندارد'
 
-        self.save(update_fields=['is_active', 'status'])
+        # فقط در صورت تغییر وضعیت، دیتابیس را به‌روزرسانی کن
+        update_fields = []
+
+        if self.is_active != new_is_active:
+            self.is_active = new_is_active
+            update_fields.append('is_active')
+
+        if self.status != new_status:
+            self.status = new_status
+            update_fields.append('status')
+
+        if update_fields:
+            self.save(update_fields=update_fields)
+
+        return self.is_active
 
     @property
     def status_display(self):
+        """
+        برگرداندن عنوان فارسی وضعیت اشتراک.
+        """
+
         return dict(self.STATUS_CHOICES).get(
             self.status,
             self.status

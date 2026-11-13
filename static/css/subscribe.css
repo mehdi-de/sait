@@ -1,321 +1,685 @@
 
-/* 🔥 استایل‌های فوق‌العاده حرفه‌ای - صد% تلاش! 🔥 */
-* {
-    font-family: 'Vazir', 'Segoe UI', Tahoma, sans-serif !important;
-}
+/* =========================================
+   AR TEST - SUBSCRIPTION PAGE
+   Modern Premium UI
+   Font: Vazirmatn
+========================================= */
 
-.subscription-hero {
-    max-width: 1400px;
-    margin: 40px auto;
-    padding: 50px;
-    background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(248,250,252,0.9));
-    border-radius: 30px;
-    box-shadow: 
-        0 30px 80px rgba(0,0,0,0.15),
-        0 0 0 1px rgba(255,255,255,0.8);
-    backdrop-filter: blur(25px);
+.subscription-page {
+    --primary: #5578df;
+    --primary-dark: #385cc2;
+    --primary-light: #edf2ff;
+    --pink: #f3a9ca;
+    --pink-light: #fff1f7;
+    --text: #263653;
+    --muted: #8993a8;
+    --border: #e8edf6;
+    --white: #ffffff;
+    --success: #16a47b;
+    --danger: #e66b7d;
+
+    direction: rtl;
     position: relative;
     overflow: hidden;
+    min-height: 100vh;
+    padding: 55px 20px 80px;
+    font-family: 'Vazirmatn', sans-serif;
+    color: var(--text);
+
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(243, 169, 202, 0.17),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 90% 15%,
+            rgba(85, 120, 223, 0.12),
+            transparent 32%
+        ),
+        linear-gradient(145deg, #f8faff, #fff8fc);
 }
 
-.subscription-hero::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 5px;
-    background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3, #54a0ff);
-    animation: gradientShift 3s ease infinite;
+.subscription-page * {
+    box-sizing: border-box;
 }
 
-@keyframes gradientShift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-}
-
-.page-title {
-    text-align: center;
-    margin-bottom: 50px;
+.subscription-page .container {
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
     position: relative;
+    z-index: 2;
 }
 
-.page-title h2 {
-    font-size: 3.5rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+/* =========================================
+   BACKGROUND
+========================================= */
+
+.subscription-page .bg-animation {
+    display: none;
+}
+
+.subscription-page::before,
+.subscription-page::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(2px);
+}
+
+.subscription-page::before {
+    width: 280px;
+    height: 280px;
+    background: rgba(243, 169, 202, 0.10);
+    top: 350px;
+    right: -160px;
+}
+
+.subscription-page::after {
+    width: 350px;
+    height: 350px;
+    background: rgba(85, 120, 223, 0.08);
+    bottom: 100px;
+    left: -200px;
+}
+
+/* =========================================
+   HERO
+========================================= */
+
+.subscription-page .hero {
+    text-align: center;
+    margin-bottom: 42px;
+}
+
+.subscription-page .hero-content {
+    max-width: 750px;
+    margin: 0 auto;
+}
+
+.subscription-page .hero-title {
+    font-size: clamp(27px, 4vw, 43px);
+    font-weight: 900;
+    color: #283d69;
+    margin: 0 0 18px;
+    line-height: 1.8;
+}
+
+.subscription-page .title-glow {
+    display: inline-block;
+    font-size: 30px;
+    margin: 0 7px;
+}
+
+.subscription-page .gradient-text {
+    background: linear-gradient(
+        120deg,
+        #5278e1,
+        #9a80e8,
+        #e99fc7
+    );
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subscription-page .hero-desc {
+    font-size: 14px;
+    color: #7e89a0;
+    line-height: 2.2;
     margin: 0;
-    font-weight: 800;
 }
 
-.page-title::after {
-    content: '💎✨ خرید اشتراک 💎✨';
-    display: block;
-    font-size: 1.3rem;
-    color: #7c3aed;
-    margin-top: 15px;
-    opacity: 0.8;
+/* =========================================
+   MESSAGES
+========================================= */
+
+.subscription-page .messages {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.subscription-page .message-item {
+    padding: 15px 20px;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
     font-weight: 600;
+    border: 1px solid var(--border);
+    background: #ffffff;
+    box-shadow: 0 5px 18px rgba(50, 70, 110, 0.04);
 }
 
-/* پیام‌ها */
-.messages {
+.subscription-page .message-success {
+    color: #168a68;
+    background: #effbf6;
+    border-color: #ccefe1;
+}
+
+.subscription-page .message-error {
+    color: #d94d65;
+    background: #fff2f4;
+    border-color: #f8d4dc;
+}
+
+.subscription-page .message-warning {
+    color: #a87922;
+    background: #fff9eb;
+    border-color: #f5e5bc;
+}
+
+.subscription-page .message-info {
+    color: #4168c7;
+    background: #f1f5ff;
+    border-color: #dce6ff;
+}
+
+.subscription-page .pulse-animation {
+    animation: none !important;
+}
+
+/* =========================================
+   STATUS CARD
+========================================= */
+
+.subscription-page .status-card {
+    position: relative;
+    padding: 24px 28px;
     margin-bottom: 30px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 35px rgba(43, 66, 120, 0.06);
 }
 
-.message-item {
-    padding: 20px 25px;
-    border-radius: 20px;
-    margin-bottom: 15px;
+.subscription-page .glass-effect {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.subscription-page .status-header {
     display: flex;
     align-items: center;
     gap: 15px;
-    font-weight: 600;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    animation: slideInUp 0.5s ease-out;
-    border-right: 5px solid;
+    margin-bottom: 15px;
 }
 
-@keyframes slideInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.message-item.success {
-    background: linear-gradient(135deg, #d4edda, #c3e6cb);
-    color: #155724;
-    border-right-color: #28a745;
-}
-
-.message-item.warning {
-    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
-    color: #856404;
-    border-right-color: #ffc107;
-}
-
-.message-item.success .btn {
-    background: #28a745;
-    color: white;
-    border: none;
-    padding: 8px 20px;
-    border-radius: 25px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.message-item.success .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(40,167,69,0.4);
-}
-
-/* پلن‌ها */
-.plans-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-    gap: 30px;
-    margin-top: 20px;
-}
-
-.subscription-card {
-    background: rgba(255,255,255,0.95);
-    border-radius: 25px;
-    padding: 40px 30px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 
-        0 20px 40px rgba(0,0,0,0.1),
-        0 0 0 1px rgba(255,255,255,0.5);
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255,255,255,0.2);
-}
-
-.subscription-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24);
-}
-
-.subscription-card:hover {
-    transform: translateY(-15px) scale(1.02);
-    box-shadow: 
-        0 40px 80px rgba(0,0,0,0.2),
-        0 0 0 1px rgba(255,255,255,0.8);
-}
-
-.subscription-card.popular {
-    background: linear-gradient(145deg, rgba(120,119,198,0.1), rgba(255,119,198,0.1));
-    border: 2px solid #8b5cf6;
-    transform: scale(1.05);
-}
-
-.subscription-card.popular::after {
-    content: '🔥 محبوب‌ترین';
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background: #ef4444;
-    color: white;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    box-shadow: 0 4px 15px rgba(239,68,68,0.4);
-}
-
-.plan-name {
-    font-size: 1.8rem;
+.subscription-page .status-header h3 {
+    font-size: 16px;
     font-weight: 800;
-    margin-bottom: 20px;
-    color: #1e293b;
-    position: relative;
+    margin: 0;
+    color: var(--text);
 }
 
-.plan-price {
-    font-size: 4rem;
-    font-weight: 900;
-    background: linear-gradient(135deg, #8b5cf6, #ec4899);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin: 20px 0;
-    line-height: 1;
-}
-
-.plan-features {
-    list-style: none;
-    padding: 0;
-    margin: 30px 0;
-}
-
-.plan-features li {
-    padding: 12px 0;
-    font-size: 1.1rem;
-    color: #475569;
-    position: relative;
-    padding-right: 40px;
-}
-
-.plan-features li::before {
-    content: '✅';
-    position: absolute;
-    right: 0;
-    font-size: 1.2rem;
-}
-
-.plan-features li:last-child {
-    font-weight: 700;
-    color: #8b5cf6;
-    font-size: 1.15rem;
-}
-
-.purchase-btn {
-    width: 100%;
-    padding: 18px 40px;
-    border: none;
-    border-radius: 50px;
-    font-size: 1.2rem;
-    font-weight: 800;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.4s ease;
-    background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
-    color: white;
-    box-shadow: 0 12px 35px rgba(139,92,246,0.4);
-}
-
-.purchase-btn:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 45px rgba(139,92,246,0.6);
-}
-
-.purchase-btn:active {
-    transform: translateY(-2px);
-}
-
-.purchase-btn:disabled {
-    background: linear-gradient(135deg, #6b7280, #4b5563);
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: 0 8px 25px rgba(107,114,128,0.3);
-}
-
-.no-plans {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 80px 40px;
-    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-    border-radius: 25px;
-    color: #64748b;
-    font-size: 1.3rem;
-}
-
-.stats-bar {
+.subscription-page .status-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 15px;
     display: flex;
     justify-content: center;
-    gap: 40px;
-    margin: 30px 0;
-    padding: 25px;
-    background: rgba(139,92,246,0.1);
-    border-radius: 20px;
+    align-items: center;
+    font-size: 21px;
 }
 
-.stat-item {
+.subscription-page .active-icon {
+    background: #e9f9f2;
+}
+
+.subscription-page .expired-icon {
+    background: #fff0f1;
+}
+
+.subscription-page .new-icon {
+    background: #f1efff;
+}
+
+.subscription-page .status-active {
+    border-right: 4px solid var(--success);
+}
+
+.subscription-page .status-expired {
+    border-right: 4px solid var(--danger);
+}
+
+.subscription-page .status-new {
+    border-right: 4px solid #8b79e8;
+}
+
+.subscription-page .status-details {
+    padding-right: 63px;
+}
+
+.subscription-page .status-details p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 2;
+}
+
+.subscription-page .detail-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.subscription-page .detail-row strong {
+    color: var(--text);
+    font-weight: 700;
+}
+
+/* =========================================
+   STATS
+========================================= */
+
+.subscription-page .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 45px;
+}
+
+.subscription-page .stat-card {
+    padding: 22px;
+    border-radius: 17px;
     text-align: center;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    box-shadow: 0 6px 22px rgba(43, 66, 120, 0.045);
 }
 
-.stat-number {
-    font-size: 2rem;
+.subscription-page .stat-value {
+    font-size: 25px;
+    font-weight: 900;
+    color: var(--primary);
+    margin-bottom: 8px;
+}
+
+.subscription-page .stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+/* =========================================
+   PLANS GRID
+========================================= */
+
+.subscription-page .plans-wrapper {
+    width: 100%;
+}
+
+.subscription-page .plans-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    align-items: stretch;
+}
+
+/* =========================================
+   PLAN CARD
+========================================= */
+
+.subscription-page .plan-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 23px 24px;
+    min-width: 0;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid #e9edf5;
+    border-radius: 22px;
+    box-shadow: 0 9px 30px rgba(43, 66, 120, 0.055);
+    overflow: hidden;
+}
+
+.subscription-page .plan-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #5578df, #e9a5c9);
+}
+
+.subscription-page .plan-premium {
+    border: 2px solid #8b9fea;
+    box-shadow: 0 14px 40px rgba(85, 120, 223, 0.13);
+}
+
+.subscription-page .plan-premium::before {
+    height: 5px;
+    background: linear-gradient(90deg, #5578df, #e9a5c9, #5578df);
+}
+
+.subscription-page .plan-active {
+    border: 2px solid #27b58a;
+    background: linear-gradient(180deg, #f6fffb, #ffffff);
+}
+
+.subscription-page .plan-active::before {
+    background: var(--success);
+}
+
+/* =========================================
+   PLAN BADGE
+========================================= */
+
+.subscription-page .plan-badge {
+    position: absolute;
+    top: 17px;
+    left: 17px;
+    min-height: 27px;
+    padding: 5px 12px;
+    border-radius: 30px;
+    font-size: 10px;
     font-weight: 800;
-    color: #8b5cf6;
+    color: #ffffff;
 }
 
-/* ریسپانسیو */
-@media (max-width: 992px) {
-    .plans-grid {
+.subscription-page .premium-badge {
+    background: linear-gradient(120deg, #e89bc1, #e47aab);
+}
+
+.subscription-page .plan-active .plan-badge {
+    background: var(--success);
+}
+
+/* =========================================
+   PLAN HEADER
+========================================= */
+
+.subscription-page .plan-header {
+    text-align: center;
+    margin-bottom: 22px;
+}
+
+.subscription-page .plan-emoji {
+    width: 62px;
+    height: 62px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #edf2ff, #fff0f7);
+    font-size: 28px;
+}
+
+.subscription-page .plan-name {
+    font-size: 20px;
+    font-weight: 900;
+    color: #30436c;
+    margin: 0;
+}
+
+/* =========================================
+   PRICE
+========================================= */
+
+.subscription-page .plan-price-section {
+    text-align: center;
+    padding: 20px 10px;
+    margin-bottom: 20px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #f5f7ff, #fff7fb);
+}
+
+.subscription-page .price-main {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.subscription-page .price-number {
+    font-size: clamp(25px, 3vw, 34px);
+    font-weight: 900;
+    color: #4e70d3;
+    direction: ltr;
+}
+
+.subscription-page .price-unit {
+    font-size: 12px;
+    font-weight: 700;
+    color: #8b94aa;
+}
+
+/* =========================================
+   FEATURES
+========================================= */
+
+.subscription-page .plan-features {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 25px;
+    flex-grow: 1;
+}
+
+.subscription-page .feature-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    color: #69758d;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.8;
+}
+
+.subscription-page .feature-item > span:first-child {
+    width: 27px;
+    height: 27px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 9px;
+    background: #f1f4ff;
+    font-size: 13px;
+}
+
+.subscription-page .active-feature {
+    color: var(--success);
+}
+
+.subscription-page .active-feature > span:first-child {
+    background: #e8f9f1;
+}
+
+/* =========================================
+   ACTION BUTTON
+========================================= */
+
+.subscription-page .plan-action {
+    width: 100%;
+    margin-top: auto;
+}
+
+.subscription-page .action-btn {
+    width: 100%;
+    min-height: 49px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    border: none;
+    border-radius: 13px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.subscription-page .gradient-btn {
+    color: #ffffff;
+    background: linear-gradient(120deg, #5578df, #7792e9);
+    box-shadow: 0 7px 18px rgba(85, 120, 223, 0.20);
+}
+
+.subscription-page .gradient-btn:hover {
+    background: linear-gradient(120deg, #3f62c7, #6682dc);
+}
+
+.subscription-page .pulse-hover {
+    animation: none !important;
+}
+
+.subscription-page .active-btn {
+    color: #138760;
+    background: #e9f9f2;
+    border: 1px solid #c9efdf;
+    cursor: default;
+}
+
+/* =========================================
+   EMPTY PLANS
+========================================= */
+
+.subscription-page .empty-plans {
+    text-align: center;
+    padding: 65px 25px;
+    background: #ffffff;
+    border: 1px dashed #dce4f3;
+    border-radius: 22px;
+}
+
+.subscription-page .empty-emoji {
+    font-size: 42px;
+    margin-bottom: 15px;
+}
+
+.subscription-page .empty-plans h3 {
+    font-size: 19px;
+    color: #34476e;
+    margin: 0 0 12px;
+}
+
+.subscription-page .empty-plans p {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0;
+}
+
+/* =========================================
+   FOCUS ACCESSIBILITY
+========================================= */
+
+.subscription-page button:focus-visible,
+.subscription-page a:focus-visible {
+    outline: 3px solid rgba(85, 120, 223, 0.35);
+    outline-offset: 4px;
+}
+
+/* =========================================
+   RESPONSIVE - TABLET
+========================================= */
+
+@media (max-width: 950px) {
+    .subscription-page .plans-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .subscription-page .plan-card {
+        padding: 26px 19px 21px;
+    }
+}
+
+/* =========================================
+   RESPONSIVE - MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+    .subscription-page {
+        padding: 35px 14px 55px;
+    }
+
+    .subscription-page .hero {
+        margin-bottom: 30px;
+    }
+
+    .subscription-page .hero-title {
+        font-size: 27px;
+    }
+
+    .subscription-page .title-glow {
+        font-size: 22px;
+        margin: 0 3px;
+    }
+
+    .subscription-page .hero-desc {
+        font-size: 12px;
+    }
+
+    .subscription-page .status-card {
+        padding: 20px 17px;
+    }
+
+    .subscription-page .status-header h3 {
+        font-size: 14px;
+    }
+
+    .subscription-page .status-details {
+        padding-right: 0;
+    }
+
+    .subscription-page .stats-grid {
+        gap: 11px;
+        margin-bottom: 30px;
+    }
+
+    .subscription-page .stat-card {
+        padding: 18px 10px;
+    }
+
+    .subscription-page .stat-value {
+        font-size: 21px;
+    }
+
+    .subscription-page .plans-grid {
         grid-template-columns: 1fr;
-        gap: 25px;
+        gap: 18px;
     }
-    
-    .subscription-hero {
-        margin: 20px;
-        padding: 30px;
+
+    .subscription-page .plan-card {
+        padding: 27px 22px 22px;
+        border-radius: 19px;
+    }
+
+    .subscription-page .plan-name {
+        font-size: 19px;
+    }
+
+    .subscription-page .price-number {
+        font-size: 31px;
+    }
+
+    .subscription-page .feature-item {
+        font-size: 13px;
     }
 }
 
-@media (max-width: 768px) {
-    .page-title h2 {
-        font-size: 2.5rem;
-    }
-    
-    .plan-price {
-        font-size: 3rem;
-    }
-    
-    .stats-bar {
-        flex-direction: column;
-        gap: 20px;
-    }
-    
-    .message-item {
-        flex-direction: column;
-        text-align: center;
-        gap: 10px;
+/* =========================================
+   REDUCED MOTION
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .subscription-page *,
+    .subscription-page *::before,
+    .subscription-page *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
     }
 }

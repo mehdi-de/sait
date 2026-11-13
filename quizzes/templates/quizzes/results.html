@@ -1,199 +1,318 @@
+
 {% extends "base.html" %}
 {% load static %}
+
+{% block title %}
+کارنامه آزمون | AR TEST
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/quiz_report.css' %}">
+{% endblock %}
+
 {% block content %}
 
-<style>
-    
-.print-report {
-    max-width: 800px;
-    margin: 20px auto;
-    background: white;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    font-family: 'Vazir', Tahoma, sans-serif;
-}
-.header {
-    text-align: center;
-    border-bottom: 3px solid #3498db;
-    padding-bottom: 20px;
-    margin-bottom: 25px;
-}
-.header h1 {
-    color: #2c3e50;
-    font-size: 1.8rem;
-    margin-bottom: 10px;
-}
-.header p {
-    color: #7f8c8d;
-    font-size: 14px;
-}
-.score-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 15px;
-    margin: 25px 0;
-}
-.score-card {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-    padding: 18px;
-    border-radius: 12px;
-    text-align: center;
-}
-.score-label {
-    font-size: 13px;
-    opacity: 0.9;
-    margin-bottom: 8px;
-}
-.score-value {
-    font-size: 22px;
-    font-weight: 800;
-}
-.total-score {
-    grid-column: 1 / -1;
-    background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
-    font-size: 28px !important;
-}
-.rank-badge {
-    background: #f39c12;
-    color: white;
-    padding: 8px 16px;
-    border-radius: 25px;
-    font-weight: bold;
-    margin: 20px 0;
-    display: inline-block;
-}
-.details-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 25px 0;
-    background: #f8f9fa;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-}
-.details-table th {
-    background: #3498db;
-    color: white;
-    padding: 12px 10px;
-    text-align: center;
-    font-size: 14px;
-}
-.details-table td {
-    padding: 12px 10px;
-    border-bottom: 1px solid #e1e8ed;
-    font-size: 13px;
-    text-align: right;
-}
-.correct { color: #27ae60; font-weight: bold; }
-.wrong { color: #e74c3c; font-weight: bold; }
-.unanswered { color: #95a5a6; font-style: italic; }
-.btn-group {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-    margin-top: 30px;
-    flex-wrap: wrap;
-}
-.btn {
-    padding: 12px 25px;
-    border: none;
-    border-radius: 10px;
-    font-weight: 700;
-    text-decoration: none;
-    transition: all 0.3s;
-    font-size: 14px;
-}
-.btn-primary {
-    background: linear-gradient(45deg, #3498db, #2980b9);
-    color: white;
-}
-.btn-success {
-    background: linear-gradient(45deg, #27ae60, #2ecc71);
-    color: white;
-}
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-}
-@media print {
-    .btn-group { display: none; }
-    .print-report { box-shadow: none; margin: 0; }
-}
-@media (max-width: 768px) {
-    .score-grid { grid-template-columns: repeat(2, 1fr); }
-    .total-score { grid-column: 1 / -1; }
-    .details-table { font-size: 12px; }
-    .details-table th, .details-table td { padding: 8px 6px; }
-}
+<div class="report-page">
 
-</style>
-<div class="print-report">
-    <div class="header">
-        <h1>📄 کارنامه آزمون {{ quiz.title }}</h1>
-        <p> آزمون های  کنکوری در سایت AR TEST</p>
-        <!--<p>فرمول: {{ unit_score }}% × {{ correct_count }} - ({{ unit_score }}/3)% × {{ wrong_count }} = {{ net_score }}%</p>-->
+    <!-- سربرگ کارنامه -->
+
+    <div class="report-header">
+
+        <div class="report-logo">
+            🎓
+        </div>
+
+        <h1>
+            کارنامه آزمون
+            <span>{{ quiz.title }}</span>
+        </h1>
+
+        <p>
+            گزارش عملکرد شما در آزمون‌های کنکوری هنر
+            | AR TEST
+        </p>
+
     </div>
+
+
+    <!-- نمره نهایی -->
+
+    <div class="final-score-card">
+
+        <div class="final-score-title">
+            ⭐ درصد نهایی آزمون شما
+        </div>
+
+        <div class="final-score-number">
+            {{ net_score }}%
+        </div>
+
+        <div class="final-score-description">
+            نتیجه نهایی عملکرد شما
+        </div>
+
+    </div>
+
+
+    <!-- آمار پاسخ‌ها -->
+
+    <h3 class="section-title">
+        📊 آمار پاسخ‌های آزمون
+    </h3>
+
 
     <div class="score-grid">
-        <!-- همه کارت‌های قبلی -->
-        <div class="score-card">
-            <div class="score-label">تعداد سوالات</div>
-            <div class="score-value">{{ total_questions }}</div>
+
+        <!-- تعداد سوالات -->
+
+        <div class="score-card card-total">
+
+            <div class="score-icon">
+                📝
+            </div>
+
+            <div class="score-label">
+                تعداد سوالات
+            </div>
+
+            <div class="score-value">
+                {{ total_questions }}
+            </div>
+
         </div>
 
-        <div class="score-card">
-            <div class="score-label">تعداد جواب های صحیح</div>
-            <div class="score-value">{{ correct_count }}</div>
+
+        <!-- پاسخ صحیح -->
+
+        <div class="score-card card-correct">
+
+            <div class="score-icon">
+                ✓
+            </div>
+
+            <div class="score-label">
+                پاسخ‌های صحیح
+            </div>
+
+            <div class="score-value">
+                {{ correct_count }}
+            </div>
+
         </div>
-        <div class="score-card">
-            <div class="score-label">تعداد جواب های اشتباه </div>
-            <div class="score-value" style="color: #f39c12;">{{ wrong_count }}</div>
+
+
+        <!-- پاسخ اشتباه -->
+
+        <div class="score-card card-wrong">
+
+            <div class="score-icon">
+                ✕
+            </div>
+
+            <div class="score-label">
+                پاسخ‌های اشتباه
+            </div>
+
+            <div class="score-value">
+                {{ wrong_count }}
+            </div>
+
         </div>
-        <div class="score-card">
-            <div class="score-label">تعدادسوال های بدون جواب</div>
-            <div class="score-value" style="color: #95a5a6;">{{ unanswered_count }}</div>
+
+
+        <!-- بدون پاسخ -->
+
+        <div class="score-card card-unanswered">
+
+            <div class="score-icon">
+                
+            </div>
+
+            <div class="score-label">
+                سوالات بدون پاسخ
+            </div>
+
+            <div class="score-value">
+                {{ unanswered_count }}
+            </div>
+
         </div>
-        <div class="score-card total-score">
-            <div class="score-label">نمره مثبت</div>
-            <div class="score-value" style="color: #27ae60;">{{ positive_score }}%</div>
-        </div>
-        <div class="score-card total-score">
-            <div class="score-label">نمره منفی</div>
-            <div class="score-value" style="color: #e74c3c;">{{ negative_score }}%</div>
-        </div>
-        <div class="score-card total-score">
-            <div class="score-label">نهایی</div>
-            <div class="score-value">{{ net_score }}%</div>
-        </div>
+
     </div>
 
-    <!--<div class="rank-badge" style="font-size: 16px;">
-        🎯 درصد نهایی: {{ net_score }}% ({{ positive_score }} - {{ negative_score }})
-    </div>-->
 
-    <!-- ✅ دکمه‌های جدید -->
-    <div class="btn-group">
-        <a href="javascript:window.print()" class="btn btn-primary">🖨️ چاپ کارنامه</a>
-        <a href="{% url 'quizzes:quiz_analysis' quiz.id %}" class="btn btn-success">📋 مرور آزمون</a>
-        <a href="{% url 'quizzes:quiz_list' %}" class="btn btn-primary">🔄 آزمون جدید</a>
-        <a href="{% url 'accounts:dashboard' %}" class="btn btn-primary">🏠 داشبورد</a>
+    <!-- جزئیات نمره -->
+
+    <h3 class="section-title">
+        🎯 جزئیات نمره
+    </h3>
+
+
+    <div class="score-grid">
+
+        <!-- نمره مثبت -->
+
+        <div class="score-card card-positive">
+
+            <div class="score-icon">
+                ↗
+            </div>
+
+            <div class="score-label">
+                نمره مثبت
+            </div>
+
+            <div class="score-value">
+                {{ positive_score }}%
+            </div>
+
+        </div>
+
+
+        <!-- نمره منفی -->
+
+        <div class="score-card card-negative">
+
+            <div class="score-icon">
+                ↘
+            </div>
+
+            <div class="score-label">
+                نمره منفی
+            </div>
+
+            <div class="score-value">
+                {{ negative_score }}%
+            </div>
+
+        </div>
+
     </div>
+
+
+    <!-- نمودار درصدها -->
+
+    <div class="percentage-grid">
+
+        <!-- درصد مثبت -->
+
+        <div class="percentage-card">
+
+            <div class="percentage-card-header">
+
+                <span>
+                    درصد پاسخ‌های مثبت
+                </span>
+
+                <strong class="positive-text">
+                    {{ positive_score }}%
+                </strong>
+
+            </div>
+
+            <div class="percentage-track">
+
+                <div
+                    class="percentage-fill positive-fill"
+                    style="width: {{ positive_score }}%;">
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- درصد منفی -->
+
+        <div class="percentage-card">
+
+            <div class="percentage-card-header">
+
+                <span>
+                    درصد نمره منفی
+                </span>
+
+                <strong class="negative-text">
+                    {{ negative_score }}%
+                </strong>
+
+            </div>
+
+            <div class="percentage-track">
+
+                <div
+                    class="percentage-fill negative-fill"
+                    style="width: {{ negative_score }}%;">
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- دکمه‌های عملیات -->
+
+    <div class="report-actions">
+
+        <button
+            type="button"
+            onclick="window.print()"
+            class="report-btn btn-outline">
+
+            🖨️ چاپ کارنامه
+
+        </button>
+
+
+        <a
+            href="{% url 'quizzes:quiz_analysis' quiz.id %}"
+            class="report-btn btn-pink">
+
+            📋 مرور آزمون
+
+        </a>
+
+
+        <a
+            href="{% url 'quizzes:quiz_list' %}"
+            class="report-btn btn-blue">
+
+            🔄 آزمون جدید
+
+        </a>
+
+
+        <a
+            href="{% url 'accounts:dashboard' %}"
+            class="report-btn btn-outline">
+
+            🏠 داشبورد
+
+        </a>
+
+    </div>
+
+
+    <!-- فوتر -->
+
+    <div class="report-footer">
+
+        طراحی شده با ❤️ برای هنرجویان
+
+        <br>
+
+        <strong>
+            AR TEST
+        </strong>
+
+        | مسیر موفقیت در هنر
+
+    </div>
+
 </div>
 
-<script>
-    
-window.onload = function() {
-    // انیمیشن درصد
-    const scoreCards = document.querySelectorAll('.score-card .score-value');
-    scoreCards.forEach((card, index) => {
-        setTimeout(() => {
-            card.style.transform = 'scale(1.1)';
-            card.style.transition = 'transform 0.3s ease';
-        }, index * 100);
-    });
-};
-
-</script>
 {% endblock %}

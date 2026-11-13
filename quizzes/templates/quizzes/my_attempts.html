@@ -1,0 +1,227 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+
+/* ==============================
+   My Attempts - AR TEST
+============================== */
+
+.my-attempts-page {
+    direction: rtl;
+    font-family: 'Vazirmatn', sans-serif;
+    max-width: 1100px;
+    margin: 50px auto;
+    padding: 20px;
+    color: #263247;
+}
+
+/* Header */
+
+.my-attempts-page .page-header {
+    margin-bottom: 35px;
+    text-align: right;
+}
+
+.my-attempts-page .page-header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #263b65;
+    margin-bottom: 12px;
+}
+
+.my-attempts-page .page-header p {
+    font-size: 14px;
+    color: #7b8496;
+    line-height: 2;
+}
+
+/* Attempts List */
+
+.attempts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.attempt-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 25px 28px;
+    background: #ffffff;
+    border: 1px solid #e9edf5;
+    border-radius: 16px;
+    box-shadow: 0 5px 20px rgba(40, 60, 100, 0.05);
+}
+
+.attempt-info h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #30466f;
+    margin: 0 0 15px;
+}
+
+.attempt-info p {
+    font-size: 13px;
+    color: #7b8496;
+    margin: 8px 0;
+    line-height: 1.8;
+}
+
+.attempt-info strong {
+    color: #455570;
+}
+
+/* Review Button */
+
+.review-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 22px;
+    background: #5578df;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    border: none;
+}
+
+.review-btn:hover {
+    background: #3f62c7;
+    color: #ffffff !important;
+}
+
+/* Empty State */
+
+.empty-state {
+    text-align: center;
+    background: #ffffff;
+    border: 1px dashed #dce3f2;
+    border-radius: 18px;
+    padding: 55px 25px;
+}
+
+.empty-state h3 {
+    color: #30466f;
+    font-size: 19px;
+    margin-bottom: 12px;
+}
+
+.empty-state p {
+    color: #858da0;
+    font-size: 14px;
+    line-height: 2;
+    margin-bottom: 25px;
+}
+
+/* Responsive */
+
+@media (max-width: 650px) {
+
+    .my-attempts-page {
+        margin: 25px auto;
+        padding: 15px;
+    }
+
+    .my-attempts-page .page-header h1 {
+        font-size: 23px;
+    }
+
+    .attempt-card {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 20px;
+    }
+
+    .attempt-info h3 {
+        font-size: 16px;
+    }
+
+    .review-btn {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .empty-state {
+        padding: 35px 18px;
+    }
+}
+
+</style>
+<div class="container my-attempts-page">
+
+    <div class="page-header">
+        <h1>مرور آزمون‌های من</h1>
+        <p>
+            در این بخش می‌توانی آزمون‌های تکمیل‌شده‌ات را مشاهده و تحلیل کنی.
+        </p>
+    </div>
+
+    {% if attempts %}
+
+        <div class="attempts-list">
+
+            {% for attempt in attempts %}
+
+                <div class="attempt-card">
+
+                    <div class="attempt-info">
+
+                        <h3>{{ attempt.quiz.title }}</h3>
+
+                        <p>
+                            <strong>تاریخ تکمیل:</strong>
+
+                            {% if attempt.completed_at %}
+                                {{ attempt.completed_at|date:"Y/m/d - H:i" }}
+                            {% else %}
+                                نامشخص
+                            {% endif %}
+                        </p>
+
+                        <p>
+                            <strong>نمره:</strong>
+                            {{ attempt.score|default:0 }}
+                        </p>
+
+                    </div>
+
+                    <a href="{% url 'quizzes:quiz_analysis' attempt.quiz.id %}"
+                       class="review-btn">
+                        مشاهده تحلیل آزمون
+                    </a>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-state">
+
+            <h3>هنوز آزمون تکمیل‌شده‌ای نداری!</h3>
+
+            <p>
+                بعد از شرکت در یک آزمون، نتیجه آن در این بخش نمایش داده می‌شود.
+            </p>
+
+            <a href="{% url 'quizzes:quiz_list' %}" class="review-btn">
+                مشاهده آزمون‌ها
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

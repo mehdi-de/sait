@@ -1,4 +1,3 @@
-from datetime import timedelta
 
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -7,6 +6,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.db.models import Sum, Count
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 from .forms import RegisterForm
@@ -16,16 +16,26 @@ from .utils import get_user_rank, persian_date
 from quizzes.models import Quiz, QuizAttempt
 
 
+def get_user_subscription(user):
+    """
+    دریافت اشتراک کاربر.
+    اگر کاربر هنوز اشتراکی نداشته باشد، None برمی‌گرداند.
+    """
+    try:
+        return user.subscription
+    except Subscription.DoesNotExist:
+        return None
+
+
 def register_view(request):
+    if request.user.is_authenticated:
+        return redirect('accounts:dashboard')
 
     if request.method == 'POST':
-
         form = RegisterForm(request.POST)
 
         if form.is_valid():
-
             user = form.save()
-
             login(request, user)
 
             messages.success(
@@ -34,7 +44,6 @@ def register_view(request):
             )
 
             return redirect('accounts:dashboard')
-
     else:
         form = RegisterForm()
 
@@ -46,43 +55,51 @@ def register_view(request):
 
 
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('accounts:dashboard')
+
+    next_url = (
+        request.POST.get('next')
+        or request.GET.get('next')
+    )
 
     if request.method == 'POST':
-
         form = AuthenticationForm(
             request,
             data=request.POST
         )
 
         if form.is_valid():
-
             user = form.get_user()
-
             login(request, user)
 
-            next_url = request.GET.get('next')
+            # جلوگیری از هدایت کاربر به آدرس خارجی
+            if next_url and url_has_allowed_host_and_scheme(
+                url=next_url,
+                allowed_hosts={request.get_host()},
+                require_https=request.is_secure(),
+            ):
+                return redirect(next_url)
 
-            return redirect(
-                next_url or 'accounts:dashboard'
-            )
-
+            return redirect('accounts:dashboard')
     else:
         form = AuthenticationForm()
 
     return render(
         request,
         'accounts/login.html',
-        {'form': form}
+        {
+            'form': form,
+            'next': next_url,
+        }
     )
 
 
 @login_required
 def dashboard_view(request):
-
     welcome_message = None
 
-    if 'dashboard_welcome_shown' not in request.session:
-
+    if not request.session.get('dashboard_welcome_shown'):
         welcome_message = """
 دوست عزیز 👋
 
@@ -94,119 +111,100 @@ def dashboard_view(request):
 موفق باشید 🌱
 """
 
-        request.session[
-            'dashboard_welcome_shown'
-        ] = True
+        request.session['dashboard_welcome_shown'] = True
 
-    subscription = getattr(
-        request.user,
-        'subscription',
-        None
-    )
+    # دریافت و بررسی وضعیت اشتراک
+    subscription = get_user_subscription(request.user)
 
     subscription_status = 'اشتراک ندارید'
-
     subscription_end = None
 
     if subscription:
-
         subscription.check_status()
 
-        subscription_status = (
-            subscription.get_status_display
-        )
-
+        subscription_status = subscription.get_status_display()
         subscription_end = subscription.end_date
 
-    user_rank_data = get_user_rank(
-        request.user
-    )
+    # رتبه کاربر
+    user_rank_data = get_user_rank(request.user)
 
+    # آزمون‌های فعال
     quizzes = (
         Quiz.objects
         .filter(is_active=True)
         .prefetch_related('questions')
     )
 
+    # تلاش‌های تکمیل‌شده کاربر
+    # مرتب‌سازی نزولی بر اساس شناسه برای انتخاب آخرین رکورد ثبت‌شده
     attempts_queryset = (
-        QuizAttempt.objects.filter(
+        QuizAttempt.objects
+        .filter(
             user=request.user,
             is_completed=True
         )
+        .order_by('-pk')
         .prefetch_related(
             'answers__selected_choice'
         )
     )
 
-    attempts = {
-        attempt.quiz_id: attempt
-        for attempt in attempts_queryset
-    }
+    # برای هر آزمون فقط جدیدترین تلاش نگهداری می‌شود
+    attempts = {}
+
+    for attempt in attempts_queryset:
+        if attempt.quiz_id not in attempts:
+            attempts[attempt.quiz_id] = attempt
 
     quiz_results = []
 
     for quiz in quizzes:
-
         attempt = attempts.get(quiz.id)
 
-        total_questions = (
-            quiz.questions.count()
-        )
+        # استفاده از داده‌های prefetch شده
+        total_questions = len(quiz.questions.all())
 
         correct_answers = 0
 
         if attempt:
-
             correct_answers = (
-                attempt.answers.filter(
+                attempt.answers
+                .filter(
                     selected_choice__is_correct=True
-                ).count()
+                )
+                .count()
             )
 
         percentage = 0
 
-        if total_questions > 0:
-
+        if total_questions:
             percentage = round(
                 (correct_answers / total_questions) * 100,
                 2
             )
 
         quiz_results.append({
-
             'quiz': quiz,
-
             'correct_answers': correct_answers,
-
             'total_questions': total_questions,
-
             'percentage': percentage,
-
             'status': (
                 'گذرانده شده'
                 if attempt
                 else 'آزمون داده نشده'
             ),
-
             'attempted': bool(attempt),
-
             'is_active': quiz.is_active,
         })
 
     context = {
-
         'welcome_message': welcome_message,
-
         'subscription_status': subscription_status,
-
         'subscription_end': subscription_end,
-
-        'subscription_end_persian': (
-            persian_date(subscription_end)
+        'subscription_end_persian': persian_date(
+            subscription_end
         ),
-
         'quiz_results': quiz_results,
-
         'user_rank': user_rank_data,
     }
 
@@ -219,31 +217,24 @@ def dashboard_view(request):
 
 @login_required
 def subscribe_view(request):
+    plans = Plan.objects.filter(is_active=True)
 
-    plans = Plan.objects.filter(
-        is_active=True
-    )
+    subscription = get_user_subscription(request.user)
 
-    subscription = getattr(
-        request.user,
-        'subscription',
-        None
-    )
+    # به‌روزرسانی وضعیت اشتراک پیش از بررسی آن
+    if subscription:
+        subscription.check_status()
 
     if request.method == 'POST':
-
         plan_id = request.POST.get('plan_id')
 
         if not plan_id:
-
             messages.error(
                 request,
                 'لطفاً یک پلن انتخاب کنید.'
             )
 
-            return redirect(
-                'accounts:subscribe'
-            )
+            return redirect('accounts:subscribe')
 
         plan = get_object_or_404(
             Plan,
@@ -252,53 +243,28 @@ def subscribe_view(request):
         )
 
         if subscription and subscription.is_active:
-
             messages.warning(
                 request,
-                'شما اشتراک فعال دارید.'
+                'شما در حال حاضر اشتراک فعال دارید.'
             )
 
-            return redirect(
-                'accounts:dashboard'
-            )
+            return redirect('accounts:dashboard')
 
-        subscription, created = (
-            Subscription.objects.get_or_create(
-                user=request.user
-            )
-        )
-
-        subscription.plan = plan
-
-        subscription.start_date = (
-            timezone.now()
-        )
-
-        subscription.end_date = (
-            timezone.now()
-            + timedelta(
-                days=plan.duration_days
-            )
-        )
-
-        subscription.status = (
-            SubscriptionStatus.ACTIVE
-        )
-
-        subscription.save()
-
-        messages.success(
+        # فعال‌سازی اشتراک در این View انجام نمی‌شود.
+        # تأیید پرداخت و فعال‌سازی فقط در فرایند پرداخت
+        # اپ quizzes انجام می‌شود.
+        messages.info(
             request,
-            f'اشتراک {plan.name} فعال شد.'
+            f'پلن {plan.name} انتخاب شد. '
+            'برای پرداخت و فعال‌سازی اشتراک، '
+            'از بخش خرید اشتراک اقدام کنید.'
         )
 
-        return redirect(
-            'accounts:dashboard'
-        )
+        return redirect('quizzes:subscribe')
 
     context = {
         'plans': plans,
-        'current_subscription': subscription
+        'current_subscription': subscription,
     }
 
     return render(
@@ -310,127 +276,95 @@ def subscribe_view(request):
 
 @login_required
 def payment_success_view(request):
+    """
+    این View به‌تنهایی اجازه فعال‌سازی اشتراک ندارد.
+    فعال‌سازی اشتراک باید پس از تأیید واقعی درگاه پرداخت
+    در فرایند پرداخت اپ quizzes انجام شود.
+    """
 
-    subscription = getattr(
-        request.user,
-        'subscription',
-        None
-    )
+    subscription = get_user_subscription(request.user)
 
-    if not subscription:
+    if subscription:
+        subscription.check_status()
 
-        messages.error(
-            request,
-            'اشتراک یافت نشد.'
-        )
-
-        return redirect(
-            'accounts:dashboard'
-        )
-
-    subscription.status = (
-        SubscriptionStatus.ACTIVE
-    )
-
-    subscription.start_date = (
-        timezone.now()
-    )
-
-    if (
-        not subscription.end_date
-        and subscription.plan
-    ):
-
-        subscription.end_date = (
-            timezone.now()
-            + timedelta(
-                days=subscription.plan.duration_days
+        if subscription.is_active:
+            messages.success(
+                request,
+                'اشتراک شما فعال است.'
             )
+        else:
+            messages.warning(
+                request,
+                'وضعیت پرداخت یا اشتراک شما هنوز تأیید نشده است.'
+            )
+    else:
+        messages.warning(
+            request,
+            'برای حساب شما اشتراکی ثبت نشده است.'
         )
 
-    subscription.save()
-
-    messages.success(
-        request,
-        'پرداخت با موفقیت انجام شد.'
-    )
-
-    return redirect(
-        'accounts:dashboard'
-    )
+    return redirect('accounts:dashboard')
 
 
-@login_required
 def leaderboard_view(request):
-
     leaderboard_data = (
-
-        QuizAttempt.objects.filter(
+        QuizAttempt.objects
+        .filter(
             is_completed=True,
             quiz__is_premium=True,
             quiz__is_active=True
         )
-
         .values(
             'user_id',
             'user__username'
         )
-
         .annotate(
             total_score=Sum('score'),
             quizzes_taken=Count('id')
         )
-
-        .order_by('-total_score')
+        .order_by('-total_score', 'user_id')
     )
 
     leaderboard_list = []
 
     rank = 0
-
     last_score = None
 
     for index, entry in enumerate(
         leaderboard_data,
         start=1
     ):
+        current_score = entry['total_score']
 
-        current_score = (
-            entry['total_score']
-        )
+        # مدیریت امتیاز خالی
+        if current_score is None:
+            current_score = 0
 
-        if current_score != last_score:
+        if index == 1 or current_score != last_score:
             rank = index
 
-        quizzes_taken = (
-            entry['quizzes_taken'] or 1
-        )
+        quizzes_taken = entry['quizzes_taken'] or 0
 
         average_score = (
             current_score / quizzes_taken
+            if quizzes_taken
+            else 0
         )
 
         leaderboard_list.append({
-
             'user': {
-                'username': (
-                    entry['user__username']
-                )
+                'username': entry['user__username']
             },
-
             'total_score': round(
                 current_score,
                 2
             ),
-
             'average_score': round(
                 average_score,
                 2
             ),
-
             'quizzes_taken': quizzes_taken,
-
-            'rank': rank
+            'rank': rank,
         })
 
         last_score = current_score
@@ -447,7 +381,11 @@ def leaderboard_view(request):
 @require_POST
 @login_required
 def logout_view(request):
-
     logout(request)
+
+    messages.success(
+        request,
+        'با موفقیت از حساب کاربری خارج شدید.'
+    )
 
     return redirect('accounts:login')

@@ -1,338 +1,334 @@
+
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}درباره ما{% endblock %}
+
+{% block title %}درباره ما | هنرآزمون{% endblock %}
 
 {% block content %}
 
+<link rel="stylesheet" href="{% static 'css/about.css' %}">
 
-<style>
-    
-    body {
-        background: 
-            radial-gradient(circle at 20% 80%, rgba(120,119,198,0.3) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, rgba(255,119,198,0.3) 0%, transparent 50%),
-            radial-gradient(circle at 40% 40%, rgba(120,219,255,0.3) 0%, transparent 50%),
-            linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
-        background-size: 800% 800%, 400% 400%, 600% 600%, 600% 600%;
-        animation: gradientFlow 18s ease infinite;
-        min-height: 100vh;
-        font-family: 'Vazir', -apple-system, BlinkMacSystemFont, sans-serif;
-        overflow-x: hidden;
-    }
+<div class="about-page" dir="rtl">
 
-    @keyframes gradientFlow {
-        0%, 100% { background-position: 0% 50%, 0% 50%, 0% 50%, 0% 50%; }
-        33% { background-position: 100% 50%, 0% 0%, 100% 30%, 100% 50%; }
-        66% { background-position: 0% 100%, 100% 50%, 30% 100%, 0% 100%; }
-    }
+    <!-- بخش اصلی -->
+    <section class="about-hero">
 
-    /* ستاره‌های شناور */
-    body::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: 
-            radial-gradient(1.5px 1.5px at 30px 40px, #fff, transparent),
-            radial-gradient(1px 1px at 80px 70px, rgba(255,255,255,0.8), transparent),
-            radial-gradient(0.8px 0.8px at 120px 30px, #fff, transparent);
-        background-repeat: repeat;
-        background-size: 250px 250px;
-        animation: starsDrift 25s linear infinite;
-        pointer-events: none;
-        z-index: -1;
-        opacity: 0.4;
-    }
+        <div class="hero-content">
+            <span class="hero-label">
+                🎨 دنیای خلاقیت و موفقیت
+            </span>
 
-    @keyframes starsDrift {
-        0% { transform: translate(0, 0); }
-        100% { transform: translate(60px, 60px); }
-    }
+            <h1>
+                مسیر هنری تو،
+                <span>از اینجا شروع می‌شه!</span>
+            </h1>
 
-    .top-actions {
-        background: rgba(255,255,255,0.15);
-        backdrop-filter: blur(25px);
-        padding: 15px 30px;
-        text-align: center;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-        border-radius: 0 0 20px 20px;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        margin-bottom: 20px;
-    }
+            <p>
+                ما اینجاییم تا مسیر رسیدن به آرزوهای هنری‌ات رو هموارتر کنیم.
+                با آزمون‌های استاندارد، آموزش هدفمند و همراهی در مسیر کنکور هنر،
+                قدم به قدم به موفقیت نزدیک‌تر شو.
+            </p>
 
-    .top-actions .button {
-        background: linear-gradient(45deg, #667eea, #764ba2) !important;
-        border: none !important;
-        color: white !important;
-        padding: 12px 30px !important;
-        border-radius: 25px !important;
-        font-weight: 600 !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 8px 25px rgba(102,126,234,0.3) !important;
-    }
+            <div class="hero-buttons">
+                <a href="{% url 'quizzes:home' %}" class="primary-btn">
+                    شروع مسیر موفقیت
+                    <span>←</span>
+                </a>
 
-    .top-actions .button:hover {
-        transform: translateY(-3px) !important;
-        box-shadow: 0 15px 35px rgba(102,126,234,0.5) !important;
-    }
+                <a href="#our-story" class="secondary-btn">
+                    بیشتر درباره ما
+                </a>
+            </div>
 
-    /* هدر */
-    .page-header {
-        background: rgba(255,255,255,0.2);
-        backdrop-filter: blur(30px);
-        color: white;
-        padding: 30px 40px;
-        box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-        border-radius: 25px;
-        text-align: center;
-        font-size: clamp(1.5rem, 4vw, 2.2rem);
-        font-weight: 800;
-        margin: 0 auto 60px;
-        max-width: 900px;
-        position: relative;
-        overflow: hidden;
-        border: 1px solid rgba(255,255,255,0.3);
-    }
+            <div class="hero-note">
+                <span>✦</span>
+                هنر، فقط یک رشته نیست؛ یک مسیر برای ساختن آینده است.
+            </div>
+        </div>
 
-    .page-header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-        animation: shimmer 3s infinite;
-    }
+        <div class="hero-art">
+            <div class="art-circle"></div>
 
-    @keyframes shimmer {
-        0% { left: -100%; }
-        100% { left: 100%; }
-    }
+            <div class="art-decoration decoration-one">✳</div>
+            <div class="art-decoration decoration-two">✦</div>
+            <div class="art-decoration decoration-three">✎</div>
 
-    /* کانتینر اصلی */
-    .about-container {
-        max-width: 1000px;
-        margin: 0 auto 80px;
-        padding: 0 20px;
-    }
+            <div class="art-card">
+                <div class="art-image-placeholder">
+                    <span>🎨</span>
+                    <span class="art-caption">ART & CREATIVITY</span>
+                </div>
+            </div>
 
-    /* معرفی */
-    .about-intro {
-        text-align: center;
-        margin-bottom: 70px;
-        background: rgba(255,255,255,0.12);
-        backdrop-filter: blur(20px);
-        border-radius: 25px;
-        padding: 50px 40px;
-        border: 1px solid rgba(255,255,255,0.2);
-        box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-        animation: floatIn 1.5s ease-out;
-    }
 
-    @keyframes floatIn {
-        0% {
-            opacity: 0;
-            transform: translateY(40px) scale(0.95);
-        }
-        100% {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-    }
+        </div>
 
-    .about-intro h2 {
-        font-size: clamp(2rem, 5vw, 3rem);
-        font-weight: 900;
-        background: linear-gradient(135deg, #fff 0%, #f8f9ff 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 25px;
-        text-shadow: 0 5px 20px rgba(255,255,255,0.5);
-    }
+    </section>
 
-    .about-intro p {
-        font-size: 1.2rem;
-        color: rgba(255,255,255,0.95);
-        line-height: 1.9;
-        max-width: 700px;
-        margin: 0 auto;
-        font-weight: 300;
-    }
 
-    /* کارت‌های ویژگی */
-    .features {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 35px;
-        margin-bottom: 70px;
-    }
+    <!-- نوار ارزش ها -->
+    <section class="about-values">
 
-    .feature-card {
-        background: rgba(255,255,255,0.15);
-        backdrop-filter: blur(25px);
-        border-radius: 22px;
-        padding: 40px 30px;
-        text-align: center;
-        border: 1px solid rgba(255,255,255,0.25);
-        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        position: relative;
-        overflow: hidden;
-        animation: cardSlideIn 0.8s ease-out forwards;
-        opacity: 0;
-        transform: translateY(50px);
-    }
+        <div class="value-item">
+            <span>🎯</span>
+            <div>
+                <strong>هدفمند</strong>
+                <small>حرکت در مسیر موفقیت</small>
+            </div>
+        </div>
 
-    .feature-card:nth-child(1) { animation-delay: 0.1s; }
-    .feature-card:nth-child(2) { animation-delay: 0.2s; }
-    .feature-card:nth-child(3) { animation-delay: 0.3s; }
+        <div class="value-item">
+            <span>🎓</span>
+            <div>
+                <strong>تخصصی</strong>
+                <small>ویژه داوطلبان کنکور هنر</small>
+            </div>
+        </div>
 
-    @keyframes cardSlideIn {
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
+        <div class="value-item">
+            <span>💜</span>
+            <div>
+                <strong>همراه و پشتیبان</strong>
+                <small>در تمام مراحل یادگیری</small>
+            </div>
+        </div>
 
-    .feature-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 5px;
-        background: linear-gradient(90deg, #667eea, #f5576c, #4facfe);
-        border-radius: 22px 22px 0 0;
-    }
+    </section>
 
-    .feature-card:hover {
-        transform: translateY(-12px) scale(1.02);
-        background: rgba(255,255,255,0.25);
-        box-shadow: 0 30px 60px rgba(0,0,0,0.25);
-    }
 
-    .feature-card h3 {
-        font-size: 1.4rem;
-        font-weight: 800;
-        margin-bottom: 18px;
-        color: white;
-        text-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
+    <!-- داستان ما -->
+    <section class="our-story" id="our-story">
 
-    .feature-card p {
-        color: rgba(255,255,255,0.95);
-        font-size: 1.05rem;
-        line-height: 1.8;
-        font-weight: 300;
-    }
+        <div class="story-image">
+            <div class="story-art">
+                <span class="story-symbol">🎨</span>
+                <span class="story-text">CREATE YOUR FUTURE</span>
+                <span class="story-star">✳</span>
+            </div>
+        </div>
 
-    /* تماس */
-    .contact {
-        text-align: center;
-        background: rgba(255,255,255,0.1);
-        backdrop-filter: blur(20px);
-        border-radius: 20px;
-        padding: 40px 30px;
-        border: 1px solid rgba(255,255,255,0.2);
-        box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-    }
+        <div class="story-content">
+            <span class="section-label">داستان ما</span>
 
-    .contact p {
-        color: rgba(255,255,255,0.9);
-        font-size: 1.2rem;
-        margin-bottom: 25px;
-        font-weight: 500;
-    }
+            <h2>
+                ما چه کسی هستیم؟
+            </h2>
 
-    .contact a {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        margin: 0 15px;
-        padding: 15px 25px;
-        background: linear-gradient(45deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
-        color: white;
-        text-decoration: none;
-        border-radius: 50px;
-        font-size: 1.1rem;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(255,255,255,0.3);
-        backdrop-filter: blur(15px);
-    }
+            <p>
+                ما مجموعه‌ای هستیم که با هدف ایجاد تجربه‌ای متفاوت
+                برای داوطلبان کنکور هنر فعالیت می‌کنیم.
+            </p>
 
-    .contact a:hover {
-        background: linear-gradient(45deg, #667eea, #764ba2);
-        transform: translateY(-3px);
-        box-shadow: 0 15px 35px rgba(102,126,234,0.4);
-    }
+            <p>
+                باور داریم که موفقیت در مسیر هنر، فقط به استعداد وابسته نیست؛
+                بلکه برنامه‌ریزی، تمرین مستمر و دسترسی به ابزارهای مناسب
+                نقش مهمی در رسیدن به اهداف دارند.
+            </p>
 
-    /* Responsive */
-    @media (max-width: 768px) {
-        .about-container {
-            padding: 0 15px;
-        }
-        
-        .about-intro {
-            padding: 30px 20px;
-            margin-bottom: 40px;
-        }
-        
-        .features {
-            grid-template-columns: 1fr;
-            gap: 25px;
-        }
-        
-        .page-header {
-            margin: 0 auto 40px;
-            padding: 25px 20px;
-        }
-    }
+            <p>
+                به همین دلیل تلاش کرده‌ایم بستری فراهم کنیم تا داوطلبان
+                بتوانند دانش خود را ارزیابی کنند، نقاط ضعفشان را بشناسند
+                و با آمادگی بیشتری در مسیر کنکور قدم بردارند.
+            </p>
 
-</style>
+        </div>
 
-<!-- HTML بدون تغییر -->
-<div class="top-actions">
-    <a href="{% url 'quizzes:home' %}" class="button is-info is-light">🔄 بازگشت به صفحه اصلی</a>
-</div>
+    </section>
 
-<div class="page-header">درباره ما</div>
 
-<div class="about-container">
-    <div class="about-intro">
-        <h2>ما چه کسی هستیم؟</h2>
+    <!-- ماموریت ما -->
+    <section class="mission-section">
+
+        <div class="section-heading">
+            <span class="section-label">هدف ما</span>
+            <h2>چرا این سامانه را ساختیم؟</h2>
+            <p>
+                چون معتقدیم هر علاقه‌مند به هنر، شایسته فرصتی برای درخشیدن است.
+            </p>
+        </div>
+
+
+<div class="features-grid">
+
+    <!-- آزمون آنلاین -->
+    <div class="feature-card">
+        <div class="feature-icon purple-icon">
+            <svg viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1.7"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="14" rx="2"/>
+                <path d="M8 22h8M12 18v4"/>
+                <path d="m9 10 2 2 4-4"/>
+            </svg>
+        </div>
+        <h3>آزمون‌های آنلاین</h3>
         <p>
-            تیم ما متشکل از متخصصین آموزش و توسعه نرم‌افزار است که با هدف ایجاد یک سامانه آزمون آنلاین حرفه‌ای و قابل اعتماد فعالیت می‌کنیم.  
-            ماموریت ما فراهم کردن تجربه‌ای امن، ساده و کاربرپسند برای داوطلبان است.
+            امکان شرکت در آزمون‌های آنلاین برای سنجش دانش
+            و آشنایی بیشتر با فضای آزمون.
         </p>
     </div>
 
-    <div class="features">
-        <div class="feature-card">
-            <h3>🔒 امنیت بالا</h3>
-            <p>تمامی آزمون‌ها با استانداردهای امنیتی بالا اجرا می‌شوند و اطلاعات کاربران محافظت می‌شود.</p>
+    <!-- ارزیابی عملکرد -->
+    <div class="feature-card">
+        <div class="feature-icon yellow-icon">
+            <svg viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1.7"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 3v18h18"/>
+                <rect x="6" y="12" width="3" height="6" rx="1"/>
+                <rect x="11" y="8" width="3" height="10" rx="1"/>
+                <rect x="16" y="4" width="3" height="14" rx="1"/>
+            </svg>
         </div>
-        <div class="feature-card">
-            <h3>⚡ پشتیبانی سریع</h3>
-            <p>تیم ما آماده پاسخگویی به سوالات و رفع مشکلات شما در کوتاه‌ترین زمان ممکن است.</p>
-        </div>
-        <div class="feature-card">
-            <h3>🎨 رابط کاربری آسان</h3>
-            <p>سامانه به گونه‌ای طراحی شده که استفاده از آن برای همه کاربران ساده و روان باشد.</p>
-        </div>
+        <h3>ارزیابی عملکرد</h3>
+        <p>
+            بررسی عملکرد و شناخت نقاط قوت و ضعف برای
+            برنامه‌ریزی بهتر در مسیر مطالعه.
+        </p>
     </div>
 
-    <div class="contact">
-        <p>ما را دنبال کنید:</p>
-        <a href="https://rubika.ir/portal_online" target="_blank">📱 روبیکا</a>
-        <a href="#" target="_blank">🐦 توییتر</a>
-        <a href="#" target="_blank">📘 فیسبوک</a>
+    <!-- فضای اختصاصی هنر -->
+    <div class="feature-card">
+        <div class="feature-icon pink-icon">
+            <svg viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1.7"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3a9 9 0 1 0 0 18h1.5a2.5 2.5 0 0 0 1.8-4.2 1.5 1.5 0 0 1 1.1-2.5H18a3 3 0 0 0 3-3c0-4.6-4-8.3-9-8.3Z"/>
+                <circle cx="7.5" cy="10" r="1" fill="currentColor"/>
+                <circle cx="11" cy="7" r="1" fill="currentColor"/>
+                <circle cx="15.5" cy="8" r="1" fill="currentColor"/>
+            </svg>
+        </div>
+        <h3>فضای اختصاصی هنر</h3>
+        <p>
+            طراحی فضایی متناسب با نیازهای داوطلبان
+            رشته‌های هنری و علاقه‌مندان به این حوزه.
+        </p>
     </div>
+
+    <!-- رشد و پیشرفت -->
+    <div class="feature-card">
+        <div class="feature-icon green-icon">
+            <svg viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1.7"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2 14.5 8 21 9l-4.5 4.5L18 20l-6-3.5L6 20l1.5-6.5L3 9l6.5-1L12 2Z"/>
+                <path d="m9.5 11.5 1.7 1.7 3.5-3.5"/>
+            </svg>
+        </div>
+        <h3>رشد و پیشرفت</h3>
+        <p>
+            کمک به ایجاد انگیزه، استمرار در تمرین و
+            حرکت آگاهانه‌تر به سمت اهداف تحصیلی.
+        </p>
+    </div>
+
+</div>
+
+
+    </section>
+
+
+    <!-- ارزش های ما -->
+    <section class="our-beliefs">
+
+        <div class="belief-content">
+            <span class="section-label">باورهای ما</span>
+
+            <h2>
+                چیزی که ما را به هم وصل می‌کند،
+                <span>عشق به هنر است.</span>
+            </h2>
+
+            <p>
+                ما به خلاقیت، تلاش و یادگیری باور داریم.
+                هدفمان ساختن فضایی است که در آن هر داوطلب بتواند
+                با انگیزه و اعتمادبه‌نفس بیشتری مسیر خود را دنبال کند.
+            </p>
+
+        </div>
+
+        <div class="belief-list">
+
+            <div class="belief-item">
+                <span>01</span>
+                <div>
+                    <h3>کیفیت در آموزش</h3>
+                    <p>تلاش برای ارائه تجربه‌ای مفید و کاربردی.</p>
+                </div>
+            </div>
+
+            <div class="belief-item">
+                <span>02</span>
+                <div>
+                    <h3>سادگی و دسترسی آسان</h3>
+                    <p>محیطی ساده و قابل استفاده برای همه داوطلبان.</p>
+                </div>
+            </div>
+
+            <div class="belief-item">
+                <span>03</span>
+                <div>
+                    <h3>پیشرفت مستمر</h3>
+                    <p>تشویق به یادگیری و تلاش برای بهتر شدن.</p>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- دعوت به اقدام -->
+    <section class="about-cta">
+
+        <div class="cta-decoration">✳</div>
+
+        <span>آینده هنری تو منتظرته!</span>
+
+        <h2>
+            آماده‌ای توانایی‌هات رو به چالش بکشی؟
+        </h2>
+
+        <p>
+            همین حالا وارد سامانه شو و اولین قدم رو برای شناخت
+            توانایی‌ها و آمادگی بیشتر برای کنکور هنر بردار.
+        </p>
+
+        <a href="{% url 'quizzes:home' %}" class="cta-button">
+            ورود به سامانه آزمون‌ها
+            <span>←</span>
+        </a>
+
+    </section>
+
+
+    <!-- ارتباط با ما -->
+    <section class="contact-section">
+
+        <div>
+            <span class="section-label">ارتباط با ما</span>
+            <h2>همیشه خوشحال می‌شیم صدات رو بشنویم 💜</h2>
+            <p>
+                اگر سوال، پیشنهاد یا انتقادی داری، از طریق راه‌های ارتباطی
+                زیر با ما در تماس باش.
+            </p>
+        </div>
+
+        <div class="social-links">
+
+            <a href="https://rubika.ir/portal_online"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="social-link">
+                <span>📱</span>
+                روبیکا
+            </a>
+
+        </div>
+
+    </section>
+
 </div>
 
 {% endblock %}

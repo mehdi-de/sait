@@ -172,4 +172,14 @@ cython_debug/
 .idea/
 
  End of https://www.toptal.com/developers/gitignore/api/django
- staticfiles/
+/staticfiles/
+ # Environment variables
+.env
+.env.*
+
+# IDE
+.vscode/
+
+# Python cache
+__pycache__/
+*.py[cod]

@@ -1,201 +1,136 @@
+
 {% extends "base.html" %}
 {% load static %}
 
 {% block content %}
-<style>
-    html, body {
-        margin: 0;
-        padding: 0;
-        height: 100%; /* اطمینان از اینکه html و body حداقل ارتفاع صفحه را اشغال کنند */
-        width: 100%;
-        overflow-x: hidden; /* جلوگیری از اسکرول افقی ناخواسته */
-    }
 
-    body {
-    background-image: url("{% static 'image/background2.jpg' %}") !important;
-    background-size: cover !important;        /* 👈 تغییر شده */
-    background-position: center center !important;
-    background-repeat: no-repeat !important;
-    background-attachment: fixed !important;
-    min-height: 100vh; 
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+<link rel="stylesheet" href="{% static 'css/leaderboard.css' %}">
 
-    .container {
-        background-color: rgba(255, 255, 255, 0.9);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        border-radius: 15px;
-    }
+<div class="leaderboard-page" dir="rtl">
 
-    .leaderboard-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0 15px;
-        margin-top: 20px;
-        font-size: 16px;
-        background-color: #ffffff;
-        border-radius: 10px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    }
+    <div class="leaderboard-container">
 
-    .leaderboard-table thead tr {
-        background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
-        color: white;
-        border-radius: 10px 10px 0 0;
-    }
+        <div class="leaderboard-header">
+            <div class="header-icon">
+                <span>TOP</span>
+            </div>
 
-    .leaderboard-table th,
-    .leaderboard-table td {
-        padding: 15px 12px;
-        text-align: center;
-        border: none;
-    }
+            <div class="header-text">
+                <span class="header-label">AR TEST LEADERBOARD</span>
+                <h1>جدول رتبه‌بندی کاربران</h1>
+                <p>
+                    تلاش کن، پیشرفت کن و جایگاهت رو در بین برترین‌ها پیدا کن.
+                </p>
+            </div>
+        </div>
 
-    .leaderboard-table th {
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        position: relative;
-    }
+        <div class="leaderboard-content">
 
-    .leaderboard-table th::after {
-        content: '';
-        position: absolute;
-        bottom: -5px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 60%;
-        height: 3px;
-        background: rgba(255, 255, 255, 0.7);
-        border-radius: 2px;
-    }
+            <div class="table-heading">
+                <div>
+                    <h2>برترین کاربران</h2>
+                    <p>عملکرد کاربران بر اساس امتیاز و نتایج آزمون‌ها</p>
+                </div>
 
-    .leaderboard-table tbody tr {
-        background-color: #ffffff;
-        transition: all 0.3s ease-in-out;
-        cursor: pointer;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        border-radius: 8px;
-        margin-bottom: 10px;
-    }
+                <div class="ranking-badge">
+                    رتبه‌بندی کاربران
+                </div>
+            </div>
 
-    .leaderboard-table tbody tr:hover {
-        transform: translateY(-5px) scale(1.01);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-        background-color: #f9f9f9;
-    }
+            <div class="table-wrapper">
+                <table class="leaderboard-table">
 
-    .leaderboard-table tbody tr.top-rank-1 {
-        background: linear-gradient(90deg, rgba(255, 215, 0, 0.8) 0%, rgba(255, 235, 150, 0.8) 100%);
-        font-weight: bold;
-        color: #333;
-    }
-    .leaderboard-table tbody tr.top-rank-2 {
-        background: linear-gradient(90deg, rgba(192, 192, 192, 0.7) 0%, rgba(220, 220, 220, 0.7) 100%);
-        font-weight: bold;
-        color: #333;
-    }
-    .leaderboard-table tbody tr.top-rank-3 {
-        background: linear-gradient(90deg, rgba(205, 127, 50, 0.6) 0%, rgba(230, 150, 70, 0.6) 100%);
-        font-weight: bold;
-        color: #333;
-    }
+                    <thead>
+                        <tr>
+                            <th>رتبه</th>
+                            <th>نام کاربری</th>
+                            <th>تعداد آزمون‌ها</th>
+                            <th>امتیاز کل</th>
+                            <th>میانگین درصد</th>
+                        </tr>
+                    </thead>
 
-    .emoji-medal {
-        font-size: 1.4em;
-        vertical-align: middle;
-    }
+                    <tbody>
 
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .leaderboard-table {
-            font-size: 14px;
-            border-spacing: 0 10px;
-        }
-        .leaderboard-table th,
-        .leaderboard-table td {
-            padding: 10px 8px;
-        }
-        .leaderboard-table thead th::after {
-            width: 80%;
-        }
-        .container {
-            padding: 20px;
-            margin: 20px auto;
-        }
-    }
+                        {% for item in leaderboard %}
 
-    @media (max-width: 480px) {
-        .leaderboard-table thead {
-            display: none;
-        }
-        .leaderboard-table tbody tr {
-            display: block;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            padding: 15px;
-            border-radius: 10px;
-        }
-        .leaderboard-table tbody td {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px dashed #eee;
-        }
-        .leaderboard-table tbody td:last-child {
-            border-bottom: none;
-        }
-        .leaderboard-table tbody td::before {
-            content: attr(data-label);
-            font-weight: bold;
-            color: #555;
-            text-transform: uppercase;
-            padding-right: 10px;
-        }
-        .leaderboard-table tbody tr:hover {
-            transform: none;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-        }
-        .container {
-            margin: 10px auto;
-            padding: 15px;
-        }
-    }
-</style>
+                        <tr class="
+                            {% if item.rank == 1 %}rank-first
+                            {% elif item.rank == 2 %}rank-second
+                            {% elif item.rank == 3 %}rank-third
+                            {% endif %}
+                        ">
 
-<div class="container" style="max-width:900px; margin:40px auto; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color:#f4f7f6; padding:30px; border-radius:15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-    <h1 style="text-align:center; color:#333; margin-bottom:30px; font-size: 2em;">
-        🏆 ✨ جدول رتبه‌بندی کاربران ✨ 🥇
-    </h1>
-    
-    <table class="leaderboard-table">
-        <thead>
-            <tr>
-                <th data-label="رتبه 👑">رتبه 👑</th>
-                <th data-label="کاربر 👤">کاربر 👤</th>
-                <th data-label="تعداد آزمون‌ها 📝">تعداد آزمون‌ها 📝</th>
-                <th data-label="امتیاز کل 💯">امتیاز کل 💯</th>
-                <th data-label="میانگین درصد 📈">میانگین درصد 📈</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in leaderboard %}
-            <tr class="{% if forloop.first %}top-rank-1{% elif item.rank == 2 %}top-rank-2{% elif item.rank == 3 %}top-rank-3{% endif %}">
-                <td data-label="رتبه 👑">
-                    {% if item.rank == 1 %}<span class="emoji-medal">🥇</span>{% elif item.rank == 2 %}<span class="emoji-medal">🥈</span>{% elif item.rank == 3 %}<span class="emoji-medal">🥉</span>{% else %}{{ item.rank }}{% endif %}
-                </td>
-                <td data-label="کاربر 👤">{{ item.user.username }}</td>
-                <td data-label="تعداد آزمون‌ها 📝">{{ item.quizzes_taken }}</td>
-                <td data-label="امتیاز کل 💯">{{ item.total_score }}</td>
-                <td data-label="میانگین درصد 📈">{{ item.average_score }}%</td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="5" style="text-align:center; padding:20px; color:#777;">هیچ داده‌ای برای نمایش وجود ندارد. 😞</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                            <td>
+                                <span class="rank-number
+                                    {% if item.rank == 1 %}rank-gold
+                                    {% elif item.rank == 2 %}rank-silver
+                                    {% elif item.rank == 3 %}rank-bronze
+                                    {% endif %}
+                                ">
+                                    {{ item.rank }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="username">
+                                    {{ item.user.username }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="table-value">
+                                    {{ item.quizzes_taken }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="score-value">
+                                    {{ item.total_score }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <div class="average-score">
+                                    <span>{{ item.average_score }}%</span>
+                                    <div class="score-progress">
+                                        <div class="score-progress-fill"style="width: {{ item.average_score }}%;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-state">
+                                    <div class="empty-icon">—</div>
+                                    <h3>هنوز اطلاعاتی ثبت نشده است</h3>
+                                    <p>
+                                        با شرکت در آزمون‌ها، اولین رتبه‌ها را بساز!
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="leaderboard-footer">
+                <span>AR TEST</span>
+                <p>هر قدم کوچک، تو رو به موفقیت نزدیک‌تر می‌کنه.</p>
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
 {% endblock %}

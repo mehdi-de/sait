@@ -47,4 +47,16 @@ urlpatterns = [
         views.verify_payment_view,
         name='verify_payment'
     ),
+
+    path(
+    'analysis/<int:quiz_id>/',
+    views.quiz_analysis_view,
+    name='quiz_analysis'
+    ),
+    path(
+    'my-attempts/',
+    views.my_attempts_view,
+    name='my_attempts'
+    ),
+
 ]

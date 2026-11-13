@@ -1,314 +1,45 @@
+
 {% load static %}
 
-<style>
+<link rel="stylesheet" href="{% static 'css/navbar.css' %}">
 
-    
-/* 🔥 Navbar Styles */
-.navbar {
-    background: linear-gradient(135deg, rgba(20, 25, 45, 0.98) 0%, rgba(35, 40, 70, 0.98) 100%);
-    backdrop-filter: blur(30px);
-    border: 1px solid rgba(100, 150, 255, 0.2);
-    border-bottom: 2px solid transparent;
-    position: fixed;
-    border-radius: 20px; /* گوشه گرد */
-    top: 20px; /* فاصله از بالا */
-    margin: 0 20px; /* فاصله از کناره‌ها */
-    max-width: calc(100% - 40px);
-    width: 100%;
-    z-index: 10000;
-    padding: 1rem 0;
-    transition: all 0.4s ease;
-}
-
-.navbar.scrolled {
-    border-bottom-color: #00f0ff;
-    box-shadow: 0 10px 40px rgba(0, 240, 255, 0.3);
-}
-
-.navbar-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 5%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 45px;
-}
-
-.site-identity a {
-    font-size: 2rem;
-    font-weight: 900;
-    background: linear-gradient(45deg, #ff03ab, #ff6600);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-
-.site-identity a:hover {
-    filter: drop-shadow(0 0 20px rgb(199, 232, 18));
-}
-
-.nav-links {
-    display: flex;
-    list-style: none;
-    gap: 15px;
-    align-items: center;
-}
-
-.nav-link {
-    color: #e0e0e0;
-    padding: 12px 24px;
-    border-radius: 15px;
-    font-weight: 600;
-    font-size: 15px;
-    position: relative;
-    transition: all 0.3s ease;
-    text-decoration: none;
-}
-
-.nav-link::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 0;
-    height: 3px;
-    background: linear-gradient(45deg, #00f0ff, #00d4ff);
-    transition: all 0.3s ease;
-    transform: translateX(-50%);
-    border-radius: 2px;
-}
-
-.nav-link:hover::before,
-.nav-link.active::before {
-    width: 90%;
-}
-
-.nav-link:hover {
-    color: #fff;
-    background: rgba(0, 240, 255, 0.15);
-    box-shadow: 0 5px 20px rgba(0, 240, 255, 0.3);
-}
-
-.nav-link.active {
-    color: #00f0ff;
-    background: rgba(0, 240, 255, 0.2);
-}
-
-.auth-controls {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-}
-
-.btn-neon {
-    padding: 12px 28px;
-    border: 2px solid transparent;
-    border-radius: 50px;
-    font-weight: 700;
-    font-size: 14px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(15px);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: 'Vazir', sans-serif;
-}
-
-.btn-primary {
-    background: linear-gradient(45deg, #00f0ff, #00d4ff);
-    color: #000;
-    box-shadow: 0 8px 25px rgba(0, 240, 255, 0.4);
-}
-
-.btn-primary:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 45px rgba(0, 240, 255, 0.6);
-    border-color: rgba(255, 255, 255, 0.3);
-}
-
-.btn-secondary {
-    background: linear-gradient(45deg, #ff0080, #ff4d94);
-    color: #000;
-    box-shadow: 0 8px 25px rgba(255, 0, 128, 0.4);
-}
-
-.btn-secondary:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 45px rgba(255, 0, 128, 0.6);
-}
-
-.btn-danger {
-    background: linear-gradient(45deg, #ff416c, #ff4b2b);
-    color: white;
-    box-shadow: 0 8px 25px rgba(255, 71, 107, 0.4);
-}
-
-.btn-danger:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 45px rgba(255, 71, 107, 0.6);
-}
-
-/* 🔥 Mobile */
-.menu-toggle {
-    display: none;
-    flex-direction: column;
-    cursor: pointer;
-    gap: 5px;
-    padding: 10px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-}
-
-.hamburger {
-    width: 28px;
-    height: 3px;
-    background: linear-gradient(45deg, #f5f7f7, #00d4ff);
-    border-radius: 3px;
-    transition: all 0.3s ease;
-    transform-origin: center;
-}
-
-.menu-toggle.active .hamburger:nth-child(1) {
-    transform: rotate(45deg) translate(7px, 7px);
-}
-
-.menu-toggle.active .hamburger:nth-child(2) {
-    opacity: 0;
-}
-
-.menu-toggle.active .hamburger:nth-child(3) {
-    transform: rotate(-45deg) translate(7px, -7px);
-}
-
-
-
-
-/* موبایل */
-@media (max-width: 1024px) {
-    .navbar {
-        top: 10px;
-    }
-
-
-    .menu-toggle { display: flex; }
-    
-    .nav-links {
-        position: fixed;
-        top: 90px;
-        right: -100%;
-        width: 320px;
-        max-width: 90vw;
-        height: calc(100vh - 90px);
-        background: 
-            radial-gradient(circle at 30% 20%, rgba(157, 234, 102, 0.3) 0%, transparent 50%),
-            linear-gradient(135deg, rgba(20, 25, 45, 0.98) 0%, rgba(35, 40, 70, 0.98) 100%);
-        backdrop-filter: blur(30px);
-        flex-direction: column;
-        padding: 3rem 0;
-        border-radius: 25px 0 25px 25px;
-        box-shadow: 
-            -20px 0 60px rgba(0, 0, 0, 0.5),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1);
-        transition: right 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-    }
-    
-    .nav-links.active {
-        right: 0;
-    }
-
-    .nav-link {
-        font-size: 1.4rem;
-        padding: 1.5rem 2.5rem;
-        opacity: 0;
-        transform: translateX(50px);
-        transition: all 0.4s ease;
-    }
-    
-    .nav-links.active .nav-link:nth-child(1) { transition-delay: 0.1s; }
-    .nav-links.active .nav-link:nth-child(2) { transition-delay: 0.2s; }
-    .nav-links.active .nav-link:nth-child(3) { transition-delay: 0.3s; }
-    
-    .nav-links.active .nav-link {
-        opacity: 1;
-        transform: translateX(0);
-    }
-
-
-    .site-identity {
-        order: 1; /* لوگو چپ */
-    }
-        .menu-toggle {
-        order: -1; /* منو راست */
-        margin-left: auto;
-    }
-
-    .nav-link {
-        font-size: 1.3rem;
-        padding: 1rem 2rem;
-        color: white;
-        text-align: center;
-        border-bottom: 1px solid rgba(235, 8, 8, 0.1);
-        opacity: 0;
-        transform: translateX(30px);
-        transition: 0.3s ease;
-    }
-    
-    .nav-links.active .nav-link {
-        opacity: 1;
-        transform: translateX(0);
-    }
-    
-    /* انیمیشن همبرگر */
-    .menu-toggle.active .hamburger:nth-child(1) {
-        transform: rotate(-45deg) translate(-5px, 6px);
-    }
-    .menu-toggle.active .hamburger:nth-child(2) {
-        opacity: 0;
-    }
-    .menu-toggle.active .hamburger:nth-child(3) {
-        transform: rotate(45deg) translate(-5px, -6px);
-    }
-}
-</style>
-
-<nav class="navbar" id="navbar">
+<nav class="navbar" id="navbar" dir="rtl">
     <div class="navbar-container">
 
-        <!-- 🔥 Logo -->
         <div class="site-identity">
-            <a href="{% url 'quizzes:home' %}">🎯 AR TEST</a>
+            <a href="{% url 'quizzes:home' %}">
+                <span class="logo-mark">AR</span>
+                <span class="logo-text">AR TEST</span>
+            </a>
         </div>
 
-        <!-- 🔥 Navigation -->
+        <button class="menu-toggle" id="menuToggle"
+                type="button" aria-label="باز کردن منو"
+                aria-expanded="false" aria-controls="navLinks">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
         <ul class="nav-links" id="navLinks">
 
             <li>
                 <a href="{% url 'quizzes:home' %}"
                    class="nav-link{% if request.resolver_match.url_name == 'home' %} active{% endif %}">
-                    🏠 خانه
-                </a>
-            </li>
-
-            <li>
-                <a href="/admin/" class="nav-link admin-btn">
-                    👨‍💻 پنل مدیریت
+                    خانه
                 </a>
             </li>
 
             <li>
                 <a href="{% url 'quizzes:about' %}"
                    class="nav-link{% if request.resolver_match.url_name == 'about' %} active{% endif %}">
-                    📃 درباره ما
+                    درباره ما
+                </a>
+            </li>
+
+            <li>
+                <a href="/admin/" class="nav-link admin-btn">
+                    پنل مدیریت
                 </a>
             </li>
 
@@ -317,97 +48,99 @@
                 <li>
                     <a href="{% url 'accounts:dashboard' %}"
                        class="nav-link{% if request.resolver_match.url_name == 'dashboard' %} active{% endif %}">
-                        📊 داشبورد
+                        داشبورد
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'quizzes:my_attempts' %}"
+                       class="nav-link{% if request.resolver_match.url_name == 'my_attempts' %} active{% endif %}">
+                        مرور آزمون‌های من
                     </a>
                 </li>
 
                 <li>
                     <a href="{% url 'quizzes:subscribe' %}"
                        class="nav-link{% if request.resolver_match.url_name == 'subscribe' %} active{% endif %}">
-                        💎 اشتراک
+                        اشتراک
                     </a>
                 </li>
 
                 <li>
                     <a href="{% url 'accounts:leaderboard' %}"
                        class="nav-link{% if request.resolver_match.url_name == 'leaderboard' %} active{% endif %}">
-                        🏆 رتبه‌بندی
+                        رتبه‌بندی
                     </a>
                 </li>
 
-                <li>
-                    <form method="post"
-                          action="{% url 'accounts:logout' %}"
-                          style="display:inline-block; margin:0;">
+                <li class="mobile-logout">
+                    <form method="post" action="{% url 'accounts:logout' %}">
                         {% csrf_token %}
-                        <button type="submit" class="btn-neon btn-danger">
-                            🚪 خروج
+                        <button type="submit" class="nav-logout">
+                            خروج از حساب
                         </button>
                     </form>
                 </li>
 
             {% endif %}
-
         </ul>
 
-        <!-- 🔥 Auth Controls -->
         <div class="auth-controls">
-
             {% if not user.is_authenticated %}
-
-                <a href="{% url 'accounts:login' %}"
-                   class="btn-neon btn-primary">
-                    🔐 ورود
+                <a href="{% url 'accounts:login' %}" class="auth-login">
+                    ورود
                 </a>
 
-                <a href="{% url 'accounts:register' %}"
-                   class="btn-neon btn-secondary">
-                    📝 ثبت‌نام
+                <a href="{% url 'accounts:register' %}" class="auth-register">
+                    ثبت‌نام
                 </a>
-
+            {% else %}
+                <form method="post" action="{% url 'accounts:logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="auth-logout">
+                        خروج
+                    </button>
+                </form>
             {% endif %}
-
-        </div>
-
-        <!-- 🔥 Mobile Toggle -->
-        <div class="menu-toggle" id="menuToggle">
-            <span class="hamburger"></span>
-            <span class="hamburger"></span>
-            <span class="hamburger"></span>
         </div>
 
     </div>
 </nav>
 
-
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const menuToggle = document.getElementById('menuToggle');
     const navLinks = document.getElementById('navLinks');
-    
-    // باز/بست منو
-    menuToggle.addEventListener('click', function() {
-        menuToggle.classList.toggle('active');
-        navLinks.classList.toggle('active');
+
+    if (!menuToggle || !navLinks) return;
+
+    function closeMenu() {
+        menuToggle.classList.remove('active');
+        navLinks.classList.remove('active');
+        menuToggle.setAttribute('aria-expanded', 'false');
+    }
+
+    menuToggle.addEventListener('click', function (event) {
+        event.stopPropagation();
+
+        const isOpen = navLinks.classList.toggle('active');
+        menuToggle.classList.toggle('active', isOpen);
+        menuToggle.setAttribute('aria-expanded', String(isOpen));
     });
-    
-    // بستن با کلیک روی لینک
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', () => {
-            menuToggle.classList.remove('active');
-            navLinks.classList.remove('active');
-        });
+
+    navLinks.querySelectorAll('a').forEach(function (link) {
+        link.addEventListener('click', closeMenu);
     });
-    
-    // بستن با کلیک بیرون منو
-    document.addEventListener('click', function(e) {
-        if (!navLinks.contains(e.target) && !menuToggle.contains(e.target)) {
-            menuToggle.classList.remove('active');
-            navLinks.classList.remove('active');
+
+    document.addEventListener('click', function (event) {
+        if (!navLinks.contains(event.target) &&
+            !menuToggle.contains(event.target)) {
+            closeMenu();
         }
+    });
+
+    window.addEventListener('resize', function () {
+        if (window.innerWidth > 1050) closeMenu();
     });
 });
 </script>
-
-
-
